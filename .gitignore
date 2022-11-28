@@ -1,4 +1,9 @@
 # Binaries for programs and plugins
+.vscode/
+.idea/
+config.*.yaml
+docs/node_modules
+docs/web_deploy
 *.exe
 *.exe~
 *.dll
