@@ -1,12 +1,57 @@
 log:
+  level: debug
   disable_sentry: true
 
 listener:
   addr: :8000
 
+data:
+  tokens:
+    - id: "1"
+      name: "USDT"
+      symbol: "USDT"
+      icon: "https://cryptologos.cc/logos/tether-usdt-logo.png"
+      chains:
+        - chain_id: "goerli"
+          token_type: erc20
+          contract_address: "" # address of erc20 contract
+        - chain_id: "sepolia"
+          token_type: erc20
+          contract_address: ""
+          #auto_send: true
+  chains:
+    - id: "goerli"
+      name: "Ethereum Goerli"
+      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
+      type: "evm"
+      swap_contract: "" # address of swap contract
+      rpc_endpoint: "" # network rpc
+      confirmations: 12
+      chain_params:
+        chain_id: 5
+        native_symbol: "ETH"
+        native_decimals: 18
+        rpc: ""
+        explorer_url: "https://goerli.etherscan.io/"
+        chain_hex_id: "0x5"
+    - id: "sepolia"
+      name: "Ethereum Sepolia"
+      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
+      type: "evm"
+      swap_contract: ""
+      rpc_endpoint: ""
+      confirmations: 12
+      chain_params:
+        chain_id: 11155111
+        native_symbol: "ETH"
+        native_decimals: 18
+        rpc: ""
+        explorer_url: "https://sepolia.etherscan.io/"
+        chain_hex_id: "0xAA36A7"
+
+
+signer:
+  eth_signer: "" # Private key of signer
+
 cop:
   disabled: true
-  endpoint: "http://..."
-  upstream: "http://..."
-  service_name: swapica-svc
-  service_port: 80
