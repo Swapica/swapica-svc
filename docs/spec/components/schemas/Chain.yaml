@@ -1,0 +1,37 @@
+allOf:
+  - $ref: '#/components/schemas/ChainKey'
+  - type: object
+    required:
+      - attributes
+      - relationships
+    properties:
+      attributes:
+        type: object
+        required:
+          - name
+          - chain_type
+          - chain_params
+        properties:
+          name:
+            type: string
+          icon:
+            type: string
+            description: Link to network icon
+            example: https://some.storage.com/image.png
+          chain_type:
+            $ref: '#/components/schemas/ChainType'
+          chain_params:
+            type: object
+            format: interface{}
+      relationships:
+        type: object
+        required:
+          - tokens
+        properties:
+          tokens:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TokenKey'

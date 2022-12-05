@@ -2,8 +2,8 @@ allOf:
   - $ref: '#/components/schemas/EvmTransactionKey'
   - type: object
     required:
-    - attributes
-    - relationships
+      - attributes
+      - relationships
     properties:
       attributes:
         type: object
@@ -13,7 +13,7 @@ allOf:
           tx_body:
             $ref: '#/components/schemas/EvmTransactionTxBody'
           confirmed:
-            type: bool
+            type: boolean
             description: Is enough signatures to send tx
       relationships:
         type: object
