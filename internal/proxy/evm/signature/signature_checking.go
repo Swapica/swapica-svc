@@ -27,6 +27,9 @@ func CheckSignature(hash, signatureS, addr string) (bool, error) {
 
 func RecoverAddress(hash, signatureS string) (common.Address, error) {
 	sig, err := hexutil.Decode(signatureS)
+	if err != nil {
+		return common.Address{}, err
+	}
 	data := []byte(hash)
 
 	if len(sig) != 65 {
