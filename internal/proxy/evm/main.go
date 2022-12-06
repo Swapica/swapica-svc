@@ -5,6 +5,7 @@ import (
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pkg/errors"
@@ -56,17 +57,12 @@ func (e *evmProxy) CancelOrder() (interface{}, error) {
 	panic("implement me")
 }
 
-func (e *evmProxy) MatchOrder() (interface{}, error) {
+func (e *evmProxy) CreateMatch() (interface{}, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (e *evmProxy) CancelMatchOrder() (interface{}, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (e *evmProxy) FinalizeOrder() (interface{}, error) {
+func (e *evmProxy) ExecuteMatch() (interface{}, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -74,4 +70,50 @@ func (e *evmProxy) FinalizeOrder() (interface{}, error) {
 func (e *evmProxy) ExecuteOrder() (interface{}, error) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (e *evmProxy) GetMatch(matchId *big.Int) (struct {
+	Id            *big.Int
+	OriginOrderId *big.Int
+	Account       common.Address
+	TokenToSell   common.Address
+	AmountToSell  *big.Int
+	OriginChain   *big.Int
+}, error) {
+	match, err := e.swapper.Matches(&bind.CallOpts{}, matchId)
+	if err != nil {
+		return struct {
+			Id            *big.Int
+			OriginOrderId *big.Int
+			Account       common.Address
+			TokenToSell   common.Address
+			AmountToSell  *big.Int
+			OriginChain   *big.Int
+		}{}, errors.Wrap(err, "failed to get match")
+	}
+	return match, nil
+}
+
+func (e *evmProxy) GetOrder(orderId *big.Int) (struct {
+	Id           *big.Int
+	Account      common.Address
+	TokenToSell  common.Address
+	TokenToBuy   common.Address
+	AmountToSell *big.Int
+	AmountToBuy  *big.Int
+	DestChain    *big.Int
+}, error) {
+	order, err := e.swapper.Orders(&bind.CallOpts{}, orderId)
+	if err != nil {
+		return struct {
+			Id           *big.Int
+			Account      common.Address
+			TokenToSell  common.Address
+			TokenToBuy   common.Address
+			AmountToSell *big.Int
+			AmountToBuy  *big.Int
+			DestChain    *big.Int
+		}{}, errors.Wrap(err, "failed to get order")
+	}
+	return order, nil
 }
