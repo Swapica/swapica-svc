@@ -4,5 +4,11 @@
 
 package resources
 
-type ResourceType struct {
-}
+type ResourceType string
+
+// List of ResourceType
+const (
+	CHAIN           ResourceType = "chain"
+	EVM_TRANSACTION ResourceType = "evm_transaction"
+	TOKEN           ResourceType = "token"
+)

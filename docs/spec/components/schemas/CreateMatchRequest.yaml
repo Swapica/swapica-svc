@@ -1,0 +1,13 @@
+type: object
+required:
+  - src_chain
+  - dest_chain
+  - order_id
+properties:
+  src_chain:
+    type: string
+  dest_chain:
+    type: string
+  order_id:
+    type: integer
+    format: uint
