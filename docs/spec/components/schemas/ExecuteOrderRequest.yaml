@@ -7,9 +7,8 @@ required:
 properties:
   chain_id:
     type: string
-    format: int
     description: The identifier of the chain in which the order was placed.
-    example: 1
+    example: "sepolia"
   match_id:
     type: string
     format: int

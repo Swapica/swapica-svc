@@ -7,9 +7,8 @@ required:
 properties:
   chain_id:
     type: string
-    format: int
     description: The identifier of the chain in which the match was placed.
-    example: 1
+    example: "goerli"
   match_id:
     type: string
     format: int

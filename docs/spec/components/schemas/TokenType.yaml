@@ -1,5 +1,5 @@
 type: string
 description: Type of token
 enum:
-  - fungible
+  - erc20
   - native

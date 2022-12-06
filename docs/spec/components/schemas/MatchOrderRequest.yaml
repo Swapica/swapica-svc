@@ -9,9 +9,8 @@ required:
 properties:
   chain_id:
     type: string
-    format: int
     description: The identifier of the chain in which the match occurred to a particular order.
-    example: 1
+    example: "goerli"
   order_id:
     type: string
     format: int
@@ -29,12 +28,11 @@ properties:
     description: >-
       The number of tokens that the user provided to purchase 
       tokens that were placed in the order
-    example: 10
+    example: 100
   origin_chain:
     type: string
-    format: int
     description: The identifier of the chain in which the order was placed.
-    example: 5
+    example: "sepolia"
   from:
     type: string
     description: The address of the sender
