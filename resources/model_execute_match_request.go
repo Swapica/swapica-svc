@@ -11,6 +11,8 @@ type ExecuteMatchRequest struct {
 	MatchId int `json:"match_id"`
 	// The identifier of the order that was created by the user.
 	OrderId int `json:"order_id"`
+	// The identifier of the chain in which the order is placed with which the match occurred.
+	OriginChainId string `json:"origin_chain_id"`
 	// The address of the receiver who will get tokens placed in order.
 	Receiver string `json:"receiver"`
 }

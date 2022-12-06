@@ -5,7 +5,7 @@ required:
   - token_to_sell
   - amount_to_sell
   - origin_chain
-  - from
+  - sender
 properties:
   chain_id:
     type: string
@@ -33,7 +33,7 @@ properties:
     type: string
     description: The identifier of the chain in which the order was placed.
     example: "sepolia"
-  from:
+  sender:
     type: string
     description: The address of the sender
     example: "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"

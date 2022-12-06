@@ -1,6 +1,7 @@
 type: object
 required:
   - chain_id
+  - origin_chain_id
   - match_id
   - sender
 properties:
@@ -8,6 +9,10 @@ properties:
     type: string
     description: The identifier of the chain in which the match was placed.
     example: "goerli"
+  origin_chain_id:
+    type: string
+    description: The identifier of the chain in which the order is placed with which the match occurred.
+    example: "sepolia"
   match_id:
     type: string
     format: int
