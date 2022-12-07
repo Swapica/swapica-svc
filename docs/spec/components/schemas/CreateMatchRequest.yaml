@@ -3,6 +3,7 @@ required:
   - src_chain
   - dest_chain
   - order_id
+  - sender
 properties:
   src_chain:
     type: string
@@ -11,3 +12,5 @@ properties:
   order_id:
     type: integer
     format: uint
+  sender:
+    type: string

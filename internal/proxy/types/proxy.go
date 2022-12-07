@@ -3,8 +3,8 @@ package types
 import (
 	"github.com/Swapica/swapica-svc/internal/amount"
 	"github.com/Swapica/swapica-svc/internal/data"
+	"github.com/Swapica/swapica-svc/resources"
 	"github.com/Swapica/swapica-svc/internal/proxy"
-	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 )
 
@@ -12,27 +12,11 @@ type Proxy interface {
 	CreateOrder(params CreateOrderParams) (interface{}, error)
 	CancelOrder() (interface{}, error)
 	ExecuteOrder() (interface{}, error)
-	CreateMatch() (interface{}, error)
+	CreateMatch(params CreateMatchParams) (interface{}, error)
 	CancelMatch(params CancelMatchParams, repo proxy.ProxyRepo) (interface{}, error)
 	ExecuteMatch() (interface{}, error)
-
-	GetMatch(matchId *big.Int) (struct {
-		Id            *big.Int
-		OriginOrderId *big.Int
-		Account       common.Address
-		TokenToSell   common.Address
-		AmountToSell  *big.Int
-		OriginChain   *big.Int
-	}, error)
-	GetOrder(orderId *big.Int) (struct {
-		Id           *big.Int
-		Account      common.Address
-		TokenToSell  common.Address
-		TokenToBuy   common.Address
-		AmountToSell *big.Int
-		AmountToBuy  *big.Int
-		DestChain    *big.Int
-	}, error)
+	GetOrder(id *big.Int) (resources.Order, error)
+	GetMatch(matchId *big.Int) (resources.Match, error)
 }
 
 type CreateOrderParams struct {
@@ -43,6 +27,13 @@ type CreateOrderParams struct {
 	TokenToBuy   string
 	AmountToBuy  amount.Amount
 	DestChain    data.Chain
+}
+
+type CreateMatchParams struct {
+	SrcChain  data.Chain
+	DestChain data.Chain
+	Order     resources.Order
+	Sender    string
 }
 
 type CancelMatchParams struct {

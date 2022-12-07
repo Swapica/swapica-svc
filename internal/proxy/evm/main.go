@@ -57,10 +57,6 @@ func (e *evmProxy) CancelOrder() (interface{}, error) {
 	panic("implement me")
 }
 
-func (e *evmProxy) CreateMatch() (interface{}, error) {
-	//TODO implement me
-	panic("implement me")
-}
 
 func (e *evmProxy) ExecuteMatch() (interface{}, error) {
 	//TODO implement me
