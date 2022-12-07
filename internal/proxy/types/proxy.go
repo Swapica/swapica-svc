@@ -10,11 +10,12 @@ import (
 type Proxy interface {
 	CreateOrder(params CreateOrderParams) (interface{}, error)
 	CancelOrder() (interface{}, error)
-	CreateMatch(params CreateMatchParams) (interface{}, error)
-	CancelMatchOrder() (interface{}, error)
-	ExecuteMatch() (interface{}, error)
 	ExecuteOrder() (interface{}, error)
+	CreateMatch(params CreateMatchParams) (interface{}, error)
+	CancelMatch(params CancelMatchParams) (interface{}, error)
+	ExecuteMatch() (interface{}, error)
 	GetOrder(id *big.Int) (resources.Order, error)
+	GetMatch(id *big.Int) (resources.Match, error)
 }
 
 type CreateOrderParams struct {
@@ -32,4 +33,12 @@ type CreateMatchParams struct {
 	DestChain data.Chain
 	Order     resources.Order
 	Sender    string
+}
+
+type CancelMatchParams struct {
+	Sender   string
+	SrcChain data.Chain
+	OrgChain data.Chain
+	Order    resources.Order
+	Match    resources.Match
 }

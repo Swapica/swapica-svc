@@ -1,0 +1,23 @@
+type: object
+required:
+  - account
+  - token_to_sell
+properties:
+  id:
+    type: string
+    format: big.Int
+  origin_order_id:
+    type: string
+    format: big.Int
+  account:
+    type: string
+    format: common.Address
+  token_to_sell:
+    type: string
+    format: common.Address
+  amount_to_sell:
+    type: string
+    format: big.Int
+  origin_chain:
+    type: string
+    format: big.Int

@@ -1,13 +1,13 @@
 type: object
 required:
-  - chain_id
+  - dest_chain
   - order_id
   - token_to_sell
   - amount_to_sell
-  - origin_chain
-  - from
+  - src_chain
+  - sender
 properties:
-  chain_id:
+  dest_chain:
     type: string
     description: The identifier of the chain in which the match occurred to a particular order.
     example: "goerli"
@@ -29,11 +29,11 @@ properties:
       The number of tokens that the user provided to purchase 
       tokens that were placed in the order
     example: 100
-  origin_chain:
+  src_chain:
     type: string
     description: The identifier of the chain in which the order was placed.
     example: "sepolia"
-  from:
+  sender:
     type: string
     description: The address of the sender
     example: "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
