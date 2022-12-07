@@ -19,7 +19,7 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	srcChain, err := ChainsQ(r).FilterByID(request.ChainId).Get()
+	srcChain, err := ChainsQ(r).FilterByID(request.SrcChain).Get()
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get source chain")
 		ape.RenderErr(w, problems.InternalError())
@@ -32,14 +32,14 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orgChain, err := ChainsQ(r).FilterByID(request.OriginChainId).Get()
+	destChain, err := ChainsQ(r).FilterByID(request.DestChain).Get()
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get source chain")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
-	if orgChain == nil {
+	if destChain == nil {
 		Log(r).Error("source chain not found")
 		ape.RenderErr(w, problems.BadRequest(errors.New("source chain not found"))...)
 		return
@@ -52,17 +52,17 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := ProxyRepo(r).Get(orgChain.ID).GetOrder(match.OriginOrderId)
+	order, err := ProxyRepo(r).Get(destChain.ID).GetOrder(match.OriginOrderId)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get order")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.ChainId).CancelMatch(types.CancelMatchParams{
+	tx, err := ProxyRepo(r).Get(request.DestChain).CancelMatch(types.CancelMatchParams{
 		Sender:   request.Sender,
 		SrcChain: *srcChain,
-		OrgChain: *orgChain,
+		OrgChain: *destChain,
 		Match:    match,
 		Order:    order,
 	})

@@ -6,13 +6,13 @@ package resources
 
 type ExecuteOrderRequest struct {
 	// The identifier of the chain in which the order was placed.
-	ChainId string `json:"chain_id"`
+	DestChain string `json:"dest_chain"`
 	// The identifier of the match that was selected by the user.
 	MatchId int `json:"match_id"`
 	// The identifier of the order that was selected by the user to create the match.
 	OrderId int `json:"order_id"`
-	// The identifier of the chain in which the order is placed with which the match occurred.
-	OriginChainId string `json:"origin_chain_id"`
 	// The address of the receiver who will get tokens placed in order.
 	Receiver string `json:"receiver"`
+	// The identifier of the chain in which the order is placed with which the match occurred.
+	SrcChain string `json:"src_chain"`
 }

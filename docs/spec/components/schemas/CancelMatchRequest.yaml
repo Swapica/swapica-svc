@@ -1,15 +1,15 @@
 type: object
 required:
-  - chain_id
-  - origin_chain_id
+  - dest_chain
+  - src_chain
   - match_id
   - sender
 properties:
-  chain_id:
+  dest_chain:
     type: string
     description: The identifier of the chain in which the match was placed.
     example: "goerli"
-  origin_chain_id:
+  src_chain:
     type: string
     description: The identifier of the chain in which the order is placed with which the match occurred.
     example: "sepolia"
