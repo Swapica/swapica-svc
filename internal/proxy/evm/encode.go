@@ -2,7 +2,7 @@ package evm
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 type Selector uint8
@@ -48,4 +48,33 @@ func CreateMatchCalldata(calldata createMatchCalldata) ([]byte, error) {
 	}
 
 	return []byte(hexutil.Encode(packed)), nil
+}
+
+type cancelMatchCalldata struct {
+	Selector
+	ChainId uint
+	Swapica string
+	MatchId uint
+}
+
+func EncodeCancelMatch(calldata cancelMatchCalldata) ([]byte, error) {
+	calldataType, err := abi.NewType("tuple", "", []abi.ArgumentMarshaling{
+		{Name: "selector", Type: "uint8"},
+		{Name: "chain_id", Type: "uint"},
+		{Name: "swapica", Type: "address"},
+		{Name: "id", Type: "uint"},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	args := abi.Arguments{
+		{Type: calldataType, Name: "calldata"},
+	}
+
+	packed, err := args.Pack(&calldata)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(hexutil.Encode(packed)), err
 }

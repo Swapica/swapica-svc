@@ -4,7 +4,6 @@ import (
 	"github.com/Swapica/swapica-svc/internal/amount"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/resources"
-	"github.com/Swapica/swapica-svc/internal/proxy"
 	"math/big"
 )
 
@@ -13,10 +12,10 @@ type Proxy interface {
 	CancelOrder() (interface{}, error)
 	ExecuteOrder() (interface{}, error)
 	CreateMatch(params CreateMatchParams) (interface{}, error)
-	CancelMatch(params CancelMatchParams, repo proxy.ProxyRepo) (interface{}, error)
+	CancelMatch(params CancelMatchParams) (interface{}, error)
 	ExecuteMatch() (interface{}, error)
 	GetOrder(id *big.Int) (resources.Order, error)
-	GetMatch(matchId *big.Int) (resources.Match, error)
+	GetMatch(id *big.Int) (resources.Match, error)
 }
 
 type CreateOrderParams struct {
@@ -37,10 +36,9 @@ type CreateMatchParams struct {
 }
 
 type CancelMatchParams struct {
-	Sender     string
-	SrcChain   data.Chain
-	OrgChain   data.Chain
-	MatchId    int
-	OrderData  []byte
-	Signatures [][]byte
+	Sender   string
+	SrcChain data.Chain
+	OrgChain data.Chain
+	Order    resources.Order
+	Match    resources.Match
 }

@@ -7,6 +7,7 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"math/big"
 	"net/http"
 )
 
@@ -44,12 +45,27 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	match, err := ProxyRepo(r).Get(srcChain.ID).GetMatch(big.NewInt(int64(request.MatchId)))
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get order")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	order, err := ProxyRepo(r).Get(orgChain.ID).GetOrder(match.OriginOrderId)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get order")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
 	tx, err := ProxyRepo(r).Get(request.ChainId).CancelMatch(types.CancelMatchParams{
 		Sender:   request.Sender,
 		SrcChain: *srcChain,
 		OrgChain: *orgChain,
-		MatchId:  request.MatchId,
-	}, ProxyRepo(r))
+		Match:    match,
+		Order:    order,
+	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create order")
 		ape.RenderErr(w, problems.InternalError())

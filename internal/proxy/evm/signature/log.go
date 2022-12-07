@@ -4,10 +4,10 @@ import (
 	sha3 "github.com/miguelmota/go-solidity-sha3"
 )
 
-type CancelMatch struct {
-	OrderData string
+type OrderData struct {
+	OrderData []byte
 }
 
-func (log CancelMatch) Hash() []byte {
+func (log OrderData) Hash() []byte {
 	return sha3.SoliditySHA3(log.OrderData)
 }

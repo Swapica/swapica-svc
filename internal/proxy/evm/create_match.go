@@ -1,9 +1,9 @@
 package evm
 
 import (
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
@@ -28,12 +28,15 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 
 	sender := common.HexToAddress(params.Sender)
 
-	signature, err := e.signer.SignHash(crypto.Keccak256(calldata))
+	data := signature.OrderData{
+		OrderData: calldata,
+	}
+	sign, err := e.signer.Sign(&data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign calldata")
 	}
 
-	tx, err := e.swapper.CreateMatch(buildTransactOpts(sender), calldata, [][]byte{signature})
+	tx, err := e.swapper.CreateMatch(buildTransactOpts(sender), calldata, [][]byte{sign})
 	if err != nil {
 		return nil, err
 	}
