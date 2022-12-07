@@ -56,17 +56,12 @@ func (e *evmProxy) CancelOrder() (interface{}, error) {
 	panic("implement me")
 }
 
-func (e *evmProxy) MatchOrder() (interface{}, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (e *evmProxy) CancelMatchOrder() (interface{}, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (e *evmProxy) FinalizeOrder() (interface{}, error) {
+func (e *evmProxy) ExecuteMatch() (interface{}, error) {
 	//TODO implement me
 	panic("implement me")
 }
