@@ -16,6 +16,8 @@ type Proxy interface {
 	ExecuteMatch(params ExecuteMatchParams) (interface{}, error)
 	GetOrder(id *big.Int) (resources.Order, error)
 	GetMatch(id *big.Int) (resources.Match, error)
+	GetOrderStatus(id *big.Int) (resources.Status, error)
+	GetMatchStatus(id *big.Int) (resources.Status, error)
 }
 
 type CreateOrderParams struct {

@@ -13,6 +13,16 @@ import (
 
 const gasLimit = 300000
 
+type State uint8
+
+const (
+	none State = iota
+	awaitingMatch
+	awaitingFinalization
+	canceled
+	executed
+)
+
 func skipSig(address common.Address, transaction *types.Transaction) (*types.Transaction, error) {
 	return transaction, nil
 }
