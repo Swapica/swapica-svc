@@ -45,14 +45,14 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	match, err := ProxyRepo(r).Get(srcChain.ID).GetMatch(big.NewInt(int64(request.MatchId)))
+	match, err := ProxyRepo(r).Get(destChain.ID).GetMatch(big.NewInt(int64(request.MatchId)))
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get order")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	order, err := ProxyRepo(r).Get(destChain.ID).GetOrder(match.OriginOrderId)
+	order, err := ProxyRepo(r).Get(srcChain.ID).GetOrder(match.OriginOrderId)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get order")
 		ape.RenderErr(w, problems.BadRequest(err)...)
