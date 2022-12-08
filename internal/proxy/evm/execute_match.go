@@ -53,6 +53,14 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 }
 
 func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, sender common.Address) (bool, error) {
+	if params.OrderStatus.State != awaitingMatch {
+		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
+	}
+
+	if params.MatchStatus.State != awaitingFinalization {
+		return false, errors.New("cannot execute a match when it is not awaiting finalization")
+	}
+
 	if params.Receiver != params.Order.Account.String() {
 		return false, errors.New("invalid receiver")
 	}

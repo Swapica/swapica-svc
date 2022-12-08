@@ -58,12 +58,28 @@ func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(big.NewInt(int64(request.MatchId)))
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get order")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(match.OriginOrderId)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get order")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
 	tx, err := ProxyRepo(r).Get(request.DestChain).ExecuteMatch(types.ExecuteMatchParams{
-		SrcChain:  *srcChain,
-		DestChain: *destChain,
-		Order:     order,
-		Match:     match,
-		Receiver:  request.Receiver,
+		SrcChain:    *srcChain,
+		DestChain:   *destChain,
+		Order:       order,
+		Match:       match,
+		OrderStatus: orderStatus,
+		MatchStatus: matchStatus,
+		Receiver:    request.Receiver,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create match")

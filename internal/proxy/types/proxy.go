@@ -48,10 +48,12 @@ type CancelMatchParams struct {
 }
 
 type ExecuteMatchParams struct {
-	Sender    string
-	SrcChain  data.Chain
-	DestChain data.Chain
-	Order     resources.Order
-	Match     resources.Match
-	Receiver  string
+	Sender      string
+	SrcChain    data.Chain
+	DestChain   data.Chain
+	Order       resources.Order
+	Match       resources.Match
+	OrderStatus resources.Status
+	MatchStatus resources.Status
+	Receiver    string
 }
