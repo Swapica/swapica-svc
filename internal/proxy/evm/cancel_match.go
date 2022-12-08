@@ -56,7 +56,8 @@ func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, send
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != awaitingMatch {
+	if params.OrderStatus.State != canceled ||
+		(params.OrderStatus.State == executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
 		return false, errors.New("cannot cancel a match when the order has already been executed")
 	}
 
