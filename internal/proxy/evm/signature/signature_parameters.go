@@ -29,8 +29,8 @@ func (p Parameters) ToGeth() ([32]byte, [32]byte, uint8, error) {
 	}
 
 	v = uint8(p.V)
-	copy(r[:], rS[:])
-	copy(s[:], sS[:])
+	copy(r[:], rS)
+	copy(s[:], sS)
 	return r, s, v, nil
 }
 
