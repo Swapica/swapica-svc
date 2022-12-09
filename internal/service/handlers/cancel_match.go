@@ -34,20 +34,20 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 
 	destChain, err := ChainsQ(r).FilterByID(request.DestChain).Get()
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get source chain")
+		Log(r).WithError(err).Error("failed to get destination chain")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	if destChain == nil {
-		Log(r).Error("source chain not found")
-		ape.RenderErr(w, problems.BadRequest(errors.New("source chain not found"))...)
+		Log(r).Error("destination chain not found")
+		ape.RenderErr(w, problems.BadRequest(errors.New("destination chain not found"))...)
 		return
 	}
 
 	match, err := ProxyRepo(r).Get(destChain.ID).GetMatch(big.NewInt(int64(request.MatchId)))
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get order")
+		Log(r).WithError(err).Error("failed to get match")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
@@ -61,14 +61,14 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 
 	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(big.NewInt(int64(request.MatchId)))
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get order")
+		Log(r).WithError(err).Error("failed to get match status")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(match.OriginOrderId)
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get order")
+		Log(r).WithError(err).Error("failed to get order status")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
@@ -83,7 +83,7 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		MatchStatus: matchStatus,
 	})
 	if err != nil {
-		Log(r).WithError(err).Error("failed to create order")
+		Log(r).WithError(err).Error("failed to create cancel match transaction")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

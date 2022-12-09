@@ -62,7 +62,7 @@ func EncodeCancelMatch(calldata cancelMatchCalldata) ([]byte, error) {
 		{Name: "selector", Type: "uint8"},
 		{Name: "chain_id", Type: "uint"},
 		{Name: "swapica", Type: "address"},
-		{Name: "id", Type: "uint"},
+		{Name: "match_id", Type: "uint"},
 	})
 	if err != nil {
 		return nil, err
@@ -92,8 +92,41 @@ func EncodeExecuteMatch(calldata executeMatchCalldata) ([]byte, error) {
 		{Name: "selector", Type: "uint8"},
 		{Name: "chain_id", Type: "uint"},
 		{Name: "swapica", Type: "address"},
-		{Name: "id", Type: "uint"},
+		{Name: "match_id", Type: "uint"},
 		{Name: "receiver", Type: "address"},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	args := abi.Arguments{
+		{Type: calldataType, Name: "calldata"},
+	}
+
+	packed, err := args.Pack(&calldata)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(hexutil.Encode(packed)), err
+}
+
+type executeOrderCalldata struct {
+	Selector
+	ChainId  uint
+	Swapica  string
+	OrderId  uint
+	Receiver string
+	MatchId  uint
+}
+
+func EncodeExecuteOrder(calldata executeOrderCalldata) ([]byte, error) {
+	calldataType, err := abi.NewType("tuple", "", []abi.ArgumentMarshaling{
+		{Name: "selector", Type: "uint8"},
+		{Name: "chain_id", Type: "uint"},
+		{Name: "swapica", Type: "address"},
+		{Name: "order_id", Type: "uint"},
+		{Name: "receiver", Type: "address"},
+		{Name: "match_id", Type: "uint"},
 	})
 	if err != nil {
 		return nil, err

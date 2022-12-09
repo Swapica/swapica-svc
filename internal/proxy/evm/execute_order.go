@@ -8,10 +8,10 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, error) {
+func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, error) {
 	sender := common.HexToAddress(params.Sender)
 
-	tx, err := e.cancelMatchErc20(params, sender)
+	tx, err := e.executeOrderErc20(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -19,15 +19,17 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
 }
 
-func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
-	orderData, err := EncodeCancelMatch(cancelMatchCalldata{
-		Selector: cancelMatch,
+func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
+	orderData, err := EncodeExecuteOrder(executeOrderCalldata{
+		Selector: executeOrder,
 		ChainId:  uint(params.Order.DestChain.Uint64()),
 		Swapica:  e.swapperContract.String(),
+		OrderId:  uint(params.Order.Id.Uint64()),
+		Receiver: params.Match.Account.String(),
 		MatchId:  uint(params.Match.Id.Uint64()),
 	})
 
-	if ok, err := e.validateCancelMatchErc20(params, sender); !ok {
+	if ok, err := e.validateExecuteOrderErc20(params, sender); !ok {
 		return nil, err
 	}
 
@@ -39,7 +41,7 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 		return nil, errors.Wrap(err, "failed to sign order data")
 	}
 
-	tx, err := e.swapper.CancelMatch(
+	tx, err := e.swapper.ExecuteOrder(
 		buildTransactOpts(sender),
 		orderData,
 		[][]byte{sign},
@@ -51,18 +53,17 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 	return tx, nil
 }
 
-func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, sender common.Address) (bool, error) {
+func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, sender common.Address) (bool, error) {
 	if params.Match.Account != sender {
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != canceled ||
-		(params.OrderStatus.State == executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
-		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
+	if params.OrderStatus.State != awaitingMatch {
+		return false, errors.New("cannot execute order if it is not awaiting match")
 	}
 
 	if params.MatchStatus.State != awaitingFinalization {
-		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
+		return false, errors.New("cannot execute order if match status is not awaiting finalization")
 	}
 
 	if params.Order.AmountToBuy != params.Match.AmountToSell {
