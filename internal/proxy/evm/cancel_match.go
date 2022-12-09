@@ -45,7 +45,7 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 		[][]byte{sign},
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create tx")
+		return nil, err
 	}
 
 	return tx, nil
