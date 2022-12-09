@@ -2,11 +2,12 @@ package signature
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"strings"
 )
 
 func CheckSignature(hash, signatureS, addr string) (bool, error) {

@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// Amount is a wrapper around big.Int that implements decimal numbers with max precision of 18 digits
+// Amount is a wrapper around big.Int that implements decimal numbers with max precision of 18 digits.
 type Amount big.Int
 
 const DefaultPrecision = 18
@@ -38,7 +38,7 @@ func NewFromInt(v int64) Amount {
 }
 
 // NewFromIntWithPrecision creates a new Amount from an integer with the specified precision
-// For example, if v = 100000 and precision = 3 the result amount will be 100.000
+// For example, if v = 100000 and precision = 3 the result amount will be 100.000.
 func NewFromIntWithPrecision(v *big.Int, precision int) Amount {
 	if precision > DefaultPrecision {
 		panic(fmt.Sprintf("precision %d is greater than default precision %d", precision, DefaultPrecision))
@@ -56,7 +56,7 @@ func (a Amount) Int() *big.Int {
 
 // IntWithPrecision returns a big.Int representation of number with the specified precision
 // For example, if v = 100.000 and precision = 3 the result amount will be 100000
-// if v = 100.000 and precision = 5 the result amount will be 10000000
+// if v = 100.000 and precision = 5 the result amount will be 10000000.
 func (a Amount) IntWithPrecision(precision int) *big.Int {
 	if precision > DefaultPrecision {
 		panic(fmt.Sprintf("precision %d is greater than default precision %d", precision, DefaultPrecision))

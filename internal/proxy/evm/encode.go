@@ -78,3 +78,34 @@ func EncodeCancelMatch(calldata cancelMatchCalldata) ([]byte, error) {
 	}
 	return []byte(hexutil.Encode(packed)), err
 }
+
+type executeMatchCalldata struct {
+	Selector
+	ChainId  uint
+	Swapica  string
+	MatchId  uint
+	Receiver string
+}
+
+func EncodeExecuteMatch(calldata executeMatchCalldata) ([]byte, error) {
+	calldataType, err := abi.NewType("tuple", "", []abi.ArgumentMarshaling{
+		{Name: "selector", Type: "uint8"},
+		{Name: "chain_id", Type: "uint"},
+		{Name: "swapica", Type: "address"},
+		{Name: "id", Type: "uint"},
+		{Name: "receiver", Type: "address"},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	args := abi.Arguments{
+		{Type: calldataType, Name: "calldata"},
+	}
+
+	packed, err := args.Pack(&calldata)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(hexutil.Encode(packed)), err
+}
