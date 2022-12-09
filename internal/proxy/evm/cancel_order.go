@@ -16,7 +16,6 @@ func (e *evmProxy) CancelOrder(params types.CancelOrderParams) (interface{}, err
 		return nil, err
 	}
 	if tx == nil {
-		// Token is already approved
 		return nil, nil
 	}
 

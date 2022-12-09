@@ -59,6 +59,11 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+	if tx == nil {
+		Log(r).WithError(err).Error("failed to build transaction")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
 
 	ape.Render(w, models.NewTxResponse(tx, *srcChain))
 }

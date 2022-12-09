@@ -51,6 +51,9 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 	if err != nil {
 		return nil, err
 	}
+	if tx == nil {
+		return nil, nil
+	}
 
 	return encodeTx(tx, sender, params.Order.DestChain, params.DestChain.ID, nil)
 }
