@@ -56,7 +56,7 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to make create order transaction")
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 	if tx == nil {

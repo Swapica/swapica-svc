@@ -85,7 +85,7 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create cancel match transaction")
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 	if tx == nil {

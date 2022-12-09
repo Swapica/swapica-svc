@@ -66,7 +66,7 @@ func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (b
 		return false, errors.New("cannot execute a match if order is not executed")
 	}
 
-	if params.OrderStatus.ExecutedBy != params.Match.Id {
+	if params.OrderStatus.ExecutedBy.String() != params.Match.Id.String() {
 		return false, errors.New("cannot execute a match if order executed by someone other match")
 	}
 
