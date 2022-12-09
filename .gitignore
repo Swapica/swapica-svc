@@ -18,3 +18,8 @@ docs/web_deploy
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+swapica-svc
+.golangci.yml
+generate.sh
+docs/yarn.lock
