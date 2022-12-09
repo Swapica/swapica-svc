@@ -73,7 +73,7 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).ExecuteOrder(types.ExecuteOrderParams{
+	tx, err := ProxyRepo(r).Get(request.SrcChain).ExecuteOrder(types.ExecuteOrderParams{
 		SrcChain:    *srcChain,
 		DestChain:   *destChain,
 		Order:       order,
@@ -81,6 +81,7 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		OrderStatus: orderStatus,
 		MatchStatus: matchStatus,
 		Receiver:    request.Receiver,
+		Sender:      request.Sender,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create match")

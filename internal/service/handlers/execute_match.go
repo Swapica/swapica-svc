@@ -81,6 +81,7 @@ func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
 		OrderStatus: orderStatus,
 		MatchStatus: matchStatus,
 		Receiver:    request.Receiver,
+		Sender:      request.Sender,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create execute match transaction")

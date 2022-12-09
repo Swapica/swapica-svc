@@ -1,6 +1,7 @@
 package evm
 
 import (
+	"encoding/hex"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
@@ -23,13 +24,13 @@ func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, e
 func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeExecuteMatch(executeMatchCalldata{
 		Selector: executeMatch,
-		ChainId:  uint(params.Order.DestChain.Uint64()),
-		Swapica:  e.swapperContract.String(),
-		MatchId:  uint(params.Match.Id.Uint64()),
-		Receiver: params.Order.Account.String(),
+		ChainId:  params.Order.DestChain,
+		Swapica:  e.swapperContract,
+		MatchId:  params.Match.Id,
+		Receiver: params.Order.Account,
 	})
 
-	if ok, err := e.validateExecuteMatchErc20(params, sender); !ok {
+	if ok, err := e.validateExecuteMatchErc20(params); !ok {
 		return nil, err
 	}
 
@@ -40,11 +41,15 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign order data")
 	}
+	hexedCalldata, err := hex.DecodeString(orderData[2:])
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to encode calldata")
+	}
 
 	tx, err := e.swapper.ExecuteMatch(
 		buildTransactOpts(sender),
-		orderData,
-		[][]byte{sign},
+		hexedCalldata,
+		append([][]byte{}, sign),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create tx")
@@ -53,7 +58,7 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, sender common.Address) (bool, error) {
+func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (bool, error) {
 	if params.OrderStatus.State != state.Executed && params.OrderStatus.ExecutedBy == params.Match.Id {
 		return false, errors.New("cannot execute a match if order is not executed")
 	}
@@ -66,11 +71,7 @@ func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, se
 		return false, errors.New("invalid receiver")
 	}
 
-	if params.Order.DestChain != params.Match.OriginChain {
-		return false, errors.New("discrepancy between order and match chains")
-	}
-
-	if params.Order.AmountToBuy != params.Match.AmountToSell {
+	if params.Order.AmountToBuy.String() != params.Match.AmountToSell.String() {
 		return false, errors.New("mismatch between order amount to buy and match amount to sell")
 	}
 
@@ -78,7 +79,7 @@ func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, se
 		return false, errors.New("mismatch between order token to buy and match token to sell")
 	}
 
-	if params.Order.Id != params.Match.OriginOrderId {
+	if params.Order.Id.String() != params.Match.OriginOrderId.String() {
 		return false, errors.New("mismatch between order id and match origin order id")
 	}
 

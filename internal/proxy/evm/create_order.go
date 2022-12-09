@@ -34,9 +34,9 @@ func (e *evmProxy) createOrderErc20(params types.CreateOrderParams, sender commo
 	tx, err := e.swapper.CreateOrder(
 		buildTransactOpts(sender),
 		tokenToSell,
-		params.AmountToSell.Int(),
+		big.NewInt(int64(params.AmountToSell.Float())),
 		tokenToBuy,
-		params.AmountToBuy.Int(),
+		big.NewInt(int64(params.AmountToBuy.Float())),
 		big.NewInt(destChainId.ChainId),
 	)
 	if err != nil {
