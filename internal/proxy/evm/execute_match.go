@@ -2,6 +2,7 @@ package evm
 
 import (
 	"encoding/hex"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"

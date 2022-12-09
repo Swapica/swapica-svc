@@ -2,12 +2,13 @@ package evm
 
 import (
 	"encoding/hex"
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"math/big"
 )
 
 func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, error) {
