@@ -66,10 +66,6 @@ func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, se
 		return false, errors.New("cannot execute order if match status is not awaiting finalization")
 	}
 
-	if params.Order.DestChain != params.Match.OriginChain {
-		return false, errors.New("discrepancy between order and match chains")
-	}
-
 	if params.Order.AmountToBuy != params.Match.AmountToSell {
 		return false, errors.New("mismatch between order amount to buy and match amount to sell")
 	}

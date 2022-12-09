@@ -28,7 +28,7 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 		Receiver: params.Order.Account.String(),
 	})
 
-	if ok, err := e.validateExecuteMatchErc20(params, sender); !ok {
+	if ok, err := e.validateExecuteMatchErc20(params); !ok {
 		return nil, err
 	}
 
@@ -52,9 +52,9 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, sender common.Address) (bool, error) {
-	if params.OrderStatus.State != executed && params.OrderStatus.ExecutedBy == params.Match.Id {
-		return false, errors.New("cannot execute a match if order is not executed")
+func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (bool, error) {
+	if params.OrderStatus.State != executed || params.OrderStatus.ExecutedBy != params.Match.Id {
+		return false, errors.New("cannot execute a match if order is not executed or executed by someone else")
 	}
 
 	if params.MatchStatus.State != awaitingFinalization {
@@ -63,10 +63,6 @@ func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, se
 
 	if params.Receiver != params.Order.Account.String() {
 		return false, errors.New("invalid receiver")
-	}
-
-	if params.Order.DestChain != params.Match.OriginChain {
-		return false, errors.New("discrepancy between order and match chains")
 	}
 
 	if params.Order.AmountToBuy != params.Match.AmountToSell {
