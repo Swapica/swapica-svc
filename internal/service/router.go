@@ -29,8 +29,19 @@ func (s *service) router() chi.Router {
 			handlers.CtxProxyRepo(proxyRepo),
 		),
 	)
-	r.Route("/integrations/swapica-svc", func(r chi.Router) {
-		// configure endpoints here
+	r.Route("/v1", func(r chi.Router) {
+		r.Route("/create", func(r chi.Router) {
+			r.Post("/match", handlers.CreateMatch)
+			r.Post("/order", handlers.CreateOrder)
+		})
+		r.Route("/cancel", func(r chi.Router) {
+			r.Post("/match", handlers.CancelMatch)
+			r.Post("/order", handlers.CancelOrder)
+		})
+		r.Route("/execute", func(r chi.Router) {
+			r.Post("/match", handlers.ExecuteMatch)
+			r.Post("/order", handlers.ExecuteOrder)
+		})
 	})
 
 	return r
