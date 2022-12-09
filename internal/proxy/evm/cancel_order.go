@@ -14,6 +14,9 @@ func (e *evmProxy) CancelOrder(params types.CancelOrderParams) (interface{}, err
 	if err != nil {
 		return nil, err
 	}
+	if tx == nil {
+		return nil, nil
+	}
 
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
 }

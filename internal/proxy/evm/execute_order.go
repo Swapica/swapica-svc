@@ -49,6 +49,9 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create tx")
 	}
+	if tx == nil {
+		return nil, nil
+	}
 
 	return tx, nil
 }
