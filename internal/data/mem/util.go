@@ -15,7 +15,7 @@ func contains[T constraints.Ordered](src []T, value T) bool {
 	return false
 }
 
-// TODO: Remove this function when we will be able to use generics
+// TODO: Remove this function when we will be able to use generics.
 func containsStr(src []string, value string) bool {
 	for _, v := range src {
 		if v == value {

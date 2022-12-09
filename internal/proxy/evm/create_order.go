@@ -1,11 +1,12 @@
 package evm
 
 import (
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"math/big"
 )
 
 func (e *evmProxy) CreateOrder(params types.CreateOrderParams) (interface{}, error) {

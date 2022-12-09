@@ -2,6 +2,7 @@ package evm
 
 import (
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -56,12 +57,12 @@ func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, send
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != canceled ||
-		(params.OrderStatus.State == executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
+	if params.OrderStatus.State != state.Canceled ||
+		(params.OrderStatus.State == state.Executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
 		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
 	}
 
-	if params.MatchStatus.State != awaitingFinalization {
+	if params.MatchStatus.State != state.AwaitingFinalization {
 		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
 	}
 

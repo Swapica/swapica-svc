@@ -2,6 +2,7 @@ package evm
 
 import (
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -58,11 +59,11 @@ func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, se
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != awaitingMatch {
+	if params.OrderStatus.State != state.AwaitingMatch {
 		return false, errors.New("cannot execute order if it is not awaiting match")
 	}
 
-	if params.MatchStatus.State != awaitingFinalization {
+	if params.MatchStatus.State != state.AwaitingFinalization {
 		return false, errors.New("cannot execute order if match status is not awaiting finalization")
 	}
 

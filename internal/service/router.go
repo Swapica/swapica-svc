@@ -4,7 +4,6 @@ import (
 	"github.com/Swapica/swapica-svc/internal/data/mem"
 	"github.com/Swapica/swapica-svc/internal/proxy"
 	"github.com/Swapica/swapica-svc/internal/service/handlers"
-
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
 )

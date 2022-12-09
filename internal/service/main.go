@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/Swapica/swapica-svc/internal/config"
-
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

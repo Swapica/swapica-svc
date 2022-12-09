@@ -2,13 +2,14 @@ package evm
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pkg/errors"
-	"math/big"
 )
 
 const (

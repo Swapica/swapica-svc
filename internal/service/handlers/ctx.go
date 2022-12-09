@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/proxy"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
-	"net/http"
-
 	"gitlab.com/distributed_lab/logan/v3"
 )
 

@@ -14,6 +14,6 @@ type TokenChain struct {
 	ChainID         string  `fig:"chain_id,required"`
 	ContractAddress *string `fig:"contract_address"`
 	TokenType       string  `fig:"token_type,required"`
-	//AutoSend        bool    `fig:"auto_send"`
+	// AutoSend        bool    `fig:"auto_send"`
 	Decimals *uint8
 }

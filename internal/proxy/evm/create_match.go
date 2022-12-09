@@ -2,6 +2,7 @@ package evm
 
 import (
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -24,6 +25,10 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if params.OrderStatus.State != state.AwaitingMatch {
+		return nil, errors.New("cam not create match if order is not awaiting match")
 	}
 
 	sender := common.HexToAddress(params.Sender)

@@ -3,25 +3,16 @@ package evm
 import (
 	"encoding/json"
 	"fmt"
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/resources"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
-	"math/big"
 )
 
 const gasLimit = 300000
-
-type State uint8
-
-const (
-	none State = iota
-	awaitingMatch
-	awaitingFinalization
-	canceled
-	executed
-)
 
 func skipSig(address common.Address, transaction *types.Transaction) (*types.Transaction, error) {
 	return transaction, nil
