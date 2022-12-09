@@ -9,7 +9,7 @@ import (
 
 type Proxy interface {
 	CreateOrder(params CreateOrderParams) (interface{}, error)
-	CancelOrder() (interface{}, error)
+	CancelOrder(params CancelOrderParams) (interface{}, error)
 	ExecuteOrder(params ExecuteOrderParams) (interface{}, error)
 	CreateMatch(params CreateMatchParams) (interface{}, error)
 	CancelMatch(params CancelMatchParams) (interface{}, error)
@@ -30,6 +30,24 @@ type CreateOrderParams struct {
 	DestChain    data.Chain
 }
 
+type CancelOrderParams struct {
+	Sender      string
+	SrcChain    data.Chain
+	Order       resources.Order
+	OrderStatus resources.Status
+}
+
+type ExecuteOrderParams struct {
+	Sender      string
+	SrcChain    data.Chain
+	DestChain   data.Chain
+	Order       resources.Order
+	Match       resources.Match
+	OrderStatus resources.Status
+	MatchStatus resources.Status
+	Receiver    string
+}
+
 type CreateMatchParams struct {
 	SrcChain  data.Chain
 	DestChain data.Chain
@@ -48,17 +66,6 @@ type CancelMatchParams struct {
 }
 
 type ExecuteMatchParams struct {
-	Sender      string
-	SrcChain    data.Chain
-	DestChain   data.Chain
-	Order       resources.Order
-	Match       resources.Match
-	OrderStatus resources.Status
-	MatchStatus resources.Status
-	Receiver    string
-}
-
-type ExecuteOrderParams struct {
 	Sender      string
 	SrcChain    data.Chain
 	DestChain   data.Chain
