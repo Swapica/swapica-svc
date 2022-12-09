@@ -9,25 +9,13 @@ import (
 )
 
 func (e *evmProxy) CreateOrder(params types.CreateOrderParams) (interface{}, error) {
-	tokenType := TokenTypeErc20
-
 	sender := common.HexToAddress(params.Sender)
 
-	var tx *ethTypes.Transaction
-	var err error
-
-	switch tokenType {
-	case TokenTypeErc20:
-		tx, err = e.createOrderErc20(params, sender)
-	default:
-		return nil, errors.New("unsupported token type")
-	}
-
+	tx, err := e.createOrderErc20(params, sender)
 	if err != nil {
 		return nil, err
 	}
 	if tx == nil {
-		// Token is already approved
 		return nil, nil
 	}
 

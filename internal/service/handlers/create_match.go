@@ -20,26 +20,26 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 
 	destChain, err := ChainsQ(r).FilterByID(request.DestChain).Get()
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get chains")
+		Log(r).WithError(err).Error("failed to get destination chain")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	if destChain == nil {
-		Log(r).Debug("chain not found")
+		Log(r).Debug("destination chain not found")
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
 
 	srcChain, err := ChainsQ(r).FilterByID(request.SrcChain).Get()
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get chains")
+		Log(r).WithError(err).Error("failed to get source chain")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	if srcChain == nil {
-		Log(r).Debug("chain not found")
+		Log(r).Debug("source chain not found")
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
@@ -58,8 +58,13 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 		Sender:    request.Sender,
 	})
 	if err != nil {
-		Log(r).WithError(err).Error("failed to create match")
+		Log(r).WithError(err).Error("failed to make create match transaction")
 		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+	if tx == nil {
+		Log(r).WithError(err).Error("failed to build transaction")
+		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 

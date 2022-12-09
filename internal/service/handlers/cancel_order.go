@@ -11,8 +11,8 @@ import (
 	"net/http"
 )
 
-func CancelMatch(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewCancelMatchRequest(r)
+func CancelOrder(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.NewCancelOrderRequest(r)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to parse request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -32,58 +32,28 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	destChain, err := ChainsQ(r).FilterByID(request.DestChain).Get()
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get destination chain")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
-	if destChain == nil {
-		Log(r).Error("destination chain not found")
-		ape.RenderErr(w, problems.BadRequest(errors.New("destination chain not found"))...)
-		return
-	}
-
-	match, err := ProxyRepo(r).Get(destChain.ID).GetMatch(big.NewInt(int64(request.MatchId)))
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get match")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	order, err := ProxyRepo(r).Get(srcChain.ID).GetOrder(match.OriginOrderId)
+	order, err := ProxyRepo(r).Get(srcChain.ID).GetOrder(big.NewInt(int64(request.OrderId)))
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get order")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(big.NewInt(int64(request.MatchId)))
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get match status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(match.OriginOrderId)
+	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get order status")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).CancelMatch(types.CancelMatchParams{
+	tx, err := ProxyRepo(r).Get(request.SrcChain).CancelOrder(types.CancelOrderParams{
 		Sender:      request.Sender,
 		SrcChain:    *srcChain,
-		DestChain:   *destChain,
-		Match:       match,
 		Order:       order,
 		OrderStatus: orderStatus,
-		MatchStatus: matchStatus,
 	})
 	if err != nil {
-		Log(r).WithError(err).Error("failed to create cancel match transaction")
+		Log(r).WithError(err).Error("failed to create cancel order transaction")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

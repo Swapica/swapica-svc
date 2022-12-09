@@ -10,8 +10,8 @@ import (
 	"net/http"
 )
 
-func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewExecuteMatchRequest(r)
+func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.NewExecuteOrderRequest(r)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to parse request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -33,7 +33,7 @@ func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
 
 	srcChain, err := ChainsQ(r).FilterByID(request.SrcChain).Get()
 	if err != nil {
-		Log(r).WithError(err).Error("failed to source get chain")
+		Log(r).WithError(err).Error("failed to get source chain")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
@@ -58,21 +58,21 @@ func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(big.NewInt(int64(request.MatchId)))
+	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(match.Id)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get match status")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(match.OriginOrderId)
+	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to get order status")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).ExecuteMatch(types.ExecuteMatchParams{
+	tx, err := ProxyRepo(r).Get(request.DestChain).ExecuteOrder(types.ExecuteOrderParams{
 		SrcChain:    *srcChain,
 		DestChain:   *destChain,
 		Order:       order,
@@ -82,7 +82,7 @@ func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
 		Receiver:    request.Receiver,
 	})
 	if err != nil {
-		Log(r).WithError(err).Error("failed to create execute match transaction")
+		Log(r).WithError(err).Error("failed to create match")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}

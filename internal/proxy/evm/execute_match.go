@@ -15,6 +15,9 @@ func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, e
 	if err != nil {
 		return nil, err
 	}
+	if tx == nil {
+		return nil, nil
+	}
 
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
 }
@@ -53,8 +56,8 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 }
 
 func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, sender common.Address) (bool, error) {
-	if params.OrderStatus.State != awaitingMatch {
-		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
+	if params.OrderStatus.State != executed && params.OrderStatus.ExecutedBy == params.Match.Id {
+		return false, errors.New("cannot execute a match if order is not executed")
 	}
 
 	if params.MatchStatus.State != awaitingFinalization {

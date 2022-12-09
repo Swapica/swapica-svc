@@ -50,13 +50,3 @@ type evmProxy struct {
 	swapper         *swapica.Swapica
 	confirmations   int
 }
-
-func (e *evmProxy) CancelOrder() (interface{}, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (e *evmProxy) ExecuteOrder() (interface{}, error) {
-	//TODO implement me
-	panic("implement me")
-}
