@@ -10,8 +10,8 @@ import (
 	"net/http"
 )
 
-func CreateMatch(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewCreateMatchRequest(r)
+func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.NewExecuteOrderRequest(r)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to parse request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -51,14 +51,38 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).CreateMatch(types.CreateMatchParams{
-		SrcChain:  *srcChain,
-		DestChain: *destChain,
-		Order:     order,
-		Sender:    request.Sender,
+	match, err := ProxyRepo(r).Get(request.DestChain).GetMatch(big.NewInt(int64(request.MatchId)))
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get match")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(match.Id)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get match status")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get order status")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	tx, err := ProxyRepo(r).Get(request.DestChain).ExecuteOrder(types.ExecuteOrderParams{
+		SrcChain:    *srcChain,
+		DestChain:   *destChain,
+		Order:       order,
+		Match:       match,
+		OrderStatus: orderStatus,
+		MatchStatus: matchStatus,
+		Receiver:    request.Receiver,
 	})
 	if err != nil {
-		Log(r).WithError(err).Error("failed to make create match transaction")
+		Log(r).WithError(err).Error("failed to create match")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}

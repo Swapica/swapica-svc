@@ -54,7 +54,7 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		DestChain:    *destChain,
 	})
 	if err != nil {
-		Log(r).WithError(err).Error("failed to create order")
+		Log(r).WithError(err).Error("failed to make create order transaction")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

@@ -8,10 +8,10 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, error) {
+func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, error) {
 	sender := common.HexToAddress(params.Sender)
 
-	tx, err := e.executeMatchErc20(params, sender)
+	tx, err := e.executeOrderErc20(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -19,16 +19,17 @@ func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, e
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
 }
 
-func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
-	orderData, err := EncodeExecuteMatch(executeMatchCalldata{
-		Selector: executeMatch,
+func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
+	orderData, err := EncodeExecuteOrder(executeOrderCalldata{
+		Selector: executeOrder,
 		ChainId:  uint(params.Order.DestChain.Uint64()),
 		Swapica:  e.swapperContract.String(),
+		OrderId:  uint(params.Order.Id.Uint64()),
+		Receiver: params.Match.Account.String(),
 		MatchId:  uint(params.Match.Id.Uint64()),
-		Receiver: params.Order.Account.String(),
 	})
 
-	if ok, err := e.validateExecuteMatchErc20(params, sender); !ok {
+	if ok, err := e.validateExecuteOrderErc20(params, sender); !ok {
 		return nil, err
 	}
 
@@ -40,7 +41,7 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 		return nil, errors.Wrap(err, "failed to sign order data")
 	}
 
-	tx, err := e.swapper.ExecuteMatch(
+	tx, err := e.swapper.ExecuteOrder(
 		buildTransactOpts(sender),
 		orderData,
 		[][]byte{sign},
@@ -52,17 +53,17 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams, sender common.Address) (bool, error) {
-	if params.OrderStatus.State != executed && params.OrderStatus.ExecutedBy == params.Match.Id {
-		return false, errors.New("cannot execute a match if order is not executed")
+func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, sender common.Address) (bool, error) {
+	if params.Match.Account != sender {
+		return false, errors.New("invalid sender")
+	}
+
+	if params.OrderStatus.State != awaitingMatch {
+		return false, errors.New("cannot execute order if it is not awaiting match")
 	}
 
 	if params.MatchStatus.State != awaitingFinalization {
-		return false, errors.New("cannot execute a match when it is not awaiting finalization")
-	}
-
-	if params.Receiver != params.Order.Account.String() {
-		return false, errors.New("invalid receiver")
+		return false, errors.New("cannot execute order if match status is not awaiting finalization")
 	}
 
 	if params.Order.DestChain != params.Match.OriginChain {
