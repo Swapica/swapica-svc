@@ -11,7 +11,7 @@ data:
       name: "BSC Testnet"
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
       type: "evm"
-      swap_contract: "0x5A8ad2bc655213674c548De4c3dc9f553129cA28" # address of swap contract
+      swap_contract: "0x338662C6e113aD9CfA4E2e755931643D8Cf1884B" # address of swap contract
       rpc_endpoint: "https://data-seed-prebsc-1-s1.binance.org:8545" # network rpc
       confirmations: 12
       chain_params:
@@ -25,7 +25,7 @@ data:
       name: "Ethereum Goerli"
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
       type: "evm"
-      swap_contract: "0xbA950f4AaCd23307cC63170189a2dc3803939F98" # address of swap contract
+      swap_contract: "0xfd3ba43065d02137ad7E585945F28063EF9C8CaF" # address of swap contract
       rpc_endpoint: "https://goerli.infura.io/v3/67e22c92921e42839c983fbdecf33525" # network rpc
       confirmations: 12
       chain_params:
@@ -39,7 +39,7 @@ data:
       name: "Q testnet"
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
       type: "evm"
-      swap_contract: "0x789D19837181a6b779D7c02fE49823A9c89b3a4E"
+      swap_contract: "0x772B79f6CC9A6cD0E8211756B8722B40268c2AA7"
       rpc_endpoint: "https://rpc.qtestnet.org"
       confirmations: 12
       chain_params:

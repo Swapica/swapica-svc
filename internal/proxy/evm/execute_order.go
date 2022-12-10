@@ -64,8 +64,8 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 }
 
 func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, sender common.Address) (bool, error) {
-	if params.Match.Account.String() != sender.String() {
-		return false, errors.New("invalid sender")
+	if params.Receiver != params.Match.Account.String() {
+		return false, errors.New("invalid receiver")
 	}
 
 	if params.OrderStatus.State != state.AwaitingMatch {

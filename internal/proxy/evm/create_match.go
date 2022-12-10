@@ -48,7 +48,12 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 		return nil, errors.Wrap(err, "failed to encode calldata")
 	}
 
-	tx, err := e.swapper.CreateMatch(buildTransactOpts(sender), hexedCalldata, append([][]byte{}, sign))
+	tx, err := e.swapper.CreateMatch(
+		GetTransactionOpts(params.Order.TokenToBuy.String(),
+			sender, params.Order.AmountToBuy),
+		hexedCalldata,
+		append([][]byte{}, sign),
+	)
 	if err != nil {
 		return nil, err
 	}
