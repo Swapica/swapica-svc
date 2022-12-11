@@ -32,6 +32,9 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 		Swapica:  e.swapperContract,
 		MatchId:  params.Match.Id,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	if ok, err := e.validateCancelMatchErc20(params, sender); !ok {
 		return nil, err

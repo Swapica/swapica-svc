@@ -34,8 +34,11 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 		Receiver: params.Match.Account,
 		MatchId:  params.Match.Id,
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	if ok, err := e.validateExecuteOrderErc20(params, sender); !ok {
+	if ok, err := e.validateExecuteOrderErc20(params); !ok {
 		return nil, err
 	}
 
@@ -63,7 +66,7 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, sender common.Address) (bool, error) {
+func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams) (bool, error) {
 	if params.Receiver != params.Match.Account.String() {
 		return false, errors.New("invalid receiver")
 	}

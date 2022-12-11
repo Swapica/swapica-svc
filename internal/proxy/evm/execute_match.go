@@ -33,6 +33,9 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 		MatchId:  params.Match.Id,
 		Receiver: params.Order.Account,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	if ok, err := e.validateExecuteMatchErc20(params); !ok {
 		return nil, err
