@@ -39,6 +39,10 @@ func (s *service) router() chi.Router {
 			r.Post("/match", handlers.ExecuteMatch)
 			r.Post("/order", handlers.ExecuteOrder)
 		})
+		r.Route("/chains", func(r chi.Router) {
+			r.Get("/", handlers.GetChainList)
+		})
+
 	})
 
 	return r

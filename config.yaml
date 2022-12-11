@@ -18,7 +18,7 @@ data:
         chain_id: 97
         native_symbol: "BNB"
         native_decimals: 18
-        rpc: ""
+        rpc: "https://data-seed-prebsc-1-s1.binance.org:8545"
         explorer_url: "https://explorer.binance.org/smart-testnet"
         chain_hex_id: "0x5"
     - id: "goerli"
@@ -32,7 +32,7 @@ data:
         chain_id: 5
         native_symbol: "ETH"
         native_decimals: 18
-        rpc: ""
+        rpc: "https://goerli.infura.io/v3/67e22c92921e42839c983fbdecf33525"
         explorer_url: "https://goerli.etherscan.io/"
         chain_hex_id: "0x5"
     - id: "q-testnet"
@@ -46,7 +46,7 @@ data:
         chain_id: 35443
         native_symbol: "Q"
         native_decimals: 18
-        rpc: ""
+        rpc: "https://rpc.qtestnet.org"
         explorer_url: "https://explorer.q.org"
         chain_hex_id: "0x8A73"
 
