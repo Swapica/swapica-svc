@@ -1,4 +1,4 @@
-package mem
+package config
 
 import (
 	"github.com/Swapica/swapica-svc/internal/data"

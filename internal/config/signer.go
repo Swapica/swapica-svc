@@ -1,7 +1,8 @@
-package signature
+package config
 
 import (
 	"crypto/ecdsa"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 
 	"gitlab.com/distributed_lab/figure/v3"
 	"gitlab.com/distributed_lab/kit/comfig"
@@ -10,10 +11,10 @@ import (
 )
 
 type Signerer interface {
-	Signer() Signer
+	Signer() signature.Signer
 }
 
-type config struct {
+type signerConfig struct {
 	PrivKey *ecdsa.PrivateKey `fig:"eth_signer,required"`
 }
 
@@ -28,9 +29,9 @@ func NewSignerer(getter kv.Getter) Signerer {
 	}
 }
 
-func (s *signerer) Signer() Signer {
+func (s *signerer) Signer() signature.Signer {
 	return s.signerOnce.Do(func() interface{} {
-		var cfg config
+		var cfg signerConfig
 
 		err := figure.
 			Out(&cfg).
@@ -41,6 +42,6 @@ func (s *signerer) Signer() Signer {
 			panic(errors.Wrap(err, "failed to figure out signer"))
 		}
 
-		return NewSigner(cfg.PrivKey)
-	}).(Signer)
+		return signature.NewSigner(cfg.PrivKey)
+	}).(signature.Signer)
 }
