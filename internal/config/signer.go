@@ -2,8 +2,8 @@ package config
 
 import (
 	"crypto/ecdsa"
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"gitlab.com/distributed_lab/figure/v3"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"

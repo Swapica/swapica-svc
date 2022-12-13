@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"net/http"
 )
 
 func GetChainList(w http.ResponseWriter, r *http.Request) {

@@ -1,7 +1,7 @@
 package evm
 
 import (
-	"encoding/hex"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
@@ -49,7 +49,7 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign order data")
 	}
-	hexedCalldata, err := hex.DecodeString(orderData[2:])
+	hexedCalldata, err := hexutil.Decode(orderData)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encode calldata")
 	}
