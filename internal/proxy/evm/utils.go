@@ -12,10 +12,20 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-const gasLimit = 300000
+const (
+	TokenTypeNative = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+	gasLimit        = 300000
+)
 
 func skipSig(address common.Address, transaction *types.Transaction) (*types.Transaction, error) {
 	return transaction, nil
+}
+
+func GetTransactionOpts(tokenAddress string, sender common.Address, amount *big.Int) *bind.TransactOpts {
+	if tokenAddress == TokenTypeNative {
+		return buildTransactOptsWithValue(sender, amount)
+	}
+	return buildTransactOpts(sender)
 }
 
 func buildTransactOpts(from common.Address) *bind.TransactOpts {

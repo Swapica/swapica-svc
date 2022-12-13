@@ -32,7 +32,7 @@ func (e *evmProxy) createOrderErc20(params types.CreateOrderParams, sender commo
 	}
 
 	tx, err := e.swapper.CreateOrder(
-		buildTransactOpts(sender),
+		GetTransactionOpts(params.TokenToSell, sender, big.NewInt(int64(params.AmountToSell.Float()))),
 		tokenToSell,
 		big.NewInt(int64(params.AmountToSell.Float())),
 		tokenToBuy,

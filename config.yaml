@@ -6,20 +6,21 @@ listener:
   addr: :8000
 
 data:
-  tokens:
-    - id: "1"
-      name: "USDT"
-      symbol: "USDT"
-      icon: "https://cryptologos.cc/logos/tether-usdt-logo.png"
-      chains:
-        - chain_id: "goerli"
-          token_type: erc20
-          contract_address: "" # address of erc20 contract
-        - chain_id: "sepolia"
-          token_type: erc20
-          contract_address: ""
-          #auto_send: true
   chains:
+    - id: "chapel"
+      name: "BSC Testnet"
+      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
+      type: "evm"
+      swap_contract: "" # address of swap contract
+      rpc_endpoint: "" # network rpc
+      confirmations: 12
+      chain_params:
+        chain_id: 97
+        native_symbol: "BNB"
+        native_decimals: 18
+        rpc: "https://data-seed-prebsc-1-s1.binance.org:8545"
+        explorer_url: "https://explorer.binance.org/smart-testnet"
+        chain_hex_id: "0x5"
     - id: "goerli"
       name: "Ethereum Goerli"
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
@@ -31,37 +32,9 @@ data:
         chain_id: 5
         native_symbol: "ETH"
         native_decimals: 18
-        rpc: ""
+        rpc: "https://goerli.infura.io/v3/67e22c92921e42839c983fbdecf33525"
         explorer_url: "https://goerli.etherscan.io/"
         chain_hex_id: "0x5"
-    - id: "sepolia"
-      name: "Ethereum Sepolia"
-      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
-      type: "evm"
-      swap_contract: ""
-      rpc_endpoint: ""
-      confirmations: 12
-      chain_params:
-        chain_id: 11155111
-        native_symbol: "ETH"
-        native_decimals: 18
-        rpc: ""
-        explorer_url: "https://sepolia.etherscan.io/"
-        chain_hex_id: "0xAA36A7"
-    - id: "q-devnet"
-      name: "Q Dev"
-      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
-      type: "evm"
-      swap_contract: ""
-      rpc_endpoint: ""
-      confirmations: 12
-      chain_params:
-        chain_id: 11155111
-        native_symbol: "ETH"
-        native_decimals: 18
-        rpc: ""
-        explorer_url: "https://sepolia.etherscan.io/"
-        chain_hex_id: "0xAA36A7"
     - id: "q-testnet"
       name: "Q testnet"
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
@@ -70,12 +43,12 @@ data:
       rpc_endpoint: ""
       confirmations: 12
       chain_params:
-        chain_id: 11155111
-        native_symbol: "ETH"
+        chain_id: 35443
+        native_symbol: "Q"
         native_decimals: 18
-        rpc: ""
-        explorer_url: "https://sepolia.etherscan.io/"
-        chain_hex_id: "0xAA36A7"
+        rpc: "https://rpc.qtestnet.org"
+        explorer_url: "https://explorer.q.org"
+        chain_hex_id: "0x8A73"
 
 
 signer:

@@ -46,14 +46,14 @@ func (q *chainsQ) Select() ([]data.Chain, error) {
 
 func (q *chainsQ) FilterByID(ids ...string) data.ChainsQ {
 	q.filters = append(q.filters, func(value data.Chain) bool {
-		return containsStr(ids, value.ID)
+		return contains(ids, value.ID)
 	})
 	return q
 }
 
 func (q *chainsQ) FilterByType(types ...resources.ChainType) data.ChainsQ {
 	q.filters = append(q.filters, func(value data.Chain) bool {
-		return containsChainType(types, value.Type)
+		return contains(types, value.Type)
 	})
 	return q
 }

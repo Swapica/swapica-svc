@@ -1,7 +1,8 @@
 package evm
 
 import (
-	"encoding/hex"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
@@ -33,8 +34,11 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 		Receiver: params.Match.Account,
 		MatchId:  params.Match.Id,
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	if ok, err := e.validateExecuteOrderErc20(params, sender); !ok {
+	if ok, err := e.validateExecuteOrderErc20(params); !ok {
 		return nil, err
 	}
 
@@ -45,7 +49,7 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign order data")
 	}
-	hexedCalldata, err := hex.DecodeString(orderData[2:])
+	hexedCalldata, err := hexutil.Decode(orderData)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encode calldata")
 	}
@@ -62,9 +66,9 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams, sender common.Address) (bool, error) {
-	if params.Match.Account.String() != sender.String() {
-		return false, errors.New("invalid sender")
+func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams) (bool, error) {
+	if params.Receiver != params.Match.Account.String() {
+		return false, errors.New("invalid receiver")
 	}
 
 	if params.OrderStatus.State != state.AwaitingMatch {

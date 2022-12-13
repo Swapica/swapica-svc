@@ -23,8 +23,6 @@ func (s *service) router() chi.Router {
 			handlers.CtxLog(s.log),
 			handlers.CtxSigner(s.cfg.Signer()),
 			handlers.CtxChainsQ(mem.NewChainsQ(s.cfg.Chains())),
-			handlers.CtxTokensQ(mem.NewTokenQ(s.cfg.Tokens())),
-			handlers.CtxTokenChainsQ(mem.NewTokenChainsQ(s.cfg.TokenChains())),
 			handlers.CtxProxyRepo(proxyRepo),
 		),
 	)
@@ -41,6 +39,10 @@ func (s *service) router() chi.Router {
 			r.Post("/match", handlers.ExecuteMatch)
 			r.Post("/order", handlers.ExecuteOrder)
 		})
+		r.Route("/chains", func(r chi.Router) {
+			r.Get("/", handlers.GetChainList)
+		})
+
 	})
 
 	return r

@@ -1,5 +1,0 @@
-type: string
-description: Type of token
-enum:
-  - erc20
-  - native

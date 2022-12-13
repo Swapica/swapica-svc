@@ -25,6 +25,4 @@ type Chain struct {
 	Confirmations int    `fig:"confirmations,required"`
 	SwapContract  string `fig:"swap_contract,required"`
 	RpcEndpoint   string `fig:"rpc_endpoint,required"`
-	// Relation
-	Tokens []TokenChain
 }

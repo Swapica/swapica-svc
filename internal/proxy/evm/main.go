@@ -12,11 +12,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	TokenTypeNative = "native"
-	TokenTypeErc20  = "erc20"
-)
-
 func NewProxy(rpc string, signer signature.Signer, swapperContract string, confirmations int) (types.Proxy, error) {
 	client, err := ethclient.Dial(rpc)
 	if err != nil {
