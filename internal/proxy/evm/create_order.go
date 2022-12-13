@@ -1,11 +1,12 @@
 package evm
 
 import (
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"math/big"
 )
 
 func (e *evmProxy) CreateOrder(params types.CreateOrderParams) (interface{}, error) {
@@ -31,11 +32,11 @@ func (e *evmProxy) createOrderErc20(params types.CreateOrderParams, sender commo
 	}
 
 	tx, err := e.swapper.CreateOrder(
-		buildTransactOpts(sender),
+		GetTransactionOpts(params.TokenToSell, sender, big.NewInt(int64(params.AmountToSell.Float()))),
 		tokenToSell,
-		params.AmountToSell.Int(),
+		big.NewInt(int64(params.AmountToSell.Float())),
 		tokenToBuy,
-		params.AmountToBuy.Int(),
+		big.NewInt(int64(params.AmountToBuy.Float())),
 		big.NewInt(destChainId.ChainId),
 	)
 	if err != nil {

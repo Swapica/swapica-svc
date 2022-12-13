@@ -1,9 +1,10 @@
 package evm
 
 import (
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/resources"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"math/big"
 )
 
 func (e *evmProxy) GetMatch(id *big.Int) (resources.Match, error) {

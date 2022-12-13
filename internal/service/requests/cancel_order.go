@@ -2,9 +2,10 @@ package requests
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/resources"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"net/http"
 )
 
 func NewCancelOrderRequest(r *http.Request) (resources.CancelOrderRequest, error) {

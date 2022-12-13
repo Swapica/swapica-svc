@@ -1,10 +1,11 @@
 package types
 
 import (
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/internal/amount"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/resources"
-	"math/big"
 )
 
 type Proxy interface {
@@ -49,10 +50,11 @@ type ExecuteOrderParams struct {
 }
 
 type CreateMatchParams struct {
-	SrcChain  data.Chain
-	DestChain data.Chain
-	Order     resources.Order
-	Sender    string
+	SrcChain    data.Chain
+	DestChain   data.Chain
+	Order       resources.Order
+	OrderStatus resources.Status
+	Sender      string
 }
 
 type CancelMatchParams struct {

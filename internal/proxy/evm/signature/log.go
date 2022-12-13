@@ -5,7 +5,7 @@ import (
 )
 
 type OrderData struct {
-	OrderData []byte
+	OrderData string
 }
 
 func (log OrderData) Hash() []byte {

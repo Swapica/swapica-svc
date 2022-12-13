@@ -1,7 +1,10 @@
 package evm
 
 import (
+	"github.com/ethereum/go-ethereum/common/hexutil"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -25,10 +28,13 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeCancelMatch(cancelMatchCalldata{
 		Selector: cancelMatch,
-		ChainId:  uint(params.Order.DestChain.Uint64()),
-		Swapica:  e.swapperContract.String(),
-		MatchId:  uint(params.Match.Id.Uint64()),
+		ChainId:  params.Order.DestChain,
+		Swapica:  e.swapperContract,
+		MatchId:  params.Match.Id,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	if ok, err := e.validateCancelMatchErc20(params, sender); !ok {
 		return nil, err
@@ -41,14 +47,18 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign order data")
 	}
+	hexedCalldata, err := hexutil.Decode(orderData)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to encode calldata")
+	}
 
 	tx, err := e.swapper.CancelMatch(
 		buildTransactOpts(sender),
-		orderData,
-		[][]byte{sign},
+		hexedCalldata,
+		append([][]byte{}, sign),
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to create tx")
 	}
 
 	return tx, nil
@@ -59,16 +69,16 @@ func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, send
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != canceled ||
-		(params.OrderStatus.State == executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
+	if params.OrderStatus.State != state.Canceled ||
+		(params.OrderStatus.State == state.Executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
 		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
 	}
 
-	if params.MatchStatus.State != awaitingFinalization {
+	if params.MatchStatus.State != state.AwaitingFinalization {
 		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
 	}
 
-	if params.Order.AmountToBuy != params.Match.AmountToSell {
+	if params.Order.AmountToBuy.String() != params.Match.AmountToSell.String() {
 		return false, errors.New("mismatch between order amount to buy and match amount to sell")
 	}
 
@@ -76,7 +86,7 @@ func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, send
 		return false, errors.New("mismatch between order token to buy and match token to sell")
 	}
 
-	if params.Order.Id != params.Match.OriginOrderId {
+	if params.Order.Id.String() != params.Match.OriginOrderId.String() {
 		return false, errors.New("mismatch between order id and match origin order id")
 	}
 

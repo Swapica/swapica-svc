@@ -11,15 +11,6 @@ get:
         type: array
         items:
           $ref: '#/components/schemas/ChainType'
-    - in: query
-      name: 'include'
-      required: false
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-            - token
   responses:
     200:
       description: success
@@ -32,10 +23,6 @@ get:
                 type: array
                 items:
                   $ref: '#/components/schemas/Chain'
-              included:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Token'
     400:
       description: bad input parameter
       content:

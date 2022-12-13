@@ -4,7 +4,7 @@ required:
 properties:
   state:
     type: string
-    format: evm.State
+    format: state.State
   executed_by:
     type: string
     format: big.Int

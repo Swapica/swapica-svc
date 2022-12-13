@@ -1,7 +1,11 @@
 package evm
 
 import (
+	"encoding/hex"
+	"math/big"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -15,15 +19,19 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 
 	calldata, err := CreateMatchCalldata(createMatchCalldata{
 		Selector:     createMatch,
-		ChainId:      uint(params.Order.DestChain.Uint64()),
-		Swapica:      e.swapperContract.String(),
-		OrderId:      uint(params.Order.Id.Uint64()),
-		TokenToSell:  params.Order.TokenToSell.String(),
-		AmountToSell: uint(params.Order.AmountToSell.Uint64()),
-		OriginChain:  uint(srcChainParams.ChainId),
+		ChainId:      params.Order.DestChain,
+		Swapica:      e.swapperContract,
+		OrderId:      params.Order.Id,
+		TokenToSell:  params.Order.TokenToBuy,
+		AmountToSell: params.Order.AmountToBuy,
+		OriginChain:  big.NewInt(srcChainParams.ChainId),
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if params.OrderStatus.State != state.AwaitingMatch {
+		return nil, errors.New("can not create match if order is not awaiting match")
 	}
 
 	sender := common.HexToAddress(params.Sender)
@@ -35,8 +43,17 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign calldata")
 	}
+	hexedCalldata, err := hex.DecodeString(calldata[2:])
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to encode calldata")
+	}
 
-	tx, err := e.swapper.CreateMatch(buildTransactOpts(sender), calldata, [][]byte{sign})
+	tx, err := e.swapper.CreateMatch(
+		GetTransactionOpts(params.Order.TokenToBuy.String(),
+			sender, params.Order.AmountToBuy),
+		hexedCalldata,
+		append([][]byte{}, sign),
+	)
 	if err != nil {
 		return nil, err
 	}

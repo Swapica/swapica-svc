@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"fmt"
+
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"

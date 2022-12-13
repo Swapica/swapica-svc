@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"net/http"
 )
 
 func CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +56,7 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to make create order transaction")
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 	if tx == nil {

@@ -1,14 +1,15 @@
 package handlers
 
 import (
+	"math/big"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"math/big"
-	"net/http"
 )
 
 func CancelMatch(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +85,7 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create cancel match transaction")
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 	if tx == nil {

@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"math/big"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"math/big"
-	"net/http"
 )
 
 func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
@@ -80,6 +81,7 @@ func ExecuteMatch(w http.ResponseWriter, r *http.Request) {
 		OrderStatus: orderStatus,
 		MatchStatus: matchStatus,
 		Receiver:    request.Receiver,
+		Sender:      request.Sender,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create execute match transaction")

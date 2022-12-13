@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/proxy"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
-	"net/http"
-
 	"gitlab.com/distributed_lab/logan/v3"
 )
 
@@ -15,9 +15,7 @@ type ctxKey int
 const (
 	logCtxKey ctxKey = iota
 	signerCtxKey
-	tokensQCtxKey
 	chainsQCtxKey
-	tokenChainsQCtxKey
 	proxyRepoCtxKey
 )
 
@@ -41,16 +39,6 @@ func Signer(r *http.Request) signature.Signer {
 	return r.Context().Value(signerCtxKey).(signature.Signer)
 }
 
-func CtxTokensQ(entry data.TokensQ) func(context.Context) context.Context {
-	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, tokensQCtxKey, entry)
-	}
-}
-
-func TokensQ(r *http.Request) data.TokensQ {
-	return r.Context().Value(tokensQCtxKey).(data.TokensQ).New()
-}
-
 func CtxChainsQ(entry data.ChainsQ) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, chainsQCtxKey, entry)
@@ -59,16 +47,6 @@ func CtxChainsQ(entry data.ChainsQ) func(context.Context) context.Context {
 
 func ChainsQ(r *http.Request) data.ChainsQ {
 	return r.Context().Value(chainsQCtxKey).(data.ChainsQ).New()
-}
-
-func CtxTokenChainsQ(entry data.TokenChainsQ) func(context.Context) context.Context {
-	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, tokenChainsQCtxKey, entry)
-	}
-}
-
-func TokenChainsQ(r *http.Request) data.TokenChainsQ {
-	return r.Context().Value(tokenChainsQCtxKey).(data.TokenChainsQ).New()
 }
 
 func CtxProxyRepo(entry proxy.ProxyRepo) func(context.Context) context.Context {

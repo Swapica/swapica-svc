@@ -1,9 +1,11 @@
 package evm
 
 import (
+	"math/big"
+
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/resources"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"math/big"
 )
 
 func (e *evmProxy) GetMatchStatus(id *big.Int) (resources.Status, error) {
@@ -13,7 +15,7 @@ func (e *evmProxy) GetMatchStatus(id *big.Int) (resources.Status, error) {
 	}
 
 	result := resources.Status{
-		State:      State(matchStatus.State),
+		State:      state.State(matchStatus.State),
 		ExecutedBy: matchStatus.ExecutedBy,
 	}
 

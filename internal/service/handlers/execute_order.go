@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"math/big"
+	"net/http"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"math/big"
-	"net/http"
 )
 
 func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +73,7 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).ExecuteOrder(types.ExecuteOrderParams{
+	tx, err := ProxyRepo(r).Get(request.SrcChain).ExecuteOrder(types.ExecuteOrderParams{
 		SrcChain:    *srcChain,
 		DestChain:   *destChain,
 		Order:       order,
@@ -80,6 +81,7 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		OrderStatus: orderStatus,
 		MatchStatus: matchStatus,
 		Receiver:    request.Receiver,
+		Sender:      request.Sender,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create match")

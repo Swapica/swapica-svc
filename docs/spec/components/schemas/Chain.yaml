@@ -3,7 +3,6 @@ allOf:
   - type: object
     required:
       - attributes
-      - relationships
     properties:
       attributes:
         type: object
@@ -23,15 +22,3 @@ allOf:
           chain_params:
             type: object
             format: interface{}
-      relationships:
-        type: object
-        required:
-          - tokens
-        properties:
-          tokens:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TokenKey'
