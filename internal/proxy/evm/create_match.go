@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 	"math/big"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -30,7 +30,7 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 		return nil, err
 	}
 
-	if params.OrderStatus.State != state.AwaitingMatch {
+	if params.OrderStatus.State != enums.AwaitingMatch {
 		return nil, errors.New("can not create match if order is not awaiting match")
 	}
 

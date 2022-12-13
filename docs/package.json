@@ -10,6 +10,7 @@
     "start": "swagger-repo serve",
     "build": "swagger-repo build -o web_deploy",
     "test": "swagger-repo validate",
+    "exec": "npm run build && npm run test",
     "release-build": "npm run build && redoc-cli bundle ./web_deploy/openapi.yaml  -o ../public/index.html -t ./web/index.hbs --options.theme.typography.links.color=#695de4",
     "gh-pages": "swagger-repo gh-pages"
   }

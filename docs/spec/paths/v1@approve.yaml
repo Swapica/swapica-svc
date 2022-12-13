@@ -1,0 +1,53 @@
+post:
+  tags:
+    - Transfers
+  summary: Approve token
+  description: >- 
+    Checks if user approved to swapica contract to use his tokens. 
+    If approval needed generates transaction to approve tokens, in other case returns 204 status code
+  operationId: approveToken
+  responses:
+    '200':
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/EvmTransaction'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chain'
+    '204':
+      description: Success but no approval needed
+    '401':
+      description: blob creation not allowed
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '404':
+      description: account does not exist
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: failed to save blob
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - data
+          properties:
+            data:
+              type: object
+              $ref: '#/components/schemas/ApproveRequest'
