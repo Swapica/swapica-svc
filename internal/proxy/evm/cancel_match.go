@@ -30,7 +30,11 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 
 	// if tx provided check it and sign; otherwise use created tx
 	if params.RawTxData != nil {
-		tx, signNumber, err = e.checkTxDataAndSign(buildTransactOpts(sender), tx, *params.RawTxData)
+		tx, signNumber, err = e.checkTxDataAndSign(
+			buildTransactOpts(sender),
+			tx,
+			*params.RawTxData,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -85,9 +89,8 @@ func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, send
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != enums.Canceled ||
-		(params.OrderStatus.State == enums.Executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
-		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
+	if params.OrderStatus.State != enums.Canceled && params.OrderStatus.ExecutedBy == params.Match.Id {
+		return false, errors.New("cannot cancel a match if order executed by matcher or not canceled")
 	}
 
 	if params.MatchStatus.State != enums.AwaitingFinalization {

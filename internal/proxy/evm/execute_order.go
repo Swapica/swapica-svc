@@ -30,7 +30,11 @@ func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, e
 
 	// if tx provided check it and sign; otherwise use created tx
 	if params.RawTxData != nil {
-		tx, signNumber, err = e.checkTxDataAndSign(buildTransactOpts(sender), tx, *params.RawTxData)
+		tx, signNumber, err = e.checkTxDataAndSign(
+			buildTransactOpts(sender),
+			tx,
+			*params.RawTxData,
+		)
 		if err != nil {
 			return nil, err
 		}
