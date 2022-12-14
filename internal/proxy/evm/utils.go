@@ -3,6 +3,7 @@ package evm
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"math/big"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
@@ -71,4 +72,17 @@ func encodeTx(tx *types.Transaction, from common.Address, chainID *big.Int, chai
 			}.AsRelation(),
 		},
 	}, nil
+}
+
+func decodeTxParams(abi abi.ABI, data []byte) ([]interface{}, *abi.Method, error) {
+	m, err := abi.MethodById(data[:4])
+	if err != nil {
+		return nil, m, err
+	}
+
+	res, err := m.Inputs.Unpack(data[4:])
+	if err != nil {
+		return nil, nil, err
+	}
+	return res, m, nil
 }

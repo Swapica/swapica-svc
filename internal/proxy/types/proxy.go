@@ -1,12 +1,15 @@
 package types
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math/big"
 
 	"github.com/Swapica/swapica-svc/internal/amount"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/resources"
 )
+
+var ErrWrongSignedTx = errors.New("signed tx does not match tx log")
 
 type Proxy interface {
 	CreateOrder(params CreateOrderParams) (interface{}, error)
@@ -50,6 +53,7 @@ type ExecuteOrderParams struct {
 	OrderStatus resources.Status
 	MatchStatus resources.Status
 	Receiver    string
+	RawTxData   *[]byte
 }
 
 type CreateMatchParams struct {
@@ -58,6 +62,7 @@ type CreateMatchParams struct {
 	Order       resources.Order
 	OrderStatus resources.Status
 	Sender      string
+	RawTxData   *[]byte
 }
 
 type CancelMatchParams struct {
@@ -68,6 +73,7 @@ type CancelMatchParams struct {
 	Match       resources.Match
 	OrderStatus resources.Status
 	MatchStatus resources.Status
+	RawTxData   *[]byte
 }
 
 type ExecuteMatchParams struct {
@@ -79,6 +85,7 @@ type ExecuteMatchParams struct {
 	OrderStatus resources.Status
 	MatchStatus resources.Status
 	Receiver    string
+	RawTxData   *[]byte
 }
 
 type ApproveParams struct {

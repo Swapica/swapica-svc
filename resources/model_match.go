@@ -5,9 +5,8 @@
 package resources
 
 import (
-	"math/big"
-
 	"github.com/ethereum/go-ethereum/common"
+	"math/big"
 )
 
 type Match struct {

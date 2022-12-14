@@ -11,7 +11,7 @@ import (
 )
 
 type Resource interface {
-	// GetKey - returns key of the Resource
+	//GetKey - returns key of the Resource
 	GetKey() Key
 }
 
@@ -21,7 +21,7 @@ type Included struct {
 	includes map[Key]json.RawMessage
 }
 
-// Add - adds new include into collection. If one already present - skips it.
+// Add - adds new include into collection. If one already present - skips it
 func (c *Included) Add(includes ...Resource) {
 	for i := range includes {
 		c.add(includes[i])
@@ -82,7 +82,7 @@ func (c *Included) UnmarshalJSON(data []byte) error {
 
 // tryFindEntry - tries to find entry in include collection and unmarshal it
 // if entry does not exists - returns false
-// if entry exists but fails to unmarshal or key mismatches - panics.
+// if entry exists but fails to unmarshal or key mismatches - panics
 func (c *Included) tryFindEntry(key Key, entry Resource) bool {
 	rawEntry, exist := c.includes[key]
 	if !exist {

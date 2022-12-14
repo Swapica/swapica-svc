@@ -19,8 +19,8 @@ func (e *evmProxy) CreateOrder(params types.CreateOrderParams) (interface{}, err
 	if tx == nil {
 		return nil, nil
 	}
-
-	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
+	confirmed := true
+	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
 func (e *evmProxy) createOrderErc20(params types.CreateOrderParams, sender common.Address) (*ethTypes.Transaction, error) {

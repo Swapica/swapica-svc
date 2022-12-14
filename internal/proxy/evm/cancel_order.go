@@ -19,7 +19,8 @@ func (e *evmProxy) CancelOrder(params types.CancelOrderParams) (interface{}, err
 		return nil, nil
 	}
 
-	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
+	confirmed := true
+	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
 func (e *evmProxy) cancelOrderErc20(params types.CancelOrderParams, sender common.Address) (*ethTypes.Transaction, error) {

@@ -13,6 +13,11 @@ import (
 func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, error) {
 	sender := common.HexToAddress(params.Sender)
 
+	threshold, err := e.getThreshold()
+	if err != nil {
+		return nil, err
+	}
+
 	tx, err := e.executeOrderErc20(params, sender)
 	if err != nil {
 		return nil, err
@@ -21,7 +26,19 @@ func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, e
 		return nil, nil
 	}
 
-	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
+	signNumber := int64(1)
+
+	// if tx provided check it and sign; otherwise use created tx
+	if params.RawTxData != nil {
+		tx, signNumber, err = e.checkTxDataAndSign(buildTransactOpts(sender), tx, *params.RawTxData)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	confirmed := signNumber >= threshold
+
+	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
 func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {

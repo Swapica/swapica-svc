@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 	"net/http"
 
@@ -59,13 +60,24 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).CreateMatch(types.CreateMatchParams{
+	params := types.CreateMatchParams{
 		SrcChain:    *srcChain,
 		DestChain:   *destChain,
 		Order:       order,
 		OrderStatus: orderStatus,
 		Sender:      request.Sender,
-	})
+	}
+
+	if request.RawTxData != nil {
+		rawTxData, err := hexutil.Decode(*request.RawTxData)
+		if err != nil {
+			return
+		}
+
+		params.RawTxData = &rawTxData
+	}
+
+	tx, err := ProxyRepo(r).Get(request.DestChain).CreateMatch(params)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to make create match transaction")
 		ape.RenderErr(w, problems.BadRequest(err)...)

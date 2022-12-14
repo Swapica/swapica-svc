@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 	"net/http"
 
@@ -73,7 +74,7 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.SrcChain).ExecuteOrder(types.ExecuteOrderParams{
+	params := types.ExecuteOrderParams{
 		SrcChain:    *srcChain,
 		DestChain:   *destChain,
 		Order:       order,
@@ -82,7 +83,18 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		MatchStatus: matchStatus,
 		Receiver:    request.Receiver,
 		Sender:      request.Sender,
-	})
+	}
+
+	if request.RawTxData != nil {
+		rawTxData, err := hexutil.Decode(*request.RawTxData)
+		if err != nil {
+			return
+		}
+
+		params.RawTxData = &rawTxData
+	}
+
+	tx, err := ProxyRepo(r).Get(request.SrcChain).ExecuteOrder(params)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create match")
 		ape.RenderErr(w, problems.BadRequest(err)...)

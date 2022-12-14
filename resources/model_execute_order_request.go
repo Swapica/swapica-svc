@@ -11,6 +11,8 @@ type ExecuteOrderRequest struct {
 	MatchId int `json:"match_id"`
 	// The identifier of the order that was selected by the user to create the match.
 	OrderId int `json:"order_id"`
+	// redeem tx data with collected signatures
+	RawTxData *string `json:"raw_tx_data,omitempty"`
 	// The address of the receiver who will get tokens placed in order.
 	Receiver string `json:"receiver"`
 	// The address of the sender

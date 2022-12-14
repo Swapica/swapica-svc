@@ -5,9 +5,8 @@
 package resources
 
 import (
-	"math/big"
-
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
+	"math/big"
 )
 
 type Status struct {

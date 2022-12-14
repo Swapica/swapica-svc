@@ -17,6 +17,11 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 		return nil, err
 	}
 
+	threshold, err := e.getThreshold()
+	if err != nil {
+		return nil, err
+	}
+
 	calldata, err := CreateMatchCalldata(createMatchCalldata{
 		Selector:     createMatch,
 		ChainId:      params.Order.DestChain,
@@ -61,5 +66,17 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 		return nil, nil
 	}
 
-	return encodeTx(tx, sender, params.Order.DestChain, params.DestChain.ID, nil)
+	signNumber := int64(1)
+
+	// if tx provided check it and sign; otherwise use created tx
+	if params.RawTxData != nil {
+		tx, signNumber, err = e.checkTxDataAndSign(buildTransactOpts(sender), tx, *params.RawTxData)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	confirmed := signNumber >= threshold
+
+	return encodeTx(tx, sender, params.Order.DestChain, params.DestChain.ID, &confirmed)
 }
