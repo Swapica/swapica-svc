@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/resources"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -13,8 +14,7 @@ import (
 )
 
 const (
-	TokenTypeNative = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-	gasLimit        = 300000
+	gasLimit = 300000
 )
 
 func skipSig(address common.Address, transaction *types.Transaction) (*types.Transaction, error) {
@@ -22,7 +22,7 @@ func skipSig(address common.Address, transaction *types.Transaction) (*types.Tra
 }
 
 func GetTransactionOpts(tokenAddress string, sender common.Address, amount *big.Int) *bind.TransactOpts {
-	if tokenAddress == TokenTypeNative {
+	if tokenAddress == enums.TokenTypeNative {
 		return buildTransactOptsWithValue(sender, amount)
 	}
 	return buildTransactOpts(sender)

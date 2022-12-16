@@ -1,12 +1,11 @@
 package evm
 
 import (
-	"github.com/ethereum/go-ethereum/common/hexutil"
-
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -69,12 +68,12 @@ func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, send
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != state.Canceled ||
-		(params.OrderStatus.State == state.Executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
+	if params.OrderStatus.State != enums.Canceled ||
+		(params.OrderStatus.State == enums.Executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
 		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
 	}
 
-	if params.MatchStatus.State != state.AwaitingFinalization {
+	if params.MatchStatus.State != enums.AwaitingFinalization {
 		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
 	}
 

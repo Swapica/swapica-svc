@@ -42,7 +42,7 @@ func (s *service) router() chi.Router {
 		r.Route("/chains", func(r chi.Router) {
 			r.Get("/", handlers.GetChainList)
 		})
-
+		r.Post("/approve", handlers.Approve)
 	})
 
 	return r

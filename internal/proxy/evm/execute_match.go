@@ -1,12 +1,11 @@
 package evm
 
 import (
-	"github.com/ethereum/go-ethereum/common/hexutil"
-
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/signature"
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/state"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -66,7 +65,7 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 }
 
 func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (bool, error) {
-	if params.OrderStatus.State != state.Executed {
+	if params.OrderStatus.State != enums.Executed {
 		return false, errors.New("cannot execute a match if order is not executed")
 	}
 
@@ -74,7 +73,7 @@ func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (b
 		return false, errors.New("cannot execute a match if order executed by someone other match")
 	}
 
-	if params.MatchStatus.State != state.AwaitingFinalization {
+	if params.MatchStatus.State != enums.AwaitingFinalization {
 		return false, errors.New("cannot execute a match when it is not awaiting finalization")
 	}
 

@@ -4,7 +4,7 @@ required:
 properties:
   state:
     type: string
-    format: state.State
+    format: enums.State
   executed_by:
     type: string
     format: big.Int
