@@ -2,11 +2,10 @@ package figure
 
 import (
 	"fmt"
-	"reflect"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"reflect"
 )
 
 var (

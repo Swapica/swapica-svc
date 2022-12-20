@@ -14,9 +14,9 @@ var (
 )
 
 type Tag struct {
-	Key      string
-	Required bool
-	NonZero  bool
+	Key        string
+	Required   bool
+	NonZero    bool
 }
 
 func parseFieldTag(field reflect.StructField, tagKey string) (*Tag, error) {
