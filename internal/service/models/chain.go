@@ -16,10 +16,11 @@ func newChainModel(value data.Chain) *resources.Chain {
 	return &resources.Chain{
 		Key: newChainKey(value.ID),
 		Attributes: resources.ChainAttributes{
-			Name:        value.Name,
-			Icon:        value.Icon,
-			ChainType:   value.Type,
-			ChainParams: value.ChainParams,
+			Name:         value.Name,
+			Icon:         value.Icon,
+			ChainType:    value.Type,
+			ChainParams:  value.ChainParams,
+			SwapContract: value.SwapContract,
 		},
 	}
 }
