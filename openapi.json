@@ -1,0 +1,1243 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "swapica-svc",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.demo.tokend.io",
+      "description": "TokenD Developer Environment"
+    }
+  ],
+  "paths": {
+    "/v1/approve": {
+      "post": {
+        "tags": [
+          "Transfers"
+        ],
+        "summary": "Approve token",
+        "description": "Checks if user approved to swapica contract to use his tokens.  If approval needed generates transaction to approve tokens, in other case returns 204 status code",
+        "operationId": "approveToken",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Success but no approval needed"
+          },
+          "401": {
+            "description": "blob creation not allowed",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account does not exist",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "failed to save blob",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/ApproveRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cancel/match": {
+      "post": {
+        "tags": [
+          "Match"
+        ],
+        "summary": "Cancel match",
+        "operationId": "cancelMatch",
+        "description": "Provides a transaction to close a match that has not been completed.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find specified match",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create transaction",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CancelMatchRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cancel/order": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Cancel order",
+        "operationId": "cancelOrder",
+        "description": "Provides a transaction to close a order that has not been completed.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find specified order",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create transaction",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CancelOrderRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chains": {
+      "get": {
+        "tags": [
+          "Chains"
+        ],
+        "summary": "Get supported chains list",
+        "operationId": "getChainList",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "filter[chain_type]",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainType"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/create/match": {
+      "post": {
+        "tags": [
+          "Match"
+        ],
+        "summary": "Create match",
+        "operationId": "createMatch",
+        "description": "Provides a transaction to create a match with opened order.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find specified match/order",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create transaction",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/MatchOrderRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/create/order": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Create order",
+        "operationId": "createOrder",
+        "description": "Provides a transaction to create a order.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find specified order/order",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create transaction",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/CreateOrderRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/execute/match": {
+      "post": {
+        "tags": [
+          "Match"
+        ],
+        "summary": "Execute match",
+        "operationId": "executeMatch",
+        "description": "Provides a transaction to execute an already created match.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find specified match/order",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create transaction",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/ExecuteMatchRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/execute/order": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Execute order",
+        "operationId": "executeOrder",
+        "description": "Provides a transaction to execute an already created order.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/EvmTransaction"
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find specified order/match",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create transaction",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/components/schemas/ExecuteOrderRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApproveRequest": {
+        "type": "object",
+        "required": [
+          "sender",
+          "chain_id",
+          "token_address",
+          "token_type"
+        ],
+        "properties": {
+          "sender": {
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "chain_id": {
+            "type": "string",
+            "description": "The identifier of the chain in which the token exists.",
+            "example": "goerli"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "The token address on specified chain id.",
+            "example": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+          },
+          "token_type": {
+            "type": "string",
+            "description": "The token address on specified chain id.",
+            "example": "erc20",
+            "enum": [
+              "erc20",
+              "erc721",
+              "erc1155"
+            ]
+          }
+        }
+      },
+      "CancelMatchRequest": {
+        "type": "object",
+        "required": [
+          "dest_chain",
+          "src_chain",
+          "match_id",
+          "sender"
+        ],
+        "properties": {
+          "dest_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the match was placed.",
+            "example": "goerli"
+          },
+          "src_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order is placed with which the match occurred.",
+            "example": "sepolia"
+          },
+          "match_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the match that was selected by the user to cancel it.",
+            "example": 1
+          },
+          "sender": {
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          }
+        }
+      },
+      "CancelOrderRequest": {
+        "type": "object",
+        "required": [
+          "src_chain",
+          "order_id",
+          "sender"
+        ],
+        "properties": {
+          "src_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order is placed with which the match occurred.",
+            "example": "sepolia"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the order that was selected by the user to cancel.",
+            "example": 1
+          },
+          "sender": {
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          }
+        }
+      },
+      "Chain": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ChainKey"
+          },
+          {
+            "type": "object",
+            "required": [
+              "attributes"
+            ],
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "chain_type",
+                  "chain_params",
+                  "swap_contract"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "description": "Link to network icon",
+                    "example": "https://some.storage.com/image.png"
+                  },
+                  "chain_type": {
+                    "$ref": "#/components/schemas/ChainType"
+                  },
+                  "swap_contract": {
+                    "type": "string"
+                  },
+                  "chain_params": {
+                    "type": "object",
+                    "format": "interface{}"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ChainKey": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "chain"
+            ]
+          }
+        }
+      },
+      "ChainType": {
+        "type": "string",
+        "description": "Type of blockchain by supported wallets, APIs, etc.",
+        "enum": [
+          "evm"
+        ]
+      },
+      "CreateMatchRequest": {
+        "type": "object",
+        "required": [
+          "src_chain",
+          "dest_chain",
+          "order_id",
+          "sender"
+        ],
+        "properties": {
+          "src_chain": {
+            "type": "string"
+          },
+          "dest_chain": {
+            "type": "string"
+          },
+          "order_id": {
+            "type": "integer",
+            "format": "uint"
+          },
+          "sender": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateOrderRequest": {
+        "type": "object",
+        "required": [
+          "src_chain",
+          "token_to_sell",
+          "amount_to_sell",
+          "token_to_buy",
+          "amount_to_buy",
+          "dest_chain",
+          "sender"
+        ],
+        "properties": {
+          "src_chain": {
+            "type": "string"
+          },
+          "token_to_sell": {
+            "type": "string",
+            "description": "address of token contract"
+          },
+          "amount_to_sell": {
+            "type": "string",
+            "format": "amount.Amount"
+          },
+          "token_to_buy": {
+            "type": "string",
+            "description": "address of token contract"
+          },
+          "amount_to_buy": {
+            "type": "string",
+            "format": "amount.Amount"
+          },
+          "dest_chain": {
+            "type": "string"
+          },
+          "sender": {
+            "type": "string"
+          }
+        }
+      },
+      "Errors": {
+        "description": "Standard JSON:API error",
+        "type": "object",
+        "required": [
+          "errors"
+        ],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "description": "Non empty array of errors occurred during request processing",
+            "items": {
+              "type": "object",
+              "required": [
+                "title",
+                "status"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title is a short, human-readable summary of the problem",
+                  "example": "Bad Request"
+                },
+                "detail": {
+                  "type": "string",
+                  "description": "Detail is a human-readable explanation specific to this occurrence of the problem",
+                  "example": "Request body was expected"
+                },
+                "status": {
+                  "type": "integer",
+                  "description": "Status is the HTTP status code applicable to this problem",
+                  "example": 400,
+                  "enum": [
+                    400,
+                    401,
+                    403,
+                    404,
+                    409,
+                    500
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "EvmChainParams": {
+        "type": "object",
+        "required": [
+          "chain_id",
+          "rpc_url",
+          "native_symbol",
+          "native_decimals"
+        ],
+        "properties": {
+          "chain_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rpc_url": {
+            "type": "string"
+          },
+          "native_symbol": {
+            "type": "string"
+          },
+          "explorer_url": {
+            "type": "string"
+          },
+          "native_decimals": {
+            "type": "integer",
+            "format": "uint8"
+          }
+        }
+      },
+      "EvmTransaction": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EvmTransactionKey"
+          },
+          {
+            "type": "object",
+            "required": [
+              "attributes",
+              "relationships"
+            ],
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "tx_body"
+                ],
+                "properties": {
+                  "tx_body": {
+                    "$ref": "#/components/schemas/EvmTransactionTxBody"
+                  },
+                  "confirmed": {
+                    "type": "boolean",
+                    "description": "Is enough signatures to send tx"
+                  }
+                }
+              },
+              "relationships": {
+                "type": "object",
+                "required": [
+                  "chains"
+                ],
+                "properties": {
+                  "chain": {
+                    "type": "object",
+                    "description": "The chain in which the transaction is to be executed",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/ChainKey"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "EvmTransactionKey": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "transaction hash"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "evm_transaction"
+            ]
+          }
+        }
+      },
+      "EvmTransactionTxBody": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "value",
+          "data",
+          "chain_id"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "The address of the sender"
+          },
+          "to": {
+            "type": "string",
+            "description": "The address of transaction recipient"
+          },
+          "value": {
+            "type": "string",
+            "description": "The amount of wei to send"
+          },
+          "data": {
+            "type": "string",
+            "description": "transaction call data encoded as hex"
+          },
+          "chain_id": {
+            "type": "string",
+            "description": "The chain ID encoded as hex"
+          }
+        }
+      },
+      "ExecuteMatchRequest": {
+        "type": "object",
+        "required": [
+          "dest_chain",
+          "src_chain",
+          "match_id",
+          "order_id",
+          "receiver",
+          "sender"
+        ],
+        "properties": {
+          "dest_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the match was placed.",
+            "example": "goerli"
+          },
+          "src_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order is placed with which the match occurred.",
+            "example": "sepolia"
+          },
+          "match_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the match that was selected by the user that created the match.",
+            "example": 1
+          },
+          "order_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the order that was created by the user.",
+            "example": 1
+          },
+          "receiver": {
+            "type": "string",
+            "description": "The address of the receiver who will get tokens placed in order.",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "sender": {
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          }
+        }
+      },
+      "ExecuteOrderRequest": {
+        "type": "object",
+        "required": [
+          "dest_chain",
+          "src_chain",
+          "match_id",
+          "order_id",
+          "receiver",
+          "sender"
+        ],
+        "properties": {
+          "dest_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order was placed.",
+            "example": "sepolia"
+          },
+          "src_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order is placed with which the match occurred.",
+            "example": "goerli"
+          },
+          "match_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the match that was selected by the user.",
+            "example": 1
+          },
+          "order_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the order that was selected by the user to create the match.",
+            "example": 1
+          },
+          "receiver": {
+            "type": "string",
+            "description": "The address of the receiver who will get tokens placed in order.",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "sender": {
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          }
+        }
+      },
+      "Match": {
+        "type": "object",
+        "required": [
+          "account",
+          "token_to_sell"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "big.Int"
+          },
+          "origin_order_id": {
+            "type": "string",
+            "format": "big.Int"
+          },
+          "account": {
+            "type": "string",
+            "format": "common.Address"
+          },
+          "token_to_sell": {
+            "type": "string",
+            "format": "common.Address"
+          },
+          "amount_to_sell": {
+            "type": "string",
+            "format": "big.Int"
+          },
+          "origin_chain": {
+            "type": "string",
+            "format": "big.Int"
+          }
+        }
+      },
+      "MatchOrderRequest": {
+        "type": "object",
+        "required": [
+          "dest_chain",
+          "order_id",
+          "token_to_sell",
+          "amount_to_sell",
+          "src_chain",
+          "sender"
+        ],
+        "properties": {
+          "dest_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the match occurred to a particular order.",
+            "example": "goerli"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the order that was selected by the user to create the match.",
+            "example": 1
+          },
+          "token_to_sell": {
+            "type": "string",
+            "description": "The address of the token that the matcher wanted to sell in order  to buy the token that was offered for sale.",
+            "example": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+          },
+          "amount_to_sell": {
+            "type": "string",
+            "format": "int",
+            "description": "The number of tokens that the user provided to purchase  tokens that were placed in the order",
+            "example": 100
+          },
+          "src_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order was placed.",
+            "example": "sepolia"
+          },
+          "sender": {
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "required": [
+          "account",
+          "token_to_sell",
+          "token_to_buy"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "big.Int"
+          },
+          "account": {
+            "type": "string",
+            "format": "common.Address"
+          },
+          "token_to_sell": {
+            "type": "string",
+            "format": "common.Address"
+          },
+          "token_to_buy": {
+            "type": "string",
+            "format": "common.Address"
+          },
+          "amount_to_sell": {
+            "type": "string",
+            "format": "big.Int"
+          },
+          "amount_to_buy": {
+            "type": "string",
+            "format": "big.Int"
+          },
+          "dest_chain": {
+            "type": "string",
+            "format": "big.Int"
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "format": "enums.State"
+          },
+          "executed_by": {
+            "type": "string",
+            "format": "big.Int"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "pageLimitParam": {
+        "in": "query",
+        "name": "page[limit]",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 15,
+          "description": "Numbers of items per page to return."
+        }
+      },
+      "pageNumberParam": {
+        "in": "query",
+        "name": "page[number]",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        },
+        "description": "The number of a page to return."
+      },
+      "sortingParam": {
+        "in": "query",
+        "name": "page[order]",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "desc",
+          "description": "Order of records on the page. If sortingParam is not specified, order of records is by default sorted by ID."
+        }
+      }
+    }
+  }
+}
