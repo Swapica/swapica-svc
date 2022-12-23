@@ -2,8 +2,6 @@ type: object
 required:
   - dest_chain
   - order_id
-  - token_to_sell
-  - amount_to_sell
   - src_chain
   - sender
 properties:
@@ -16,19 +14,6 @@ properties:
     format: int
     description: The identifier of the order that was selected by the user to create the match.
     example: 1
-  token_to_sell:
-    type: string
-    description: >-
-      The address of the token that the matcher wanted to sell in order 
-      to buy the token that was offered for sale.
-    example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-  amount_to_sell:
-    type: string
-    format: int
-    description: >-
-      The number of tokens that the user provided to purchase 
-      tokens that were placed in the order
-    example: 100
   src_chain:
     type: string
     description: The identifier of the chain in which the order was placed.
