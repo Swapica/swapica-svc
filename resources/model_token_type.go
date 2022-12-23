@@ -4,11 +4,11 @@
 
 package resources
 
-// TokenType : Type of token.
+// TokenType : Type of token
 type TokenType string
 
-// List of TokenType.
+// List of TokenType
 const (
-	ERC20  TokenType = "erc20"
-	NATIVE TokenType = "native"
+	FUNGIBLE     TokenType = "fungible"
+	NON_FUNGIBLE TokenType = "non-fungible"
 )

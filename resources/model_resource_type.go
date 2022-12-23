@@ -10,4 +10,5 @@ type ResourceType string
 const (
 	CHAIN           ResourceType = "chain"
 	EVM_TRANSACTION ResourceType = "evm_transaction"
+	TOKEN           ResourceType = "token"
 )

@@ -1,0 +1,50 @@
+get:
+  tags:
+    - Tokens
+  summary: Get supported list of tokens
+  operationId: getTokenList
+  parameters:
+    - in: query
+      name: 'include'
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - chain
+    - in: query
+      name: 'filter[token_type]'
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/TokenType'
+  responses:
+    200:
+      description: success
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chain'
+    400:
+      description: bad input parameter
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    500:
+      description: internal error
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
