@@ -62,7 +62,7 @@ func (e *evmProxy) getThreshold() (int64, error) {
 func (e *evmProxy) checkTxDataAndSign(opts *bind.TransactOpts, tx *ethTypes.Transaction, rawData []byte) (*ethTypes.Transaction, int64, error) {
 	abi, err := swapica.SwapicaMetaData.GetAbi()
 	if err != nil {
-		return nil, 0, errors.Wrap(err, "failed to parse bridge ABI")
+		return nil, 0, errors.Wrap(err, "failed to parse swapica ABI")
 	}
 
 	newParams, newMethod, err := decodeTxParams(*abi, tx.Data())
