@@ -8,8 +8,9 @@ import (
 )
 
 type TokensRequest struct {
-	FilterType    []resources.TokenType `filter:"token_type"`
-	IncludeChains bool                  `include:"chain"`
+	FilterType         []resources.TokenType `filter:"token_type"`
+	IncludeChains      bool                  `include:"chain"`
+	IncludeTokenChains bool                  `include:"token_chain"`
 }
 
 func NewTokensRequest(r *http.Request) (TokensRequest, error) {

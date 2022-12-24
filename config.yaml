@@ -16,7 +16,6 @@ data:
         - chain_id: "goerli"
           token_type: erc20
           contract_address: "0x1bF3684E7bd3ecac57dA485EF110A131321fF64D"
-          auto_send: true
         - chain_id: "chapel"
           token_type: erc20
           contract_address: "0xB3DA24CEf82514341C9390764D764C40163bE7a2"

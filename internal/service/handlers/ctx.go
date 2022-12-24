@@ -18,6 +18,7 @@ const (
 	chainsQCtxKey
 	proxyRepoCtxKey
 	tokensQCtxKey
+	tokenChainsQCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -48,6 +49,16 @@ func CtxChainsQ(entry data.ChainsQ) func(context.Context) context.Context {
 
 func ChainsQ(r *http.Request) data.ChainsQ {
 	return r.Context().Value(chainsQCtxKey).(data.ChainsQ).New()
+}
+
+func CtxTokenChainsQ(entry data.TokenChainsQ) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, tokenChainsQCtxKey, entry)
+	}
+}
+
+func TokenChainsQ(r *http.Request) data.TokenChainsQ {
+	return r.Context().Value(tokenChainsQCtxKey).(data.TokenChainsQ).New()
 }
 
 func CtxProxyRepo(entry proxy.ProxyRepo) func(context.Context) context.Context {

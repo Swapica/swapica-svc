@@ -4,6 +4,6 @@
 
 package resources
 
-type ChainRelationships struct {
-	Tokens RelationCollection `json:"tokens"`
+type TokenChainRelationships struct {
+	Chains RelationCollection `json:"chains"`
 }

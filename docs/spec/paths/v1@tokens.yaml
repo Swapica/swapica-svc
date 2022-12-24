@@ -13,6 +13,7 @@ get:
           type: string
           enum:
             - chain
+            - token_chain
     - in: query
       name: 'filter[token_type]'
       required: false

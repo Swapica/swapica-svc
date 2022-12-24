@@ -38,7 +38,17 @@ func GetTokenList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ape.Render(w, models.NewTokenListResponse(tokens, chains))
+	var tokenChains []data.TokenChain
+	if request.IncludeTokenChains {
+		tokenChains, err = TokenChainsQ(r).FilterByTokenID(tokensId(tokens)...).Select()
+		if err != nil {
+			Log(r).WithError(err).Error("failed to get token_chains")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+	}
+
+	ape.Render(w, models.NewTokenListResponse(tokens, chains, tokenChains))
 }
 
 func chainsId(tokens []data.Token) []string {
@@ -52,6 +62,15 @@ func chainsId(tokens []data.Token) []string {
 	keys := make([]string, 0, len(result))
 	for key := range result {
 		keys = append(keys, key)
+	}
+
+	return keys
+}
+
+func tokensId(tokens []data.Token) []string {
+	keys := make([]string, 0, len(tokens))
+	for _, token := range tokens {
+		keys = append(keys, token.ID)
 	}
 
 	return keys
