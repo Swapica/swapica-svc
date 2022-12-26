@@ -89,11 +89,14 @@ func (e *evmProxy) validateCancelMatch(params types.CancelMatchParams, sender co
 		return false, errors.New("invalid sender")
 	}
 
-	notCanceled := enums.State(params.OrderStatus.State) != enums.Canceled
-	isExecutedBy := enums.State(params.OrderStatus.State) == enums.Executed && params.OrderStatus.ExecutedBy == params.Match.Id
+	if enums.State(params.OrderStatus.State) == enums.Canceled && enums.State(params.OrderStatus.State) != enums.Executed {
+		return false, errors.New("cannot cancel a match if order is canceled or executed")
+	}
+
+	isExecutedByTheMatch := params.OrderStatus.ExecutedBy.String() == params.Match.Id.String() && enums.State(params.OrderStatus.State) == enums.Executed
 	isExecutedByThis := params.OrderStatus.MatchSwapica == e.swapperContract
-	if notCanceled && isExecutedBy && isExecutedByThis {
-		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
+	if isExecutedByTheMatch && isExecutedByThis {
+		return false, errors.New("cannot cancel a match if order is executed from this swapica contract match")
 	}
 
 	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {

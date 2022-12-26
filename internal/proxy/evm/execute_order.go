@@ -47,12 +47,13 @@ func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, e
 
 func (e *evmProxy) executeOrder(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeExecuteOrder(executeOrderCalldata{
-		Selector: executeOrder,
-		ChainId:  params.Match.OriginChain,
-		Swapica:  e.swapperContract,
-		OrderId:  params.Order.Id,
-		Receiver: params.Match.Account,
-		MatchId:  params.Match.Id,
+		Selector:     executeOrder,
+		ChainId:      params.Match.OriginChain,
+		Swapica:      e.swapperContract,
+		OrderId:      params.Order.Id,
+		Receiver:     params.Match.Account,
+		MatchId:      params.Match.Id,
+		MatchSwapica: common.HexToAddress(params.DestChain.SwapContract),
 	})
 	if err != nil {
 		return nil, err
