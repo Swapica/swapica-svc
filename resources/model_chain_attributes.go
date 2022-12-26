@@ -8,6 +8,7 @@ type ChainAttributes struct {
 	ChainParams interface{} `json:"chain_params"`
 	ChainType   ChainType   `json:"chain_type"`
 	// Link to network icon
-	Icon *string `json:"icon,omitempty"`
-	Name string  `json:"name"`
+	Icon         *string `json:"icon,omitempty"`
+	Name         string  `json:"name"`
+	SwapContract string  `json:"swap_contract"`
 }

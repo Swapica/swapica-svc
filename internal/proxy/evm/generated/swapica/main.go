@@ -28,15 +28,37 @@ var (
 	_ = event.NewSubscription
 )
 
+// SwapicaMatch is an auto generated low-level Go binding around an user-defined struct.
+type SwapicaMatch struct {
+	Id            *big.Int
+	OriginOrderId *big.Int
+	Account       common.Address
+	TokenToSell   common.Address
+	AmountToSell  *big.Int
+	OriginChain   *big.Int
+}
+
+// SwapicaOrder is an auto generated low-level Go binding around an user-defined struct.
+type SwapicaOrder struct {
+	Id           *big.Int
+	Account      common.Address
+	TokenToSell  common.Address
+	TokenToBuy   common.Address
+	AmountToSell *big.Int
+	AmountToBuy  *big.Int
+	DestChain    *big.Int
+}
+
 // SwapicaStatus is an auto generated low-level Go binding around an user-defined struct.
 type SwapicaStatus struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }
 
 // SwapicaMetaData contains all meta data concerning the Swapica contract.
 var SwapicaMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\"}],\"name\":\"BeaconUpgraded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"}],\"indexed\":true,\"internalType\":\"structSwapica.Status\",\"name\":\"status\",\"type\":\"tuple\"}],\"name\":\"MatchUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"}],\"indexed\":true,\"internalType\":\"structSwapica.Status\",\"name\":\"status\",\"type\":\"tuple\"}],\"name\":\"OrderUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"NATIVE\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers_\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"signaturesThreshold_\",\"type\":\"uint256\"}],\"name\":\"__Signers_init\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers\",\"type\":\"address[]\"}],\"name\":\"__Swapica_init\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers_\",\"type\":\"address[]\"}],\"name\":\"addSigners\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"cancelMatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"cancelOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"createMatch\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToBuy\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"destChain\",\"type\":\"uint256\"}],\"name\":\"createOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"executeMatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"executeOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSigners\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"locked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"matchStatus\",\"outputs\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"matches\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"originOrderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"originChain\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"orderStatus\",\"outputs\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"orders\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountToBuy\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"destChain\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers_\",\"type\":\"address[]\"}],\"name\":\"removeSigners\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"signaturesThreshold_\",\"type\":\"uint256\"}],\"name\":\"setSignaturesThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"signaturesThreshold\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"}],\"name\":\"upgradeTo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\"}],\"name\":\"BeaconUpgraded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"matchSwapica\",\"type\":\"address\"}],\"indexed\":true,\"internalType\":\"structSwapica.Status\",\"name\":\"status\",\"type\":\"tuple\"}],\"name\":\"MatchUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"matchSwapica\",\"type\":\"address\"}],\"indexed\":true,\"internalType\":\"structSwapica.Status\",\"name\":\"status\",\"type\":\"tuple\"}],\"name\":\"OrderUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"NATIVE\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers_\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"signaturesThreshold_\",\"type\":\"uint256\"}],\"name\":\"__Signers_init\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers\",\"type\":\"address[]\"}],\"name\":\"__Swapica_init\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers_\",\"type\":\"address[]\"}],\"name\":\"addSigners\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"cancelMatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"cancelOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"createMatch\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToBuy\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"destChain\",\"type\":\"uint256\"}],\"name\":\"createOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"executeMatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"orderData\",\"type\":\"bytes\"},{\"internalType\":\"bytes[]\",\"name\":\"signatures\",\"type\":\"bytes[]\"}],\"name\":\"executeOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"begin\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"end\",\"type\":\"uint256\"}],\"name\":\"getActiveOrders\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountToBuy\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"destChain\",\"type\":\"uint256\"}],\"internalType\":\"structSwapica.Order[]\",\"name\":\"result\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSigners\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"begin\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"end\",\"type\":\"uint256\"}],\"name\":\"getUserMatches\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"originOrderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"originChain\",\"type\":\"uint256\"}],\"internalType\":\"structSwapica.Match[]\",\"name\":\"result\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"begin\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"end\",\"type\":\"uint256\"}],\"name\":\"getUserOrders\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountToBuy\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"destChain\",\"type\":\"uint256\"}],\"internalType\":\"structSwapica.Order[]\",\"name\":\"result\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"locked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"matchStatus\",\"outputs\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"matchSwapica\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"matches\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"originOrderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"originChain\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"orderStatus\",\"outputs\":[{\"internalType\":\"enumSwapica.State\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"executedBy\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"matchSwapica\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"orders\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToSell\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenToBuy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountToSell\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountToBuy\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"destChain\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"signers_\",\"type\":\"address[]\"}],\"name\":\"removeSigners\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"signaturesThreshold_\",\"type\":\"uint256\"}],\"name\":\"setSignaturesThreshold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"signaturesThreshold\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"}],\"name\":\"upgradeTo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // SwapicaABI is the input ABI used to generate the binding from.
@@ -216,6 +238,37 @@ func (_Swapica *SwapicaCallerSession) NATIVE() (common.Address, error) {
 	return _Swapica.Contract.NATIVE(&_Swapica.CallOpts)
 }
 
+// GetActiveOrders is a free data retrieval call binding the contract method 0xab9f52a1.
+//
+// Solidity: function getActiveOrders(address tokenToSell, address tokenToBuy, uint256 begin, uint256 end) view returns((uint256,address,address,address,uint256,uint256,uint256)[] result)
+func (_Swapica *SwapicaCaller) GetActiveOrders(opts *bind.CallOpts, tokenToSell common.Address, tokenToBuy common.Address, begin *big.Int, end *big.Int) ([]SwapicaOrder, error) {
+	var out []interface{}
+	err := _Swapica.contract.Call(opts, &out, "getActiveOrders", tokenToSell, tokenToBuy, begin, end)
+
+	if err != nil {
+		return *new([]SwapicaOrder), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]SwapicaOrder)).(*[]SwapicaOrder)
+
+	return out0, err
+
+}
+
+// GetActiveOrders is a free data retrieval call binding the contract method 0xab9f52a1.
+//
+// Solidity: function getActiveOrders(address tokenToSell, address tokenToBuy, uint256 begin, uint256 end) view returns((uint256,address,address,address,uint256,uint256,uint256)[] result)
+func (_Swapica *SwapicaSession) GetActiveOrders(tokenToSell common.Address, tokenToBuy common.Address, begin *big.Int, end *big.Int) ([]SwapicaOrder, error) {
+	return _Swapica.Contract.GetActiveOrders(&_Swapica.CallOpts, tokenToSell, tokenToBuy, begin, end)
+}
+
+// GetActiveOrders is a free data retrieval call binding the contract method 0xab9f52a1.
+//
+// Solidity: function getActiveOrders(address tokenToSell, address tokenToBuy, uint256 begin, uint256 end) view returns((uint256,address,address,address,uint256,uint256,uint256)[] result)
+func (_Swapica *SwapicaCallerSession) GetActiveOrders(tokenToSell common.Address, tokenToBuy common.Address, begin *big.Int, end *big.Int) ([]SwapicaOrder, error) {
+	return _Swapica.Contract.GetActiveOrders(&_Swapica.CallOpts, tokenToSell, tokenToBuy, begin, end)
+}
+
 // GetSigners is a free data retrieval call binding the contract method 0x94cf795e.
 //
 // Solidity: function getSigners() view returns(address[])
@@ -245,6 +298,68 @@ func (_Swapica *SwapicaSession) GetSigners() ([]common.Address, error) {
 // Solidity: function getSigners() view returns(address[])
 func (_Swapica *SwapicaCallerSession) GetSigners() ([]common.Address, error) {
 	return _Swapica.Contract.GetSigners(&_Swapica.CallOpts)
+}
+
+// GetUserMatches is a free data retrieval call binding the contract method 0xecf1d9f9.
+//
+// Solidity: function getUserMatches(address user, uint256 begin, uint256 end) view returns((uint256,uint256,address,address,uint256,uint256)[] result)
+func (_Swapica *SwapicaCaller) GetUserMatches(opts *bind.CallOpts, user common.Address, begin *big.Int, end *big.Int) ([]SwapicaMatch, error) {
+	var out []interface{}
+	err := _Swapica.contract.Call(opts, &out, "getUserMatches", user, begin, end)
+
+	if err != nil {
+		return *new([]SwapicaMatch), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]SwapicaMatch)).(*[]SwapicaMatch)
+
+	return out0, err
+
+}
+
+// GetUserMatches is a free data retrieval call binding the contract method 0xecf1d9f9.
+//
+// Solidity: function getUserMatches(address user, uint256 begin, uint256 end) view returns((uint256,uint256,address,address,uint256,uint256)[] result)
+func (_Swapica *SwapicaSession) GetUserMatches(user common.Address, begin *big.Int, end *big.Int) ([]SwapicaMatch, error) {
+	return _Swapica.Contract.GetUserMatches(&_Swapica.CallOpts, user, begin, end)
+}
+
+// GetUserMatches is a free data retrieval call binding the contract method 0xecf1d9f9.
+//
+// Solidity: function getUserMatches(address user, uint256 begin, uint256 end) view returns((uint256,uint256,address,address,uint256,uint256)[] result)
+func (_Swapica *SwapicaCallerSession) GetUserMatches(user common.Address, begin *big.Int, end *big.Int) ([]SwapicaMatch, error) {
+	return _Swapica.Contract.GetUserMatches(&_Swapica.CallOpts, user, begin, end)
+}
+
+// GetUserOrders is a free data retrieval call binding the contract method 0xc7efbe36.
+//
+// Solidity: function getUserOrders(address user, uint256 begin, uint256 end) view returns((uint256,address,address,address,uint256,uint256,uint256)[] result)
+func (_Swapica *SwapicaCaller) GetUserOrders(opts *bind.CallOpts, user common.Address, begin *big.Int, end *big.Int) ([]SwapicaOrder, error) {
+	var out []interface{}
+	err := _Swapica.contract.Call(opts, &out, "getUserOrders", user, begin, end)
+
+	if err != nil {
+		return *new([]SwapicaOrder), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]SwapicaOrder)).(*[]SwapicaOrder)
+
+	return out0, err
+
+}
+
+// GetUserOrders is a free data retrieval call binding the contract method 0xc7efbe36.
+//
+// Solidity: function getUserOrders(address user, uint256 begin, uint256 end) view returns((uint256,address,address,address,uint256,uint256,uint256)[] result)
+func (_Swapica *SwapicaSession) GetUserOrders(user common.Address, begin *big.Int, end *big.Int) ([]SwapicaOrder, error) {
+	return _Swapica.Contract.GetUserOrders(&_Swapica.CallOpts, user, begin, end)
+}
+
+// GetUserOrders is a free data retrieval call binding the contract method 0xc7efbe36.
+//
+// Solidity: function getUserOrders(address user, uint256 begin, uint256 end) view returns((uint256,address,address,address,uint256,uint256,uint256)[] result)
+func (_Swapica *SwapicaCallerSession) GetUserOrders(user common.Address, begin *big.Int, end *big.Int) ([]SwapicaOrder, error) {
+	return _Swapica.Contract.GetUserOrders(&_Swapica.CallOpts, user, begin, end)
 }
 
 // Locked is a free data retrieval call binding the contract method 0xdb20266f.
@@ -280,17 +395,19 @@ func (_Swapica *SwapicaCallerSession) Locked(arg0 common.Address, arg1 common.Ad
 
 // MatchStatus is a free data retrieval call binding the contract method 0x23d38621.
 //
-// Solidity: function matchStatus(uint256 ) view returns(uint8 state, uint256 executedBy)
+// Solidity: function matchStatus(uint256 ) view returns(uint8 state, uint256 executedBy, address matchSwapica)
 func (_Swapica *SwapicaCaller) MatchStatus(opts *bind.CallOpts, arg0 *big.Int) (struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }, error) {
 	var out []interface{}
 	err := _Swapica.contract.Call(opts, &out, "matchStatus", arg0)
 
 	outstruct := new(struct {
-		State      uint8
-		ExecutedBy *big.Int
+		State        uint8
+		ExecutedBy   *big.Int
+		MatchSwapica common.Address
 	})
 	if err != nil {
 		return *outstruct, err
@@ -298,6 +415,7 @@ func (_Swapica *SwapicaCaller) MatchStatus(opts *bind.CallOpts, arg0 *big.Int) (
 
 	outstruct.State = *abi.ConvertType(out[0], new(uint8)).(*uint8)
 	outstruct.ExecutedBy = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.MatchSwapica = *abi.ConvertType(out[2], new(common.Address)).(*common.Address)
 
 	return *outstruct, err
 
@@ -305,20 +423,22 @@ func (_Swapica *SwapicaCaller) MatchStatus(opts *bind.CallOpts, arg0 *big.Int) (
 
 // MatchStatus is a free data retrieval call binding the contract method 0x23d38621.
 //
-// Solidity: function matchStatus(uint256 ) view returns(uint8 state, uint256 executedBy)
+// Solidity: function matchStatus(uint256 ) view returns(uint8 state, uint256 executedBy, address matchSwapica)
 func (_Swapica *SwapicaSession) MatchStatus(arg0 *big.Int) (struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }, error) {
 	return _Swapica.Contract.MatchStatus(&_Swapica.CallOpts, arg0)
 }
 
 // MatchStatus is a free data retrieval call binding the contract method 0x23d38621.
 //
-// Solidity: function matchStatus(uint256 ) view returns(uint8 state, uint256 executedBy)
+// Solidity: function matchStatus(uint256 ) view returns(uint8 state, uint256 executedBy, address matchSwapica)
 func (_Swapica *SwapicaCallerSession) MatchStatus(arg0 *big.Int) (struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }, error) {
 	return _Swapica.Contract.MatchStatus(&_Swapica.CallOpts, arg0)
 }
@@ -390,17 +510,19 @@ func (_Swapica *SwapicaCallerSession) Matches(arg0 *big.Int) (struct {
 
 // OrderStatus is a free data retrieval call binding the contract method 0xbff49450.
 //
-// Solidity: function orderStatus(uint256 ) view returns(uint8 state, uint256 executedBy)
+// Solidity: function orderStatus(uint256 ) view returns(uint8 state, uint256 executedBy, address matchSwapica)
 func (_Swapica *SwapicaCaller) OrderStatus(opts *bind.CallOpts, arg0 *big.Int) (struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }, error) {
 	var out []interface{}
 	err := _Swapica.contract.Call(opts, &out, "orderStatus", arg0)
 
 	outstruct := new(struct {
-		State      uint8
-		ExecutedBy *big.Int
+		State        uint8
+		ExecutedBy   *big.Int
+		MatchSwapica common.Address
 	})
 	if err != nil {
 		return *outstruct, err
@@ -408,6 +530,7 @@ func (_Swapica *SwapicaCaller) OrderStatus(opts *bind.CallOpts, arg0 *big.Int) (
 
 	outstruct.State = *abi.ConvertType(out[0], new(uint8)).(*uint8)
 	outstruct.ExecutedBy = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.MatchSwapica = *abi.ConvertType(out[2], new(common.Address)).(*common.Address)
 
 	return *outstruct, err
 
@@ -415,20 +538,22 @@ func (_Swapica *SwapicaCaller) OrderStatus(opts *bind.CallOpts, arg0 *big.Int) (
 
 // OrderStatus is a free data retrieval call binding the contract method 0xbff49450.
 //
-// Solidity: function orderStatus(uint256 ) view returns(uint8 state, uint256 executedBy)
+// Solidity: function orderStatus(uint256 ) view returns(uint8 state, uint256 executedBy, address matchSwapica)
 func (_Swapica *SwapicaSession) OrderStatus(arg0 *big.Int) (struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }, error) {
 	return _Swapica.Contract.OrderStatus(&_Swapica.CallOpts, arg0)
 }
 
 // OrderStatus is a free data retrieval call binding the contract method 0xbff49450.
 //
-// Solidity: function orderStatus(uint256 ) view returns(uint8 state, uint256 executedBy)
+// Solidity: function orderStatus(uint256 ) view returns(uint8 state, uint256 executedBy, address matchSwapica)
 func (_Swapica *SwapicaCallerSession) OrderStatus(arg0 *big.Int) (struct {
-	State      uint8
-	ExecutedBy *big.Int
+	State        uint8
+	ExecutedBy   *big.Int
+	MatchSwapica common.Address
 }, error) {
 	return _Swapica.Contract.OrderStatus(&_Swapica.CallOpts, arg0)
 }
@@ -1398,9 +1523,9 @@ type SwapicaMatchUpdated struct {
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterMatchUpdated is a free log retrieval operation binding the contract event 0xcbe9b920dc102a8df3c3c6ac1710e90d35d00308330e4f948c90f534fe87aff2.
+// FilterMatchUpdated is a free log retrieval operation binding the contract event 0xa9b5f1914efdf39593d3001993d7ebde53d6c14bf4ea8b5af4c545f81bf47120.
 //
-// Solidity: event MatchUpdated(uint256 indexed id, (uint8,uint256) indexed status)
+// Solidity: event MatchUpdated(uint256 indexed id, (uint8,uint256,address) indexed status)
 func (_Swapica *SwapicaFilterer) FilterMatchUpdated(opts *bind.FilterOpts, id []*big.Int, status []SwapicaStatus) (*SwapicaMatchUpdatedIterator, error) {
 
 	var idRule []interface{}
@@ -1419,9 +1544,9 @@ func (_Swapica *SwapicaFilterer) FilterMatchUpdated(opts *bind.FilterOpts, id []
 	return &SwapicaMatchUpdatedIterator{contract: _Swapica.contract, event: "MatchUpdated", logs: logs, sub: sub}, nil
 }
 
-// WatchMatchUpdated is a free log subscription operation binding the contract event 0xcbe9b920dc102a8df3c3c6ac1710e90d35d00308330e4f948c90f534fe87aff2.
+// WatchMatchUpdated is a free log subscription operation binding the contract event 0xa9b5f1914efdf39593d3001993d7ebde53d6c14bf4ea8b5af4c545f81bf47120.
 //
-// Solidity: event MatchUpdated(uint256 indexed id, (uint8,uint256) indexed status)
+// Solidity: event MatchUpdated(uint256 indexed id, (uint8,uint256,address) indexed status)
 func (_Swapica *SwapicaFilterer) WatchMatchUpdated(opts *bind.WatchOpts, sink chan<- *SwapicaMatchUpdated, id []*big.Int, status []SwapicaStatus) (event.Subscription, error) {
 
 	var idRule []interface{}
@@ -1465,9 +1590,9 @@ func (_Swapica *SwapicaFilterer) WatchMatchUpdated(opts *bind.WatchOpts, sink ch
 	}), nil
 }
 
-// ParseMatchUpdated is a log parse operation binding the contract event 0xcbe9b920dc102a8df3c3c6ac1710e90d35d00308330e4f948c90f534fe87aff2.
+// ParseMatchUpdated is a log parse operation binding the contract event 0xa9b5f1914efdf39593d3001993d7ebde53d6c14bf4ea8b5af4c545f81bf47120.
 //
-// Solidity: event MatchUpdated(uint256 indexed id, (uint8,uint256) indexed status)
+// Solidity: event MatchUpdated(uint256 indexed id, (uint8,uint256,address) indexed status)
 func (_Swapica *SwapicaFilterer) ParseMatchUpdated(log types.Log) (*SwapicaMatchUpdated, error) {
 	event := new(SwapicaMatchUpdated)
 	if err := _Swapica.contract.UnpackLog(event, "MatchUpdated", log); err != nil {
@@ -1551,9 +1676,9 @@ type SwapicaOrderUpdated struct {
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterOrderUpdated is a free log retrieval operation binding the contract event 0x73a9fddc811bd10d7714a344a6c50d5b982b2f9fae4b3c5bd76f0d01afe6d0b8.
+// FilterOrderUpdated is a free log retrieval operation binding the contract event 0x4c59495d370247039622ce9df1b0843542a363a1b9055118689976b177709635.
 //
-// Solidity: event OrderUpdated(uint256 indexed id, (uint8,uint256) indexed status)
+// Solidity: event OrderUpdated(uint256 indexed id, (uint8,uint256,address) indexed status)
 func (_Swapica *SwapicaFilterer) FilterOrderUpdated(opts *bind.FilterOpts, id []*big.Int, status []SwapicaStatus) (*SwapicaOrderUpdatedIterator, error) {
 
 	var idRule []interface{}
@@ -1572,9 +1697,9 @@ func (_Swapica *SwapicaFilterer) FilterOrderUpdated(opts *bind.FilterOpts, id []
 	return &SwapicaOrderUpdatedIterator{contract: _Swapica.contract, event: "OrderUpdated", logs: logs, sub: sub}, nil
 }
 
-// WatchOrderUpdated is a free log subscription operation binding the contract event 0x73a9fddc811bd10d7714a344a6c50d5b982b2f9fae4b3c5bd76f0d01afe6d0b8.
+// WatchOrderUpdated is a free log subscription operation binding the contract event 0x4c59495d370247039622ce9df1b0843542a363a1b9055118689976b177709635.
 //
-// Solidity: event OrderUpdated(uint256 indexed id, (uint8,uint256) indexed status)
+// Solidity: event OrderUpdated(uint256 indexed id, (uint8,uint256,address) indexed status)
 func (_Swapica *SwapicaFilterer) WatchOrderUpdated(opts *bind.WatchOpts, sink chan<- *SwapicaOrderUpdated, id []*big.Int, status []SwapicaStatus) (event.Subscription, error) {
 
 	var idRule []interface{}
@@ -1618,9 +1743,9 @@ func (_Swapica *SwapicaFilterer) WatchOrderUpdated(opts *bind.WatchOpts, sink ch
 	}), nil
 }
 
-// ParseOrderUpdated is a log parse operation binding the contract event 0x73a9fddc811bd10d7714a344a6c50d5b982b2f9fae4b3c5bd76f0d01afe6d0b8.
+// ParseOrderUpdated is a log parse operation binding the contract event 0x4c59495d370247039622ce9df1b0843542a363a1b9055118689976b177709635.
 //
-// Solidity: event OrderUpdated(uint256 indexed id, (uint8,uint256) indexed status)
+// Solidity: event OrderUpdated(uint256 indexed id, (uint8,uint256,address) indexed status)
 func (_Swapica *SwapicaFilterer) ParseOrderUpdated(log types.Log) (*SwapicaOrderUpdated, error) {
 	event := new(SwapicaOrderUpdated)
 	if err := _Swapica.contract.UnpackLog(event, "OrderUpdated", log); err != nil {

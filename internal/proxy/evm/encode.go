@@ -116,11 +116,12 @@ func EncodeExecuteMatch(calldata executeMatchCalldata) (string, error) {
 
 type executeOrderCalldata struct {
 	Selector
-	ChainId  *big.Int
-	Swapica  common.Address
-	OrderId  *big.Int
-	Receiver common.Address
-	MatchId  *big.Int
+	ChainId      *big.Int
+	Swapica      common.Address
+	OrderId      *big.Int
+	Receiver     common.Address
+	MatchSwapica common.Address
+	MatchId      *big.Int
 }
 
 func EncodeExecuteOrder(calldata executeOrderCalldata) (string, error) {
@@ -130,6 +131,7 @@ func EncodeExecuteOrder(calldata executeOrderCalldata) (string, error) {
 		{Name: "swapica", Type: "address"},
 		{Name: "order_id", Type: "uint256"},
 		{Name: "receiver", Type: "address"},
+		{Name: "match_swapica", Type: "address"},
 		{Name: "match_id", Type: "uint256"},
 	})
 	if err != nil {

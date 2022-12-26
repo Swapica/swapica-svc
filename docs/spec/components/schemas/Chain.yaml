@@ -10,6 +10,7 @@ allOf:
           - name
           - chain_type
           - chain_params
+          - swap_contract
         properties:
           name:
             type: string
@@ -19,6 +20,8 @@ allOf:
             example: https://some.storage.com/image.png
           chain_type:
             $ref: '#/components/schemas/ChainType'
+          swap_contract:
+            type: string
           chain_params:
             type: object
             format: interface{}

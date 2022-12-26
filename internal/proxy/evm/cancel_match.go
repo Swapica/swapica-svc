@@ -18,7 +18,7 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 		return nil, err
 	}
 
-	tx, err := e.cancelMatchErc20(params, sender)
+	tx, err := e.cancelMatch(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
-func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
+func (e *evmProxy) cancelMatch(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeCancelMatch(cancelMatchCalldata{
 		Selector: cancelMatch,
 		ChainId:  params.Order.DestChain,
@@ -56,7 +56,7 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 		return nil, err
 	}
 
-	if ok, err := e.validateCancelMatchErc20(params, sender); !ok {
+	if ok, err := e.validateCancelMatch(params, sender); !ok {
 		return nil, err
 	}
 
@@ -84,16 +84,19 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 	return tx, nil
 }
 
-func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, sender common.Address) (bool, error) {
+func (e *evmProxy) validateCancelMatch(params types.CancelMatchParams, sender common.Address) (bool, error) {
 	if params.Match.Account != sender {
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != enums.Canceled && params.OrderStatus.ExecutedBy == params.Match.Id {
-		return false, errors.New("cannot cancel a match if order executed by matcher or not canceled")
+	notCanceled := enums.State(params.OrderStatus.State) != enums.Canceled
+	isExecutedBy := enums.State(params.OrderStatus.State) == enums.Executed && params.OrderStatus.ExecutedBy == params.Match.Id
+	isExecutedByThis := params.OrderStatus.MatchSwapica == e.swapperContract
+	if notCanceled && isExecutedBy && isExecutedByThis {
+		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
 	}
 
-	if params.MatchStatus.State != enums.AwaitingFinalization {
+	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
 	}
 

@@ -11,7 +11,7 @@ import (
 func (e *evmProxy) CancelOrder(params types.CancelOrderParams) (interface{}, error) {
 	sender := common.HexToAddress(params.Sender)
 
-	tx, err := e.cancelOrderErc20(params, sender)
+	tx, err := e.cancelOrder(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +23,8 @@ func (e *evmProxy) CancelOrder(params types.CancelOrderParams) (interface{}, err
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
-func (e *evmProxy) cancelOrderErc20(params types.CancelOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
-	if params.OrderStatus.State != enums.AwaitingMatch {
+func (e *evmProxy) cancelOrder(params types.CancelOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
+	if enums.State(params.OrderStatus.State) != enums.AwaitingMatch {
 		return nil, errors.New("can not cancel order if it is not awaiting match")
 	}
 

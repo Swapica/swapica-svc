@@ -12,7 +12,7 @@ import (
 func (e *evmProxy) CreateOrder(params types.CreateOrderParams) (interface{}, error) {
 	sender := common.HexToAddress(params.Sender)
 
-	tx, err := e.createOrderErc20(params, sender)
+	tx, err := e.createOrder(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +23,7 @@ func (e *evmProxy) CreateOrder(params types.CreateOrderParams) (interface{}, err
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
-func (e *evmProxy) createOrderErc20(params types.CreateOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
+func (e *evmProxy) createOrder(params types.CreateOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
 	tokenToSell := common.HexToAddress(params.TokenToSell)
 	tokenToBuy := common.HexToAddress(params.TokenToBuy)
 	destChainId, err := parseChainParams(params.DestChain.ChainParams)

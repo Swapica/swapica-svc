@@ -18,7 +18,7 @@ func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, e
 		return nil, err
 	}
 
-	tx, err := e.executeMatchErc20(params, sender)
+	tx, err := e.executeMatch(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, e
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
-func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
+func (e *evmProxy) executeMatch(params types.ExecuteMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeExecuteMatch(executeMatchCalldata{
 		Selector: executeMatch,
 		ChainId:  params.Order.DestChain,
@@ -57,7 +57,7 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 		return nil, err
 	}
 
-	if ok, err := e.validateExecuteMatchErc20(params); !ok {
+	if ok, err := e.validateExecuteMatch(params); !ok {
 		return nil, err
 	}
 
@@ -85,8 +85,8 @@ func (e *evmProxy) executeMatchErc20(params types.ExecuteMatchParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (bool, error) {
-	if params.OrderStatus.State != enums.Executed {
+func (e *evmProxy) validateExecuteMatch(params types.ExecuteMatchParams) (bool, error) {
+	if enums.State(params.OrderStatus.State) != enums.Executed {
 		return false, errors.New("cannot execute a match if order is not executed")
 	}
 
@@ -94,7 +94,11 @@ func (e *evmProxy) validateExecuteMatchErc20(params types.ExecuteMatchParams) (b
 		return false, errors.New("cannot execute a match if order executed by someone other match")
 	}
 
-	if params.MatchStatus.State != enums.AwaitingFinalization {
+	if params.OrderStatus.MatchSwapica.String() != e.swapperContract.String() {
+		return false, errors.New("cannot execute a match if the match is not created by this swapica contract")
+	}
+
+	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot execute a match when it is not awaiting finalization")
 	}
 

@@ -3,20 +3,20 @@ package evm
 import (
 	"math/big"
 
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
-	"github.com/Swapica/swapica-svc/resources"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func (e *evmProxy) GetMatchStatus(id *big.Int) (resources.Status, error) {
+func (e *evmProxy) GetMatchStatus(id *big.Int) (swapica.SwapicaStatus, error) {
 	matchStatus, err := e.swapper.MatchStatus(&bind.CallOpts{}, id)
 	if err != nil {
-		return resources.Status{}, err
+		return swapica.SwapicaStatus{}, err
 	}
 
-	result := resources.Status{
-		State:      enums.State(matchStatus.State),
-		ExecutedBy: matchStatus.ExecutedBy,
+	result := swapica.SwapicaStatus{
+		State:        matchStatus.State,
+		ExecutedBy:   matchStatus.ExecutedBy,
+		MatchSwapica: matchStatus.MatchSwapica,
 	}
 
 	return result, err

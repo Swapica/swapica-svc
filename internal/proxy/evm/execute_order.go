@@ -18,7 +18,7 @@ func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, e
 		return nil, err
 	}
 
-	tx, err := e.executeOrderErc20(params, sender)
+	tx, err := e.executeOrder(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, e
 	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
-func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
+func (e *evmProxy) executeOrder(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeExecuteOrder(executeOrderCalldata{
 		Selector: executeOrder,
 		ChainId:  params.Match.OriginChain,
@@ -58,7 +58,7 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 		return nil, err
 	}
 
-	if ok, err := e.validateExecuteOrderErc20(params); !ok {
+	if ok, err := e.validateExecuteOrder(params); !ok {
 		return nil, err
 	}
 
@@ -86,16 +86,16 @@ func (e *evmProxy) executeOrderErc20(params types.ExecuteOrderParams, sender com
 	return tx, nil
 }
 
-func (e *evmProxy) validateExecuteOrderErc20(params types.ExecuteOrderParams) (bool, error) {
+func (e *evmProxy) validateExecuteOrder(params types.ExecuteOrderParams) (bool, error) {
 	if params.Receiver != params.Match.Account.String() {
 		return false, errors.New("invalid receiver")
 	}
 
-	if params.OrderStatus.State != enums.AwaitingMatch {
+	if enums.State(params.OrderStatus.State) != enums.AwaitingMatch {
 		return false, errors.New("cannot execute order if it is not awaiting match")
 	}
 
-	if params.MatchStatus.State != enums.AwaitingFinalization {
+	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot execute order if match status is not awaiting finalization")
 	}
 
