@@ -7,7 +7,7 @@ package resources
 // ChainType : Type of blockchain by supported wallets, APIs, etc.
 type ChainType string
 
-// List of ChainType.
+// List of ChainType
 const (
 	EVM ChainType = "evm"
 )

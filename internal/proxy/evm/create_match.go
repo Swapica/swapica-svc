@@ -30,7 +30,7 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 		return nil, err
 	}
 
-	if params.OrderStatus.State != enums.AwaitingMatch {
+	if enums.State(params.OrderStatus.State) != enums.AwaitingMatch {
 		return nil, errors.New("can not create match if order is not awaiting match")
 	}
 
