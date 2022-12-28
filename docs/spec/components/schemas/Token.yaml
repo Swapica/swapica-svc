@@ -26,6 +26,7 @@ allOf:
         type: object
         required:
           - chains
+          - token_chains
         properties:
           chains:
             type: object
@@ -33,4 +34,6 @@ allOf:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ChainKey'
+                  oneOf:
+                    - $ref: '#/components/schemas/ChainKey'
+                    - $ref: '#/components/schemas/TokenChainKey'

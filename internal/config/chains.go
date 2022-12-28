@@ -6,6 +6,7 @@ import (
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"strconv"
 )
 
 func NewChainer(getter kv.Getter) Chainer {
@@ -65,16 +66,18 @@ func (c *chainer) readConfig() {
 
 		tokenChains := make([]data.TokenChain, 0)
 		for _, token := range cfg.Tokens {
-			for i, tokenChain := range token.Chains {
+			for i, tokenChain := range token.TokenChains {
+				tokenChain.ID = strconv.Itoa(i)
 				tokenChain.TokenID = token.ID
-				token.Chains[i] = tokenChain
-				tokenChains = append(tokenChains, tokenChain)
+				token.TokenChains[i] = tokenChain
 				for k, chain := range cfg.Chains {
 					if chain.ID == tokenChain.ChainID {
 						chain.Tokens = append(chain.Tokens, tokenChain)
+						tokenChain.Chains = append(tokenChain.Chains, chain)
 						cfg.Chains[k] = chain
 					}
 				}
+				tokenChains = append(tokenChains, tokenChain)
 			}
 		}
 
