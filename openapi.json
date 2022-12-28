@@ -359,7 +359,7 @@
                 ],
                 "properties": {
                   "data": {
-                    "$ref": "#/components/schemas/MatchOrderRequest"
+                    "$ref": "#/components/schemas/CreateMatchRequest"
                   }
                 }
               }
@@ -577,6 +577,89 @@
           }
         }
       }
+    },
+    "/v1/tokens": {
+      "get": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Get supported list of tokens",
+        "operationId": "getTokenList",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "chain",
+                  "token_chain"
+                ]
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "filter[token_type]",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TokenType"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Token"
+                      }
+                    },
+                    "included": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chain"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -646,6 +729,10 @@
             "type": "string",
             "description": "The address of the sender",
             "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "raw_tx_data": {
+            "type": "string",
+            "description": "redeem tx data with collected signatures"
           }
         }
       },
@@ -747,24 +834,36 @@
       "CreateMatchRequest": {
         "type": "object",
         "required": [
-          "src_chain",
           "dest_chain",
           "order_id",
+          "src_chain",
           "sender"
         ],
         "properties": {
-          "src_chain": {
-            "type": "string"
-          },
           "dest_chain": {
-            "type": "string"
+            "type": "string",
+            "description": "The identifier of the chain in which the match occurred to a particular order.",
+            "example": "goerli"
           },
           "order_id": {
-            "type": "integer",
-            "format": "uint"
+            "type": "string",
+            "format": "int",
+            "description": "The identifier of the order that was selected by the user to create the match.",
+            "example": 1
+          },
+          "src_chain": {
+            "type": "string",
+            "description": "The identifier of the chain in which the order was placed.",
+            "example": "sepolia"
           },
           "sender": {
-            "type": "string"
+            "type": "string",
+            "description": "The address of the sender",
+            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "raw_tx_data": {
+            "type": "string",
+            "description": "redeem tx data with collected signatures"
           }
         }
       },
@@ -1021,6 +1120,10 @@
             "type": "string",
             "description": "The address of the sender",
             "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "raw_tx_data": {
+            "type": "string",
+            "description": "redeem tx data with collected signatures"
           }
         }
       },
@@ -1066,140 +1169,136 @@
             "type": "string",
             "description": "The address of the sender",
             "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+          },
+          "raw_tx_data": {
+            "type": "string",
+            "description": "redeem tx data with collected signatures"
           }
         }
       },
-      "Match": {
+      "Token": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TokenKey"
+          },
+          {
+            "type": "object",
+            "required": [
+              "attributes",
+              "relationships"
+            ],
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "symbol",
+                  "token_type"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "description": "Link to icon",
+                    "example": "https://some.storage.com/image.png"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "token_type": {
+                    "$ref": "#/components/schemas/TokenType"
+                  }
+                }
+              },
+              "relationships": {
+                "type": "object",
+                "required": [
+                  "chains"
+                ],
+                "properties": {
+                  "chains": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ChainKey"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TokenChain": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TokenKey"
+          },
+          {
+            "type": "object",
+            "required": [
+              "attributes",
+              "relationships"
+            ],
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "chain_id",
+                  "token_id",
+                  "contract_address",
+                  "token_type"
+                ],
+                "properties": {
+                  "chain_id": {
+                    "type": "string"
+                  },
+                  "token_id": {
+                    "type": "string"
+                  },
+                  "contract_address": {
+                    "type": "string"
+                  },
+                  "token_type": {
+                    "$ref": "#/components/schemas/TokenType"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TokenKey": {
         "type": "object",
         "required": [
-          "account",
-          "token_to_sell"
+          "id",
+          "type"
         ],
         "properties": {
           "id": {
-            "type": "string",
-            "format": "big.Int"
+            "type": "string"
           },
-          "origin_order_id": {
+          "type": {
             "type": "string",
-            "format": "big.Int"
-          },
-          "account": {
-            "type": "string",
-            "format": "common.Address"
-          },
-          "token_to_sell": {
-            "type": "string",
-            "format": "common.Address"
-          },
-          "amount_to_sell": {
-            "type": "string",
-            "format": "big.Int"
-          },
-          "origin_chain": {
-            "type": "string",
-            "format": "big.Int"
+            "enum": [
+              "token"
+            ]
           }
         }
       },
-      "MatchOrderRequest": {
-        "type": "object",
-        "required": [
-          "dest_chain",
-          "order_id",
-          "token_to_sell",
-          "amount_to_sell",
-          "src_chain",
-          "sender"
-        ],
-        "properties": {
-          "dest_chain": {
-            "type": "string",
-            "description": "The identifier of the chain in which the match occurred to a particular order.",
-            "example": "goerli"
-          },
-          "order_id": {
-            "type": "string",
-            "format": "int",
-            "description": "The identifier of the order that was selected by the user to create the match.",
-            "example": 1
-          },
-          "token_to_sell": {
-            "type": "string",
-            "description": "The address of the token that the matcher wanted to sell in order  to buy the token that was offered for sale.",
-            "example": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-          },
-          "amount_to_sell": {
-            "type": "string",
-            "format": "int",
-            "description": "The number of tokens that the user provided to purchase  tokens that were placed in the order",
-            "example": 100
-          },
-          "src_chain": {
-            "type": "string",
-            "description": "The identifier of the chain in which the order was placed.",
-            "example": "sepolia"
-          },
-          "sender": {
-            "type": "string",
-            "description": "The address of the sender",
-            "example": "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
-          }
-        }
-      },
-      "Order": {
-        "type": "object",
-        "required": [
-          "account",
-          "token_to_sell",
-          "token_to_buy"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "big.Int"
-          },
-          "account": {
-            "type": "string",
-            "format": "common.Address"
-          },
-          "token_to_sell": {
-            "type": "string",
-            "format": "common.Address"
-          },
-          "token_to_buy": {
-            "type": "string",
-            "format": "common.Address"
-          },
-          "amount_to_sell": {
-            "type": "string",
-            "format": "big.Int"
-          },
-          "amount_to_buy": {
-            "type": "string",
-            "format": "big.Int"
-          },
-          "dest_chain": {
-            "type": "string",
-            "format": "big.Int"
-          }
-        }
-      },
-      "Status": {
-        "type": "object",
-        "required": [
-          "state"
-        ],
-        "properties": {
-          "state": {
-            "type": "string",
-            "format": "enums.State"
-          },
-          "executed_by": {
-            "type": "string",
-            "format": "big.Int"
-          }
-        }
+      "TokenType": {
+        "type": "string",
+        "description": "Type of token",
+        "enum": [
+          "fungible",
+          "non-fungible"
+        ]
       }
     },
     "parameters": {
