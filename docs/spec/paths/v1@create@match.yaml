@@ -39,4 +39,4 @@ post:
             - data
           properties:
             data:
-              $ref: '#/components/schemas/MatchOrderRequest'
+              $ref: '#/components/schemas/CreateMatchRequest'

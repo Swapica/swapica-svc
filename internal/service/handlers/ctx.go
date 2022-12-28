@@ -17,6 +17,8 @@ const (
 	signerCtxKey
 	chainsQCtxKey
 	proxyRepoCtxKey
+	tokensQCtxKey
+	tokenChainsQCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -49,6 +51,16 @@ func ChainsQ(r *http.Request) data.ChainsQ {
 	return r.Context().Value(chainsQCtxKey).(data.ChainsQ).New()
 }
 
+func CtxTokenChainsQ(entry data.TokenChainsQ) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, tokenChainsQCtxKey, entry)
+	}
+}
+
+func TokenChainsQ(r *http.Request) data.TokenChainsQ {
+	return r.Context().Value(tokenChainsQCtxKey).(data.TokenChainsQ).New()
+}
+
 func CtxProxyRepo(entry proxy.ProxyRepo) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, proxyRepoCtxKey, entry)
@@ -57,4 +69,14 @@ func CtxProxyRepo(entry proxy.ProxyRepo) func(context.Context) context.Context {
 
 func ProxyRepo(r *http.Request) proxy.ProxyRepo {
 	return r.Context().Value(proxyRepoCtxKey).(proxy.ProxyRepo)
+}
+
+func CtxTokensQ(entry data.TokensQ) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, tokensQCtxKey, entry)
+	}
+}
+
+func TokensQ(r *http.Request) data.TokensQ {
+	return r.Context().Value(tokensQCtxKey).(data.TokensQ).New()
 }

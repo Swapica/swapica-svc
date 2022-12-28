@@ -3,23 +3,23 @@ package evm
 import (
 	"math/big"
 
-	"github.com/Swapica/swapica-svc/resources"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func (e *evmProxy) GetMatch(id *big.Int) (resources.Match, error) {
+func (e *evmProxy) GetMatch(id *big.Int) (swapica.SwapicaMatch, error) {
 	match, err := e.swapper.Matches(&bind.CallOpts{}, id)
 	if err != nil {
-		return resources.Match{}, err
+		return swapica.SwapicaMatch{}, err
 	}
 
-	result := resources.Match{
-		Account:       match.Account,
-		AmountToSell:  match.AmountToSell,
+	result := swapica.SwapicaMatch{
 		Id:            match.Id,
-		OriginChain:   match.OriginChain,
 		OriginOrderId: match.OriginOrderId,
+		Account:       match.Account,
 		TokenToSell:   match.TokenToSell,
+		AmountToSell:  match.AmountToSell,
+		OriginChain:   match.OriginChain,
 	}
 
 	return result, err

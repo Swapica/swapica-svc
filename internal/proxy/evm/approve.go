@@ -40,7 +40,8 @@ func (e *evmProxy) Approve(params types.ApproveParams) (interface{}, error) {
 		return nil, nil
 	}
 
-	return encodeTx(tx, fromAddress, e.chainID, params.Chain.ID, nil)
+	confirmed := true
+	return encodeTx(tx, fromAddress, e.chainID, params.Chain.ID, &confirmed)
 }
 
 func (e *evmProxy) approveErc20(tokenAddress common.Address, approveFrom common.Address) (*ethTypes.Transaction, error) {

@@ -13,7 +13,12 @@ import (
 func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, error) {
 	sender := common.HexToAddress(params.Sender)
 
-	tx, err := e.cancelMatchErc20(params, sender)
+	threshold, err := e.getThreshold()
+	if err != nil {
+		return nil, err
+	}
+
+	tx, err := e.cancelMatch(params, sender)
 	if err != nil {
 		return nil, err
 	}
@@ -21,10 +26,26 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 		return nil, nil
 	}
 
-	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, nil)
+	signNumber := int64(1)
+
+	// if tx provided check it and sign; otherwise use created tx
+	if params.RawTxData != nil {
+		tx, signNumber, err = e.checkTxDataAndSign(
+			buildTransactOpts(sender),
+			tx,
+			*params.RawTxData,
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	confirmed := signNumber >= threshold
+
+	return encodeTx(tx, sender, e.chainID, params.SrcChain.ID, &confirmed)
 }
 
-func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
+func (e *evmProxy) cancelMatch(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeCancelMatch(cancelMatchCalldata{
 		Selector: cancelMatch,
 		ChainId:  params.Order.DestChain,
@@ -35,7 +56,7 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 		return nil, err
 	}
 
-	if ok, err := e.validateCancelMatchErc20(params, sender); !ok {
+	if ok, err := e.validateCancelMatch(params, sender); !ok {
 		return nil, err
 	}
 
@@ -63,17 +84,22 @@ func (e *evmProxy) cancelMatchErc20(params types.CancelMatchParams, sender commo
 	return tx, nil
 }
 
-func (e *evmProxy) validateCancelMatchErc20(params types.CancelMatchParams, sender common.Address) (bool, error) {
+func (e *evmProxy) validateCancelMatch(params types.CancelMatchParams, sender common.Address) (bool, error) {
 	if params.Match.Account != sender {
 		return false, errors.New("invalid sender")
 	}
 
-	if params.OrderStatus.State != enums.Canceled ||
-		(params.OrderStatus.State == enums.Executed && params.OrderStatus.ExecutedBy == params.Match.Id) {
-		return false, errors.New("cannot cancel a match if order is canceled or executed by matcher")
+	if enums.State(params.OrderStatus.State) == enums.Canceled && enums.State(params.OrderStatus.State) != enums.Executed {
+		return false, errors.New("cannot cancel a match if order is canceled or executed")
 	}
 
-	if params.MatchStatus.State != enums.AwaitingFinalization {
+	isExecutedByTheMatch := params.OrderStatus.ExecutedBy.String() == params.Match.Id.String() && enums.State(params.OrderStatus.State) == enums.Executed
+	isExecutedByThis := params.OrderStatus.MatchSwapica == e.swapperContract
+	if isExecutedByTheMatch && isExecutedByThis {
+		return false, errors.New("cannot cancel a match if order is executed from this swapica contract match")
+	}
+
+	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
 	}
 

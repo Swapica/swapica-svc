@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 	"net/http"
 
@@ -74,7 +75,7 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := ProxyRepo(r).Get(request.DestChain).CancelMatch(types.CancelMatchParams{
+	params := types.CancelMatchParams{
 		Sender:      request.Sender,
 		SrcChain:    *srcChain,
 		DestChain:   *destChain,
@@ -82,7 +83,18 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		Order:       order,
 		OrderStatus: orderStatus,
 		MatchStatus: matchStatus,
-	})
+	}
+
+	if request.RawTxData != nil {
+		rawTxData, err := hexutil.Decode(*request.RawTxData)
+		if err != nil {
+			return
+		}
+
+		params.RawTxData = &rawTxData
+	}
+
+	tx, err := ProxyRepo(r).Get(request.DestChain).CancelMatch(params)
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create cancel match transaction")
 		ape.RenderErr(w, problems.BadRequest(err)...)
