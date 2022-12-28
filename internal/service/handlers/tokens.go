@@ -54,7 +54,7 @@ func GetTokenList(w http.ResponseWriter, r *http.Request) {
 func chainsId(tokens []data.Token) []string {
 	result := make(map[string]struct{})
 	for _, token := range tokens {
-		for _, chain := range token.Chains {
+		for _, chain := range token.TokenChains {
 			result[chain.ChainID] = struct{}{}
 		}
 	}

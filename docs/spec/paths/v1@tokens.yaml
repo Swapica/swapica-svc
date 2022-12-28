@@ -36,7 +36,9 @@ get:
               included:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Chain'
+                  oneOf:
+                    - $ref: '#/components/schemas/ChainKey'
+                    - $ref: '#/components/schemas/TokenChainKey'
     400:
       description: bad input parameter
       content:

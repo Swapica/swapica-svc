@@ -15,10 +15,10 @@ data:
       chains:
         - chain_id: "goerli"
           token_type: erc20
-          contract_address: "0x1bF3684E7bd3ecac57dA485EF110A131321fF64D"
+          contract_address: "0x5a735AefD4F924884414d24d4F6acA128f85C70b"
         - chain_id: "chapel"
           token_type: erc20
-          contract_address: "0xB3DA24CEf82514341C9390764D764C40163bE7a2"
+          contract_address: "0x2b52FE12464e1C233628B4A5eb37803485f49A4F"
   chains:
     - id: "chapel"
       name: "BSC Testnet"

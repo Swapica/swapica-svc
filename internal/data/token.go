@@ -19,5 +19,5 @@ type Token struct {
 	Icon   *string             `fig:"icon"`
 	Type   resources.TokenType `fig:"type,required"`
 	// Relation
-	Chains []TokenChain `fig:"chains,required"`
+	TokenChains []TokenChain `fig:"chains,required"`
 }
