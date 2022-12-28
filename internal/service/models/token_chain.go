@@ -23,3 +23,17 @@ func newTokenChainModel(value data.TokenChain) *resources.TokenChain {
 		},
 	}
 }
+
+func newTokenChainModelWithRelation(value data.TokenChain) *resources.TokenChain {
+	model := newTokenChainModel(value)
+	model.Relationships = resources.TokenChainRelationships{
+		Chains: resources.RelationCollection{
+			Data: make([]resources.Key, len(value.Chains)),
+		},
+	}
+	for i, chain := range value.Chains {
+		model.Relationships.Chains.Data[i] = newChainKey(chain.ID)
+	}
+
+	return model
+}

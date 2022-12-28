@@ -70,13 +70,14 @@ func (c *chainer) readConfig() {
 				tokenChain.ID = strconv.Itoa(i)
 				tokenChain.TokenID = token.ID
 				token.TokenChains[i] = tokenChain
-				tokenChains = append(tokenChains, tokenChain)
 				for k, chain := range cfg.Chains {
 					if chain.ID == tokenChain.ChainID {
 						chain.Tokens = append(chain.Tokens, tokenChain)
+						tokenChain.Chains = append(tokenChain.Chains, chain)
 						cfg.Chains[k] = chain
 					}
 				}
+				tokenChains = append(tokenChains, tokenChain)
 			}
 		}
 

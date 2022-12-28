@@ -6,7 +6,8 @@ package resources
 
 type TokenChain struct {
 	Key
-	Attributes TokenChainAttributes `json:"attributes"`
+	Attributes    TokenChainAttributes    `json:"attributes"`
+	Relationships TokenChainRelationships `json:"relationships"`
 }
 type TokenChainResponse struct {
 	Data     TokenChain `json:"data"`

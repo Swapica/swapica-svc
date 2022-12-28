@@ -54,7 +54,7 @@ func NewTokenListResponse(tokens []data.Token, chains []data.Chain, tokenChains 
 	}
 
 	for _, tokenChain := range tokenChains {
-		response.Included.Add(newTokenChainModel(tokenChain))
+		response.Included.Add(newTokenChainModelWithRelation(tokenChain))
 	}
 
 	return response

@@ -12,7 +12,9 @@ type TokenChainsQ interface {
 type TokenChain struct {
 	ID              string
 	TokenID         string
-	ChainID         string  `fig:"chain_id,required"`
-	ContractAddress *string `fig:"contract_address"`
-	TokenType       string  `fig:"token_type,required"`
+	ChainID         string
+	ContractAddress *string
+	TokenType       string
+	// Relation
+	Chains []Chain
 }
