@@ -1,0 +1,42 @@
+post:
+  tags:
+    - Match
+  summary: Cancel match
+  operationId: cancelMatch
+  description: Provides a transaction to close a match that has not been completed.
+  responses:
+    '200':
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/EvmTransaction'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chain'
+    '404':
+      description: Could not find specified match
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    '500':
+      description: Failed to create transaction
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - data
+          properties:
+            data:
+              $ref: '#/components/schemas/CancelMatchRequest'

@@ -1,0 +1,71 @@
+log:
+  level: debug
+  disable_sentry: true
+
+listener:
+  addr: :8000
+
+data:
+  tokens: # list of supported tokens
+    - id: "1"
+      name: "Tether USDT"
+      symbol: "USDT"
+      icon: "https://etherscan.io/token/images/tether_32.png"
+      type: fungible
+      chains:
+        - chain_id: "goerli"
+          token_type: erc20
+          contract_address: "0x5a735AefD4F924884414d24d4F6acA128f85C70b"
+        - chain_id: "chapel"
+          token_type: erc20
+          contract_address: "0x2b52FE12464e1C233628B4A5eb37803485f49A4F"
+  chains:
+    - id: "chapel"
+      name: "BSC Testnet"
+      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
+      type: "evm"
+      swap_contract: "" # address of swap contract
+      rpc_endpoint: "" # network rpc
+      confirmations: 12
+      chain_params:
+        chain_id: 97
+        native_symbol: "BNB"
+        native_decimals: 18
+        rpc: "https://data-seed-prebsc-1-s1.binance.org:8545"
+        explorer_url: "https://explorer.binance.org/smart-testnet"
+        chain_hex_id: "0x5"
+    - id: "goerli"
+      name: "Ethereum Goerli"
+      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
+      type: "evm"
+      swap_contract: "" # address of swap contract
+      rpc_endpoint: "" # network rpc
+      confirmations: 12
+      chain_params:
+        chain_id: 5
+        native_symbol: "ETH"
+        native_decimals: 18
+        rpc: "https://goerli.infura.io/v3/67e22c92921e42839c983fbdecf33525"
+        explorer_url: "https://goerli.etherscan.io/"
+        chain_hex_id: "0x5"
+    - id: "q-testnet"
+      name: "Q testnet"
+      icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
+      type: "evm"
+      swap_contract: ""
+      rpc_endpoint: ""
+      confirmations: 12
+      chain_params:
+        chain_id: 35443
+        native_symbol: "Q"
+        native_decimals: 18
+        rpc: "https://rpc.qtestnet.org"
+        explorer_url: "https://explorer.q.org"
+        chain_hex_id: "0x8A73"
+
+
+signer:
+  eth_signer: "" # Private key of signer
+
+cop:
+  disabled: true

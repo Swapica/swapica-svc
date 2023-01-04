@@ -1,4 +1,9 @@
 # Binaries for programs and plugins
+.vscode/
+.idea/
+config.*.yaml
+docs/node_modules
+docs/web_deploy
 *.exe
 *.exe~
 *.dll
@@ -13,3 +18,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+swapica-svc
+.golangci.yml
+generate.sh
+docs/yarn.lock
