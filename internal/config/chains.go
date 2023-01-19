@@ -65,9 +65,11 @@ func (c *chainer) readConfig() {
 		}
 
 		tokenChains := make([]data.TokenChain, 0)
+		id := 0
 		for _, token := range cfg.Tokens {
 			for i, tokenChain := range token.TokenChains {
-				tokenChain.ID = strconv.Itoa(i)
+				tokenChain.ID = strconv.Itoa(id)
+				id += 1
 				tokenChain.TokenID = token.ID
 				token.TokenChains[i] = tokenChain
 				for k, chain := range cfg.Chains {
