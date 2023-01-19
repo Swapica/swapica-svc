@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/resources"
-	"strconv"
 )
 
 func newTokenKey(id string) resources.Key {
@@ -32,8 +31,8 @@ func newTokenModelWithRelation(value data.Token) *resources.Token {
 			Data: make([]resources.Key, len(value.TokenChains)),
 		},
 	}
-	for i, _ := range value.TokenChains {
-		model.Relationships.Chains.Data[i] = newTokenChainKey(strconv.Itoa(i))
+	for i, tokenChain := range value.TokenChains {
+		model.Relationships.Chains.Data[i] = newTokenChainKey(tokenChain.ID)
 	}
 
 	return model
