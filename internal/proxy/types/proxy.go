@@ -21,10 +21,8 @@ type Proxy interface {
 
 	Approve(params ApproveParams) (interface{}, error)
 
-	GetOrder(id *big.Int) (swapica.SwapicaOrder, error)
-	GetMatch(id *big.Int) (swapica.SwapicaMatch, error)
-	GetOrderStatus(id *big.Int) (swapica.SwapicaStatus, error)
-	GetMatchStatus(id *big.Int) (swapica.SwapicaStatus, error)
+	GetOrder(id *big.Int) (swapica.ISwapicaOrder, error)
+	GetMatch(id *big.Int) (swapica.ISwapicaMatch, error)
 }
 
 type CreateOrderParams struct {
@@ -38,54 +36,46 @@ type CreateOrderParams struct {
 }
 
 type CancelOrderParams struct {
-	Sender      string
-	SrcChain    data.Chain
-	Order       swapica.SwapicaOrder
-	OrderStatus swapica.SwapicaStatus
+	Sender   string
+	SrcChain data.Chain
+	Order    swapica.ISwapicaOrder
 }
 
 type ExecuteOrderParams struct {
-	Sender      string
-	SrcChain    data.Chain
-	DestChain   data.Chain
-	Order       swapica.SwapicaOrder
-	Match       swapica.SwapicaMatch
-	OrderStatus swapica.SwapicaStatus
-	MatchStatus swapica.SwapicaStatus
-	Receiver    string
-	RawTxData   *[]byte
+	Sender    string
+	SrcChain  data.Chain
+	DestChain data.Chain
+	Order     swapica.ISwapicaOrder
+	Match     swapica.ISwapicaMatch
+	Receiver  string
+	RawTxData *[]byte
 }
 
 type CreateMatchParams struct {
-	SrcChain    data.Chain
-	DestChain   data.Chain
-	Order       swapica.SwapicaOrder
-	OrderStatus swapica.SwapicaStatus
-	Sender      string
-	RawTxData   *[]byte
+	SrcChain  data.Chain
+	DestChain data.Chain
+	Order     swapica.ISwapicaOrder
+	Sender    string
+	RawTxData *[]byte
 }
 
 type CancelMatchParams struct {
-	Sender      string
-	SrcChain    data.Chain
-	DestChain   data.Chain
-	Order       swapica.SwapicaOrder
-	Match       swapica.SwapicaMatch
-	OrderStatus swapica.SwapicaStatus
-	MatchStatus swapica.SwapicaStatus
-	RawTxData   *[]byte
+	Sender    string
+	SrcChain  data.Chain
+	DestChain data.Chain
+	Order     swapica.ISwapicaOrder
+	Match     swapica.ISwapicaMatch
+	RawTxData *[]byte
 }
 
 type ExecuteMatchParams struct {
-	Sender      string
-	SrcChain    data.Chain
-	DestChain   data.Chain
-	Order       swapica.SwapicaOrder
-	Match       swapica.SwapicaMatch
-	OrderStatus swapica.SwapicaStatus
-	MatchStatus swapica.SwapicaStatus
-	Receiver    string
-	RawTxData   *[]byte
+	Sender    string
+	SrcChain  data.Chain
+	DestChain data.Chain
+	Order     swapica.ISwapicaOrder
+	Match     swapica.ISwapicaMatch
+	Receiver  string
+	RawTxData *[]byte
 }
 
 type ApproveParams struct {

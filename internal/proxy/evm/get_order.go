@@ -1,27 +1,20 @@
 package evm
 
 import (
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"math/big"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func (e *evmProxy) GetOrder(id *big.Int) (swapica.SwapicaOrder, error) {
-	order, err := e.swapper.Orders(&bind.CallOpts{}, id)
+func (e *evmProxy) GetOrder(id *big.Int) (swapica.ISwapicaOrder, error) {
+	orders, err := e.swapper.GetAllOrders(&bind.CallOpts{}, id, bigOne)
 	if err != nil {
-		return swapica.SwapicaOrder{}, err
+		return swapica.ISwapicaOrder{}, err
+	}
+	if 1 != len(orders) {
+		panic(errNotSingleOrder)
 	}
 
-	result := swapica.SwapicaOrder{
-		Id:           order.Id,
-		Account:      order.Account,
-		TokenToSell:  order.TokenToSell,
-		TokenToBuy:   order.TokenToBuy,
-		AmountToSell: order.AmountToSell,
-		AmountToBuy:  order.AmountToBuy,
-		DestChain:    order.DestChain,
-	}
-
-	return result, err
+	return orders[0], err
 }

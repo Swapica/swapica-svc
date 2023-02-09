@@ -7,20 +7,13 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func (e *evmProxy) GetMatch(id *big.Int) (swapica.SwapicaMatch, error) {
-	match, err := e.swapper.Matches(&bind.CallOpts{}, id)
+func (e *evmProxy) GetMatch(id *big.Int) (swapica.ISwapicaMatch, error) {
+	matches, err := e.swapper.GetAllMatches(&bind.CallOpts{}, id, bigOne)
 	if err != nil {
-		return swapica.SwapicaMatch{}, err
+		return swapica.ISwapicaMatch{}, err
 	}
-
-	result := swapica.SwapicaMatch{
-		Id:            match.Id,
-		OriginOrderId: match.OriginOrderId,
-		Account:       match.Account,
-		TokenToSell:   match.TokenToSell,
-		AmountToSell:  match.AmountToSell,
-		OriginChain:   match.OriginChain,
+	if len(matches) != 1 {
+		panic(errNotSingleOrder)
 	}
-
-	return result, err
+	return matches[0], nil
 }

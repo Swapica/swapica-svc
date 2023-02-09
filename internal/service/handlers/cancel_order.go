@@ -40,18 +40,10 @@ func CancelOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get order status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	tx, err := ProxyRepo(r).Get(request.SrcChain).CancelOrder(types.CancelOrderParams{
-		Sender:      request.Sender,
-		SrcChain:    *srcChain,
-		Order:       order,
-		OrderStatus: orderStatus,
+		Sender:   request.Sender,
+		SrcChain: *srcChain,
+		Order:    order,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to create cancel order transaction")
