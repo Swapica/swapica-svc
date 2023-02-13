@@ -5,6 +5,7 @@ import (
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 func (e *evmProxy) GetOrder(id *big.Int) (swapica.ISwapicaOrder, error) {
@@ -12,7 +13,10 @@ func (e *evmProxy) GetOrder(id *big.Int) (swapica.ISwapicaOrder, error) {
 	if err != nil {
 		return swapica.ISwapicaOrder{}, err
 	}
-	if 1 != len(orders) {
+	if len(orders) == 0 {
+		return swapica.ISwapicaOrder{}, errors.New("order does not exist")
+	}
+	if len(orders) > 1 {
 		panic(errNotSingleOrder)
 	}
 
