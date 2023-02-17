@@ -9,7 +9,8 @@ import (
 )
 
 func (e *evmProxy) GetMatch(id *big.Int) (swapica.ISwapicaMatch, error) {
-	matches, err := e.swapper.GetAllMatches(&bind.CallOpts{}, id, bigOne)
+	offset := id.Sub(id, bigOne)
+	matches, err := e.swapper.GetAllMatches(&bind.CallOpts{}, offset, bigOne)
 	if err != nil {
 		return swapica.ISwapicaMatch{}, err
 	}

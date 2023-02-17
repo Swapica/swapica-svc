@@ -9,7 +9,8 @@ import (
 )
 
 func (e *evmProxy) GetOrder(id *big.Int) (swapica.ISwapicaOrder, error) {
-	orders, err := e.swapper.GetAllOrders(&bind.CallOpts{}, id, bigOne)
+	offset := id.Sub(id, bigOne)
+	orders, err := e.swapper.GetAllOrders(&bind.CallOpts{}, offset, bigOne)
 	if err != nil {
 		return swapica.ISwapicaOrder{}, err
 	}
