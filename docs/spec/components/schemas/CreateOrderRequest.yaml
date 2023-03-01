@@ -14,15 +14,13 @@ properties:
     type: string
     description: address of token contract
   amount_to_sell:
-    type: integer
-    format: "*big.Int"
+    type: string
     description: uint256 value, multiplied by 10^token_decimals
   token_to_buy:
     type: string
     description: address of token contract
   amount_to_buy:
-    type: integer
-    format: "*big.Int"
+    type: string
     description: uint256 value, multiplied by 10^token_decimals
   dest_chain:
     type: string
