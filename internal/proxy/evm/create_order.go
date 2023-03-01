@@ -33,12 +33,12 @@ func (e *evmProxy) createOrder(params types.CreateOrderParams, sender common.Add
 	}
 
 	tx, err := e.swapper.CreateOrder(
-		GetTransactionOpts(params.TokenToSell, sender, big.NewInt(int64(params.AmountToSell.Float()))),
+		GetTransactionOpts(params.TokenToSell, sender, params.AmountToSell),
 		swapica.ISwapicaCreateOrderRequest{
 			TokenToSell:      tokenToSell,
-			AmountToSell:     big.NewInt(int64(params.AmountToSell.Float())),
+			AmountToSell:     params.AmountToSell,
 			TokenToBuy:       tokenToBuy,
-			AmountToBuy:      big.NewInt(int64(params.AmountToBuy.Float())),
+			AmountToBuy:      params.AmountToBuy,
 			DestinationChain: big.NewInt(destChainId.ChainId),
 		},
 	)

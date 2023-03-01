@@ -3,7 +3,6 @@ package types
 import (
 	"math/big"
 
-	"github.com/Swapica/swapica-svc/internal/amount"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -29,9 +28,9 @@ type CreateOrderParams struct {
 	Sender       string
 	SrcChain     data.Chain
 	TokenToSell  string
-	AmountToSell amount.Amount
+	AmountToSell *big.Int
 	TokenToBuy   string
-	AmountToBuy  amount.Amount
+	AmountToBuy  *big.Int
 	DestChain    data.Chain
 }
 
