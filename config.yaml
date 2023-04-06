@@ -7,8 +7,8 @@ listener:
 
 runner:
   send_auto_execute: false
-  endpoint: "http://order-aggregator/integrations/order-aggregator"
-  endpoint_ws: "ws://order-aggregator/ws"
+  url: "http://order-aggregator/"
+  ws: "ws://order-aggregator/ws"
   timeout: 1s
 
 data:
