@@ -61,28 +61,12 @@ func CancelMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(big.NewInt(int64(request.MatchId)))
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get match status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(match.OriginOrderId)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get order status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	params := types.CancelMatchParams{
-		Sender:      request.Sender,
-		SrcChain:    *srcChain,
-		DestChain:   *destChain,
-		Match:       match,
-		Order:       order,
-		OrderStatus: orderStatus,
-		MatchStatus: matchStatus,
+		Sender:    request.Sender,
+		SrcChain:  *srcChain,
+		DestChain: *destChain,
+		Match:     match,
+		Order:     order,
 	}
 
 	if request.RawTxData != nil {

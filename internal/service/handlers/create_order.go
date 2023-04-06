@@ -49,9 +49,9 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		Sender:       request.Sender,
 		SrcChain:     *srcChain,
 		TokenToSell:  request.TokenToSell,
-		AmountToSell: request.AmountToSell,
+		AmountToSell: &request.AmountToSell,
 		TokenToBuy:   request.TokenToBuy,
-		AmountToBuy:  request.AmountToBuy,
+		AmountToBuy:  &request.AmountToBuy,
 		DestChain:    *destChain,
 	})
 	if err != nil {

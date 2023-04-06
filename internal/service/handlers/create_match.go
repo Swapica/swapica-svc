@@ -53,19 +53,11 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get order status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	params := types.CreateMatchParams{
-		SrcChain:    *srcChain,
-		DestChain:   *destChain,
-		Order:       order,
-		OrderStatus: orderStatus,
-		Sender:      request.Sender,
+		SrcChain:  *srcChain,
+		DestChain: *destChain,
+		Order:     order,
+		Sender:    request.Sender,
 	}
 
 	if request.RawTxData != nil {

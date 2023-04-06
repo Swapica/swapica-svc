@@ -60,29 +60,13 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(match.Id)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get match status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get order status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	params := types.ExecuteOrderParams{
-		SrcChain:    *srcChain,
-		DestChain:   *destChain,
-		Order:       order,
-		Match:       match,
-		OrderStatus: orderStatus,
-		MatchStatus: matchStatus,
-		Receiver:    request.Receiver,
-		Sender:      request.Sender,
+		SrcChain:  *srcChain,
+		DestChain: *destChain,
+		Order:     order,
+		Match:     match,
+		Receiver:  request.Receiver,
+		Sender:    request.Sender,
 	}
 
 	if request.RawTxData != nil {

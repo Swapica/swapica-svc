@@ -48,9 +48,9 @@ func (e *evmProxy) CancelMatch(params types.CancelMatchParams) (interface{}, err
 func (e *evmProxy) cancelMatch(params types.CancelMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeCancelMatch(cancelMatchCalldata{
 		Selector: cancelMatch,
-		ChainId:  params.Order.DestChain,
+		ChainId:  params.Order.DestinationChain,
 		Swapica:  e.swapperContract,
-		MatchId:  params.Match.Id,
+		MatchId:  params.Match.MatchId,
 	})
 	if err != nil {
 		return nil, err
@@ -85,21 +85,21 @@ func (e *evmProxy) cancelMatch(params types.CancelMatchParams, sender common.Add
 }
 
 func (e *evmProxy) validateCancelMatch(params types.CancelMatchParams, sender common.Address) (bool, error) {
-	if params.Match.Account != sender {
+	if params.Match.Creator != sender {
 		return false, errors.New("invalid sender")
 	}
 
-	if enums.State(params.OrderStatus.State) == enums.Canceled && enums.State(params.OrderStatus.State) != enums.Executed {
+	if enums.State(params.Order.Status.State) == enums.Canceled && enums.State(params.Order.Status.State) != enums.Executed {
 		return false, errors.New("cannot cancel a match if order is canceled or executed")
 	}
 
-	isExecutedByTheMatch := params.OrderStatus.ExecutedBy.String() == params.Match.Id.String() && enums.State(params.OrderStatus.State) == enums.Executed
-	isExecutedByThis := params.OrderStatus.MatchSwapica == e.swapperContract
+	isExecutedByTheMatch := params.Order.Status.MatchId.String() == params.Match.MatchId.String() && enums.State(params.Order.Status.State) == enums.Executed
+	isExecutedByThis := params.Order.Status.MatchSwapica == e.swapperContract
 	if isExecutedByTheMatch && isExecutedByThis {
 		return false, errors.New("cannot cancel a match if order is executed from this swapica contract match")
 	}
 
-	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
+	if enums.State(params.Match.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot cancel a match when it is not awaiting finalization")
 	}
 
@@ -111,7 +111,7 @@ func (e *evmProxy) validateCancelMatch(params types.CancelMatchParams, sender co
 		return false, errors.New("mismatch between order token to buy and match token to sell")
 	}
 
-	if params.Order.Id.String() != params.Match.OriginOrderId.String() {
+	if params.Order.OrderId.String() != params.Match.OriginOrderId.String() {
 		return false, errors.New("mismatch between order id and match origin order id")
 	}
 

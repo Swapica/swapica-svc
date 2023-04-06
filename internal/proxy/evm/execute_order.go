@@ -48,11 +48,11 @@ func (e *evmProxy) ExecuteOrder(params types.ExecuteOrderParams) (interface{}, e
 func (e *evmProxy) executeOrder(params types.ExecuteOrderParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeExecuteOrder(executeOrderCalldata{
 		Selector:     executeOrder,
-		ChainId:      params.Match.OriginChain,
+		ChainId:      params.Match.OriginChainId,
 		Swapica:      e.swapperContract,
-		OrderId:      params.Order.Id,
-		Receiver:     params.Match.Account,
-		MatchId:      params.Match.Id,
+		OrderId:      params.Order.OrderId,
+		Receiver:     params.Match.Creator,
+		MatchId:      params.Match.MatchId,
 		MatchSwapica: common.HexToAddress(params.DestChain.SwapContract),
 	})
 	if err != nil {
@@ -88,15 +88,15 @@ func (e *evmProxy) executeOrder(params types.ExecuteOrderParams, sender common.A
 }
 
 func (e *evmProxy) validateExecuteOrder(params types.ExecuteOrderParams) (bool, error) {
-	if params.Receiver != params.Match.Account.String() {
+	if params.Receiver != params.Match.Creator.String() {
 		return false, errors.New("invalid receiver")
 	}
 
-	if enums.State(params.OrderStatus.State) != enums.AwaitingMatch {
+	if enums.State(params.Order.Status.State) != enums.AwaitingMatch {
 		return false, errors.New("cannot execute order if it is not awaiting match")
 	}
 
-	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
+	if enums.State(params.Match.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot execute order if match status is not awaiting finalization")
 	}
 
@@ -108,7 +108,7 @@ func (e *evmProxy) validateExecuteOrder(params types.ExecuteOrderParams) (bool, 
 		return false, errors.New("mismatch between order token to buy and match token to sell")
 	}
 
-	if params.Order.Id.String() != params.Match.OriginOrderId.String() {
+	if params.Order.OrderId.String() != params.Match.OriginOrderId.String() {
 		return false, errors.New("mismatch between order id and match origin order id")
 	}
 

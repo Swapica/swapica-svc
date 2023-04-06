@@ -48,10 +48,10 @@ func (e *evmProxy) ExecuteMatch(params types.ExecuteMatchParams) (interface{}, e
 func (e *evmProxy) executeMatch(params types.ExecuteMatchParams, sender common.Address) (*ethTypes.Transaction, error) {
 	orderData, err := EncodeExecuteMatch(executeMatchCalldata{
 		Selector: executeMatch,
-		ChainId:  params.Order.DestChain,
+		ChainId:  params.Order.DestinationChain,
 		Swapica:  e.swapperContract,
-		MatchId:  params.Match.Id,
-		Receiver: params.Order.Account,
+		MatchId:  params.Match.MatchId,
+		Receiver: params.Order.Creator,
 	})
 	if err != nil {
 		return nil, err
@@ -86,23 +86,23 @@ func (e *evmProxy) executeMatch(params types.ExecuteMatchParams, sender common.A
 }
 
 func (e *evmProxy) validateExecuteMatch(params types.ExecuteMatchParams) (bool, error) {
-	if enums.State(params.OrderStatus.State) != enums.Executed {
+	if enums.State(params.Order.Status.State) != enums.Executed {
 		return false, errors.New("cannot execute a match if order is not executed")
 	}
 
-	if params.OrderStatus.ExecutedBy.String() != params.Match.Id.String() {
+	if params.Order.Status.MatchId.String() != params.Match.MatchId.String() {
 		return false, errors.New("cannot execute a match if order executed by someone other match")
 	}
 
-	if params.OrderStatus.MatchSwapica.String() != e.swapperContract.String() {
+	if params.Order.Status.MatchSwapica.String() != e.swapperContract.String() {
 		return false, errors.New("cannot execute a match if the match is not created by this swapica contract")
 	}
 
-	if enums.State(params.MatchStatus.State) != enums.AwaitingFinalization {
+	if enums.State(params.Match.State) != enums.AwaitingFinalization {
 		return false, errors.New("cannot execute a match when it is not awaiting finalization")
 	}
 
-	if params.Receiver != params.Order.Account.String() {
+	if params.Receiver != params.Order.Creator.String() {
 		return false, errors.New("invalid receiver")
 	}
 
@@ -114,7 +114,7 @@ func (e *evmProxy) validateExecuteMatch(params types.ExecuteMatchParams) (bool, 
 		return false, errors.New("mismatch between order token to buy and match token to sell")
 	}
 
-	if params.Order.Id.String() != params.Match.OriginOrderId.String() {
+	if params.Order.OrderId.String() != params.Match.OriginOrderId.String() {
 		return false, errors.New("mismatch between order id and match origin order id")
 	}
 

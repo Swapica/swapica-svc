@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math/big"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
@@ -17,6 +18,9 @@ import (
 const (
 	gasLimit = 300000
 )
+
+var bigOne = big.NewInt(1)
+var errNotSingleOrder = errors.New("expected 1 order/match to be returned or execution to be reverted") // must not occur
 
 func skipSig(address common.Address, transaction *types.Transaction) (*types.Transaction, error) {
 	return transaction, nil

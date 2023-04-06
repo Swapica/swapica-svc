@@ -1,26 +1,25 @@
 package evm
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math/big"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func (e *evmProxy) GetMatch(id *big.Int) (swapica.SwapicaMatch, error) {
-	match, err := e.swapper.Matches(&bind.CallOpts{}, id)
+func (e *evmProxy) GetMatch(id *big.Int) (swapica.ISwapicaMatch, error) {
+	offset := big.NewInt(0).Sub(id, bigOne)
+	matches, err := e.swapper.GetAllMatches(&bind.CallOpts{}, offset, bigOne)
 	if err != nil {
-		return swapica.SwapicaMatch{}, err
+		return swapica.ISwapicaMatch{}, err
+	}
+	if len(matches) == 0 {
+		return swapica.ISwapicaMatch{}, errors.New("match order does not exist")
+	}
+	if len(matches) > 1 {
+		panic(errNotSingleOrder)
 	}
 
-	result := swapica.SwapicaMatch{
-		Id:            match.Id,
-		OriginOrderId: match.OriginOrderId,
-		Account:       match.Account,
-		TokenToSell:   match.TokenToSell,
-		AmountToSell:  match.AmountToSell,
-		OriginChain:   match.OriginChain,
-	}
-
-	return result, err
+	return matches[0], err
 }
