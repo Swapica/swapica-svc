@@ -1,6 +1,10 @@
 package service
 
 import (
+	"github.com/Swapica/swapica-svc/internal/data"
+	"github.com/Swapica/swapica-svc/internal/data/mem"
+	"github.com/Swapica/swapica-svc/internal/proxy"
+	"github.com/Swapica/swapica-svc/internal/runner"
 	"net"
 	"net/http"
 
@@ -17,9 +21,9 @@ type service struct {
 	cfg      config.Config
 }
 
-func (s *service) run() error {
+func (s *service) run(proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens data.TokensQ) error {
 	s.log.Info("Service started")
-	r := s.router()
+	r := s.router(proxyRepo, chains, tokens)
 
 	if err := s.copus.RegisterChi(r); err != nil {
 		return errors.Wrap(err, "cop failed")
@@ -38,7 +42,25 @@ func newService(cfg config.Config) *service {
 }
 
 func Run(cfg config.Config) {
-	if err := newService(cfg).run(); err != nil {
+	proxyRepo, err := proxy.NewProxyRepo(cfg.Chains(), cfg.Signer())
+	if err != nil {
+		panic(err)
+	}
+
+	chains := mem.NewChainsQ(cfg.Chains())
+	tokens := mem.NewTokenQ(cfg.Tokens())
+
+	newRunner, err := runner.NewRunner(cfg, proxyRepo, chains, tokens)
+	if err != nil {
+		panic(err)
+	}
+
+	if cfg.RunnerCfg().SendAutoExecute {
+		newRunner.ExecuteOrders()
+	}
+	go newRunner.ListenNewOrders()
+
+	if err := newService(cfg).run(proxyRepo, chains, tokens); err != nil {
 		panic(err)
 	}
 }
