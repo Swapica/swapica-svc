@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"math/big"
 	"net/http"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
@@ -45,13 +46,21 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	amountToSell, _ := big.NewInt(0).SetString(request.AmountToSell, 10)
+	amountToBuy, _ := big.NewInt(0).SetString(request.AmountToBuy, 10)
+	if amountToSell == nil || amountToBuy == nil {
+		Log(r).Debug("invalid big int value for amount to sell or amount to buy")
+		ape.RenderErr(w, problems.BadRequest(errors.New("invalid big int value for amount to sell or amount to buy"))...)
+		return
+	}
+
 	tx, err := ProxyRepo(r).Get(request.SrcChain).CreateOrder(types.CreateOrderParams{
 		Sender:       request.Sender,
 		SrcChain:     *srcChain,
 		TokenToSell:  request.TokenToSell,
-		AmountToSell: &request.AmountToSell,
+		AmountToSell: amountToSell,
 		TokenToBuy:   request.TokenToBuy,
-		AmountToBuy:  &request.AmountToBuy,
+		AmountToBuy:  amountToBuy,
 		DestChain:    *destChain,
 	})
 	if err != nil {
