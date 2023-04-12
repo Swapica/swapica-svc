@@ -20,7 +20,6 @@ func newTokenModel(value data.Token) *resources.Token {
 			Symbol:    value.Symbol,
 			Icon:      value.Icon,
 			TokenType: value.Type,
-			MaxAmount: value.MaxAmount,
 		},
 	}
 }
