@@ -13,11 +13,12 @@ type TokensQ interface {
 }
 
 type Token struct {
-	ID     string              `fig:"id,required"`
-	Name   string              `fig:"name,required"`
-	Symbol string              `fig:"symbol,required"`
-	Icon   *string             `fig:"icon"`
-	Type   resources.TokenType `fig:"type,required"`
+	ID        string              `fig:"id,required"`
+	Name      string              `fig:"name,required"`
+	Symbol    string              `fig:"symbol,required"`
+	Icon      *string             `fig:"icon"`
+	Type      resources.TokenType `fig:"type,required"`
+	MaxAmount uint64              `fig:"max_amount"`
 	// Relation
 	TokenChains []TokenChain `fig:"chains,required"`
 }

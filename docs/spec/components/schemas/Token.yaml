@@ -11,6 +11,7 @@ allOf:
           - name
           - symbol
           - token_type
+          - max_amount
         properties:
           name:
             type: string
@@ -22,6 +23,9 @@ allOf:
             type: string
           token_type:
             $ref: '#/components/schemas/TokenType'
+          max_amount:
+            type: integer
+            format: uint64
       relationships:
         type: object
         required:
