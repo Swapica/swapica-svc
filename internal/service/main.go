@@ -1,17 +1,19 @@
 package service
 
 import (
+	"context"
+	"github.com/Swapica/swapica-svc/internal/config"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/data/mem"
 	"github.com/Swapica/swapica-svc/internal/proxy"
 	"github.com/Swapica/swapica-svc/internal/runner"
-	"net"
-	"net/http"
-
-	"github.com/Swapica/swapica-svc/internal/config"
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/distributed_lab/running"
+	"net"
+	"net/http"
+	"time"
 )
 
 type service struct {
@@ -55,10 +57,7 @@ func Run(cfg config.Config) {
 		panic(err)
 	}
 
-	if cfg.RunnerCfg().SendAutoExecute {
-		newRunner.ExecuteOrders()
-	}
-	go newRunner.ListenNewOrders()
+	go running.WithBackOff(context.Background(), cfg.Log(), "swapica", newRunner.Run, 10*time.Second, 5*time.Second, 5*time.Minute)
 
 	if err := newService(cfg).run(proxyRepo, chains, tokens); err != nil {
 		panic(err)

@@ -4,13 +4,19 @@ import (
 	"gitlab.com/distributed_lab/figure/v3"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"net/url"
 	"time"
 )
 
+type Aggregator struct {
+	Endpoint *url.URL `fig:"endpoint,required"`
+	Ws       string   `fig:"ws,required"`
+}
+
 type RunnerConfig struct {
 	SendAutoExecute bool          `fig:"send_auto_execute,required"`
-	Url             string        `fig:"url,required"`
-	Ws              string        `fig:"ws,required"`
+	RelayerEndpoint *url.URL      `fig:"relayer_endpoint,required"`
+	Aggregator      Aggregator    `fig:"aggregator,required"`
 	Timeout         time.Duration `fig:"timeout,required"`
 }
 

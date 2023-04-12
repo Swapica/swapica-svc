@@ -7,9 +7,11 @@ listener:
 
 runner:
   send_auto_execute: false
-  url: "http://order-aggregator/"
-  ws: "ws://order-aggregator/ws"
-  timeout: 1s
+  relayer_endpoint: "http://relayer/integrations/relayer"
+  timeout: 3s
+  aggregator:
+    endpoint: "http://order-aggregator/integrations/order-aggregator"
+    ws: "ws://order-aggregator/ws"
 
 data:
   tokens: # list of supported tokens

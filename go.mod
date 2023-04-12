@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/Swapica/order-aggregator-svc v0.1.0-rc.0
+	github.com/Swapica/relayer-svc v0.1.0-rc.0
 	github.com/alecthomas/kingpin v2.2.6+incompatible
 	github.com/ethereum/go-ethereum v1.11.2
 	github.com/go-chi/chi v4.1.2+incompatible
@@ -16,6 +17,7 @@ require (
 	gitlab.com/distributed_lab/json-api-connector v0.2.4
 	gitlab.com/distributed_lab/kit v1.11.1
 	gitlab.com/distributed_lab/logan v3.8.1+incompatible
+	gitlab.com/distributed_lab/running v1.6.0
 	gitlab.com/distributed_lab/urlval v3.0.0+incompatible
 	gitlab.com/tokend/connectors v0.1.9
 	golang.org/x/exp v0.0.0-20230206171751-46f607a40771
@@ -55,7 +57,6 @@ require (
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	gitlab.com/distributed_lab/figure v2.1.0+incompatible // indirect
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
-	gitlab.com/distributed_lab/running v1.6.0 // indirect
 	gitlab.com/tokend/go v3.15.0+incompatible // indirect
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
