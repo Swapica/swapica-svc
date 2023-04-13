@@ -23,8 +23,8 @@ allOf:
           token_type:
             $ref: '#/components/schemas/TokenType'
           max_amount:
-            type: integer
-            format: uint64
+            type: number
+            format: float64
       relationships:
         type: object
         required:
