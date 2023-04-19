@@ -40,6 +40,7 @@ func (e *evmProxy) createOrder(params types.CreateOrderParams, sender common.Add
 			TokenToBuy:       tokenToBuy,
 			AmountToBuy:      params.AmountToBuy,
 			DestinationChain: big.NewInt(destChainId.ChainId),
+			UseRelayer:       params.UseRalyer,
 		},
 	)
 	if err != nil {

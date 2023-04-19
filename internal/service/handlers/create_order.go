@@ -47,11 +47,11 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	amountToBuy,ok1:=big.NewInt(0).SetString(request.AmountToBuy,10)
-	amountToSell,ok2:=big.NewInt(0).SetString(request.AmountToSell,10)
-	if !ok1||!ok2{
-		msg:="amount_to_buy or amount_to_sell is not big integer"
-		Log(r).WithFields(logan.F{"amount_to_buy": request.AmountToBuy,"amount_to_sell": request.AmountToSell}).Debug(msg)
+	amountToBuy, ok1 := big.NewInt(0).SetString(request.AmountToBuy, 10)
+	amountToSell, ok2 := big.NewInt(0).SetString(request.AmountToSell, 10)
+	if !ok1 || !ok2 {
+		msg := "amount_to_buy or amount_to_sell is not big integer"
+		Log(r).WithFields(logan.F{"amount_to_buy": request.AmountToBuy, "amount_to_sell": request.AmountToSell}).Debug(msg)
 		ape.RenderErr(w, problems.BadRequest(nil)...)
 		return
 	}
@@ -64,6 +64,7 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		TokenToBuy:   request.TokenToBuy,
 		AmountToBuy:  amountToBuy,
 		DestChain:    *destChain,
+		UseRalyer:    request.UseRelayer,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to make create order transaction")

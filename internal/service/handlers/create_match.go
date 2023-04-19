@@ -55,10 +55,11 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := types.CreateMatchParams{
-		SrcChain:  *srcChain,
-		DestChain: *destChain,
-		Order:     order,
-		Sender:    request.Sender,
+		SrcChain:   *srcChain,
+		DestChain:  *destChain,
+		Order:      order,
+		Sender:     request.Sender,
+		UseRelayer: request.UseRelayer,
 	}
 
 	if request.RawTxData != nil {

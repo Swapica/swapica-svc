@@ -16,4 +16,5 @@ type CreateOrderRequest struct {
 	TokenToBuy string `json:"token_to_buy"`
 	// address of token contract
 	TokenToSell string `json:"token_to_sell"`
+	UseRelayer  bool   `json:"use_relayer"`
 }
