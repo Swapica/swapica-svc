@@ -10,6 +10,7 @@ import (
 	"github.com/Swapica/swapica-svc/internal/service/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 func CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -46,11 +47,12 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	amountToSell, _ := big.NewInt(0).SetString(request.AmountToSell, 10)
-	amountToBuy, _ := big.NewInt(0).SetString(request.AmountToBuy, 10)
-	if amountToSell == nil || amountToBuy == nil {
-		Log(r).Debug("invalid big int value for amount to sell or amount to buy")
-		ape.RenderErr(w, problems.BadRequest(errors.New("invalid big int value for amount to sell or amount to buy"))...)
+	amountToBuy, ok1 := big.NewInt(0).SetString(request.AmountToBuy, 10)
+	amountToSell, ok2 := big.NewInt(0).SetString(request.AmountToSell, 10)
+	if !ok1 || !ok2 {
+		msg := "amount_to_buy or amount_to_sell is not big integer"
+		Log(r).WithFields(logan.F{"amount_to_buy": request.AmountToBuy, "amount_to_sell": request.AmountToSell}).Debug(msg)
+		ape.RenderErr(w, problems.BadRequest(nil)...)
 		return
 	}
 
@@ -62,6 +64,7 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		TokenToBuy:   request.TokenToBuy,
 		AmountToBuy:  amountToBuy,
 		DestChain:    *destChain,
+		UseRalyer:    request.UseRelayer,
 	})
 	if err != nil {
 		Log(r).WithError(err).Error("failed to make create order transaction")

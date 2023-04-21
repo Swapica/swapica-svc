@@ -20,6 +20,7 @@ func newTokenChainModel(value data.TokenChain) *resources.TokenChain {
 			ContractAddress: *value.ContractAddress,
 			TokenId:         value.TokenID,
 			TokenType:       resources.TokenType(value.TokenType),
+			MaxAmount:       value.MaxAmount,
 		},
 	}
 }

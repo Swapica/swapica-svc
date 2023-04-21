@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 	"net/http"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 )
@@ -54,10 +54,11 @@ func CreateMatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := types.CreateMatchParams{
-		SrcChain:  *srcChain,
-		DestChain: *destChain,
-		Order:     order,
-		Sender:    request.Sender,
+		SrcChain:   *srcChain,
+		DestChain:  *destChain,
+		Order:      order,
+		Sender:     request.Sender,
+		UseRelayer: request.UseRelayer,
 	}
 
 	if request.RawTxData != nil {

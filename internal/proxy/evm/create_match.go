@@ -30,6 +30,7 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 		TokenToSell:  params.Order.TokenToBuy,
 		AmountToSell: params.Order.AmountToBuy,
 		OriginChain:  big.NewInt(srcChainParams.ChainId),
+		UseRelayer:   params.UseRelayer,
 	})
 	if err != nil {
 		return nil, err

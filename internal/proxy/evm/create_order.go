@@ -1,9 +1,9 @@
 package evm
 
 import (
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"math/big"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -40,6 +40,7 @@ func (e *evmProxy) createOrder(params types.CreateOrderParams, sender common.Add
 			TokenToBuy:       tokenToBuy,
 			AmountToBuy:      params.AmountToBuy,
 			DestinationChain: big.NewInt(destChainId.ChainId),
+			UseRelayer:       params.UseRalyer,
 		},
 	)
 	if err != nil {

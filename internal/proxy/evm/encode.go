@@ -25,6 +25,7 @@ type createMatchCalldata struct {
 	TokenToSell  common.Address
 	AmountToSell *big.Int
 	OriginChain  *big.Int
+	UseRelayer   bool
 }
 
 func CreateMatchCalldata(calldata createMatchCalldata) (string, error) {
@@ -36,6 +37,7 @@ func CreateMatchCalldata(calldata createMatchCalldata) (string, error) {
 		{Name: "token_to_sell", Type: "address"},
 		{Name: "amount_to_sell", Type: "uint256"},
 		{Name: "origin_chain", Type: "uint256"},
+		{Name: "use_relayer", Type: "bool"},
 	})
 	if err != nil {
 		return "", err

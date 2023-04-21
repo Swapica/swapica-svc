@@ -14,5 +14,6 @@ type CreateMatchRequest struct {
 	// The address of the sender
 	Sender string `json:"sender"`
 	// The identifier of the chain in which the order was placed.
-	SrcChain string `json:"src_chain"`
+	SrcChain   string `json:"src_chain"`
+	UseRelayer bool   `json:"use_relayer"`
 }

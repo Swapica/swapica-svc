@@ -32,6 +32,7 @@ type CreateOrderParams struct {
 	TokenToBuy   string
 	AmountToBuy  *big.Int
 	DestChain    data.Chain
+	UseRalyer    bool
 }
 
 type CancelOrderParams struct {
@@ -51,11 +52,12 @@ type ExecuteOrderParams struct {
 }
 
 type CreateMatchParams struct {
-	SrcChain  data.Chain
-	DestChain data.Chain
-	Order     swapica.ISwapicaOrder
-	Sender    string
-	RawTxData *[]byte
+	SrcChain   data.Chain
+	DestChain  data.Chain
+	Order      swapica.ISwapicaOrder
+	Sender     string
+	RawTxData  *[]byte
+	UseRelayer bool
 }
 
 type CancelMatchParams struct {

@@ -23,14 +23,14 @@ import (
 )
 
 type Runner struct {
-	socketUrl       string
-	aggregator      *jsonapi.Connector
-	relayer         *jsonapi.Connector
-	log             *logan.Entry
-	proxyRepo       proxy.ProxyRepo
-	chains          data.ChainsQ
-	tokens          data.TokensQ
-	sendAutoExecute bool
+	socketUrl  string
+	aggregator *jsonapi.Connector
+	relayer    *jsonapi.Connector
+	log        *logan.Entry
+	proxyRepo  proxy.ProxyRepo
+	chains     data.ChainsQ
+	tokens     data.TokensQ
+	useRelayer bool
 }
 
 func NewRunner(cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens data.TokensQ) (*Runner, error) {
@@ -49,14 +49,14 @@ func NewRunner(cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ
 	)
 
 	runner := &Runner{
-		socketUrl:       cfg.RunnerCfg().Aggregator.Ws,
-		aggregator:      aggregator,
-		relayer:         relayer,
-		log:             cfg.Log(),
-		proxyRepo:       proxyRepo,
-		chains:          chains,
-		tokens:          tokens,
-		sendAutoExecute: cfg.RunnerCfg().SendAutoExecute,
+		socketUrl:  cfg.RunnerCfg().Aggregator.Ws,
+		aggregator: aggregator,
+		relayer:    relayer,
+		log:        cfg.Log(),
+		proxyRepo:  proxyRepo,
+		chains:     chains,
+		tokens:     tokens,
+		useRelayer: cfg.RunnerCfg().UseRelayer,
 	}
 
 	return runner, nil
@@ -65,7 +65,7 @@ func NewRunner(cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ
 func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 	var limit = 100
 	var response resources.OrderListResponse
-	u, _ := url.Parse(fmt.Sprintf("/orders?filter[auto_execute]=true&filter[state]=1&page[number]=0&page[limit]=%d", limit))
+	u, _ := url.Parse(fmt.Sprintf("/orders?filter[use_relayer]=true&filter[state]=1&page[number]=0&page[limit]=%d", limit))
 	for {
 		err = r.aggregator.Get(u, &response)
 		if err != nil {
@@ -83,7 +83,7 @@ func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 func (r *Runner) fetchMatches() (matches []resources.Match, err error) {
 	var limit = 100
 	var response resources.MatchListResponse
-	u, _ := url.Parse(fmt.Sprintf("/match_orders?filter[auto_execute]=true&filter[state]=2&page[number]=0&page[limit]=%d", limit))
+	u, _ := url.Parse(fmt.Sprintf("/match_orders?filter[use_relayer]=true&filter[state]=2&page[number]=0&page[limit]=%d", limit))
 	for {
 		err = r.aggregator.Get(u, &response)
 		if err != nil {
@@ -157,7 +157,7 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}) error {
 
 	err := r.relayer.PostJSON(u, evmTxReq, context.Background(), nil)
 	if err != nil {
-		return errors.Wrap(err, "relayer return error")
+		return errors.Wrap(err, "relayer returns error")
 	}
 	return nil
 }
@@ -289,13 +289,19 @@ func (r *Runner) ListenNewOrders() error {
 		return errors.Wrap(err, "failed to dial ws url")
 	}
 
-	defer socket.Close()
+	defer func(socket *websocket.Conn) {
+		err := socket.Close()
+		if err != nil {
+			r.log.WithError(err).Debug("failed to close socket")
+		}
+	}(socket)
 
 	r.log.Info("Try to start listen new orders")
 	for {
 		_, message, err := socket.ReadMessage()
 		if err != nil {
-			r.log.Debug("read error:", err)
+			r.log.WithError(err).Debug("websocket read error")
+			return err
 		}
 
 		err = r.handleOrderUpdates(message)
@@ -306,7 +312,7 @@ func (r *Runner) ListenNewOrders() error {
 }
 
 func (r *Runner) Run(_ context.Context) error {
-	if r.sendAutoExecute {
+	if r.useRelayer {
 		if err := r.ExecuteOrders(); err != nil {
 			return err
 		}

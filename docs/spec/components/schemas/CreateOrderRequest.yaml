@@ -7,6 +7,7 @@ required:
   - amount_to_buy
   - dest_chain
   - sender
+  - use_relayer
 properties:
   src_chain:
     type: string
@@ -26,3 +27,5 @@ properties:
     type: string
   sender:
     type: string
+  use_relayer:
+    type: bool

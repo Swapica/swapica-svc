@@ -15,6 +15,7 @@ type TokenChain struct {
 	ChainID         string
 	ContractAddress *string
 	TokenType       string
+	MaxAmount       float64
 	// Relation
 	Chains []Chain
 }

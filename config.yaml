@@ -6,7 +6,7 @@ listener:
   addr: :8000
 
 runner:
-  send_auto_execute: false
+  use_relayer: false
   relayer_endpoint: "http://relayer/integrations/relayer"
   timeout: 3s
   aggregator:

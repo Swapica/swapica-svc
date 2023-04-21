@@ -14,7 +14,7 @@ type Aggregator struct {
 }
 
 type RunnerConfig struct {
-	SendAutoExecute bool          `fig:"send_auto_execute,required"`
+	UseRelayer      bool          `fig:"use_relayer,required"`
 	RelayerEndpoint *url.URL      `fig:"relayer_endpoint,required"`
 	Aggregator      Aggregator    `fig:"aggregator,required"`
 	Timeout         time.Duration `fig:"timeout,required"`

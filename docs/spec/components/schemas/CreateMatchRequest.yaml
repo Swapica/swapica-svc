@@ -4,6 +4,7 @@ required:
   - order_id
   - src_chain
   - sender
+  - use_relayer
 properties:
   dest_chain:
     type: string
@@ -22,6 +23,8 @@ properties:
     type: string
     description: The address of the sender
     example: "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
+  use_relayer:
+    type: bool
   raw_tx_data:
     type: string
     description: redeem tx data with collected signatures

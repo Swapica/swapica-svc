@@ -1,11 +1,11 @@
 package evm
 
 import (
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math/big"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 func (e *evmProxy) GetMatch(id *big.Int) (swapica.ISwapicaMatch, error) {
@@ -21,5 +21,5 @@ func (e *evmProxy) GetMatch(id *big.Int) (swapica.ISwapicaMatch, error) {
 		panic(errNotSingleOrder)
 	}
 
-	return matches[0], err
+	return matches[0], nil
 }
