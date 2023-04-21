@@ -65,17 +65,21 @@ func NewRunner(cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ
 func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 	var limit = 100
 	var response resources.OrderListResponse
-	u, _ := url.Parse(fmt.Sprintf("/orders?filter[use_relayer]=true&filter[state]=1&page[number]=0&page[limit]=%d", limit))
+	val, _ := url.ParseQuery(fmt.Sprintf("filter[use_relayer]=true&filter[state]=1&page[number]=0&page[limit]=%d", limit))
 	for {
+		u, _ := url.Parse("/orders?" + val.Encode())
 		err = r.aggregator.Get(u, &response)
 		if err != nil {
 			return nil, err
 		}
-		u, _ = url.Parse(response.Links.Next)
+
 		orders = append(orders, response.Data...)
-		if len(response.Data) < limit {
+		if len(response.Data) < limit || response.Links == nil {
 			break
 		}
+
+		nextUrl, _ := url.Parse(response.Links.Next)
+		val = nextUrl.Query()
 	}
 	return orders, nil
 }
@@ -83,40 +87,47 @@ func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 func (r *Runner) fetchMatches() (matches []resources.Match, err error) {
 	var limit = 100
 	var response resources.MatchListResponse
-	u, _ := url.Parse(fmt.Sprintf("/match_orders?filter[use_relayer]=true&filter[state]=2&page[number]=0&page[limit]=%d", limit))
+	val, _ := url.ParseQuery(fmt.Sprintf("filter[use_relayer]=true&filter[state]=2&page[number]=0&page[limit]=%d", limit))
 	for {
+		u, _ := url.Parse("/match_orders?" + val.Encode())
 		err = r.aggregator.Get(u, &response)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to send get request")
 		}
 
-		u, err = url.Parse(response.Links.Next)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed parse url")
-		}
-
 		matches = append(matches, response.Data...)
-		if len(response.Data) < limit {
+		if len(response.Data) < limit || response.Links == nil {
 			break
 		}
+
+		nextUrl, _ := url.Parse(response.Links.Next)
+		val = nextUrl.Query()
 	}
 	return matches, nil
 }
 
 func (r *Runner) ExecuteOrders() error {
-	_, err := r.fetchOrders()
+	orders, err := r.fetchOrders()
 	if err != nil {
 		return errors.Wrap(err, "failed to get order list from aggregator")
 	}
 
-	// TODO: process orders
-
-	_, err = r.fetchMatches()
-	if err != nil {
-		return errors.Wrap(err, "failed to get match list from aggregator")
+	for _, order := range orders {
+		_ = r.executeMatch(order)
 	}
 
-	// TODO: process match orders
+	matches, err := r.fetchMatches()
+	if err != nil {
+		return errors.Wrap(err, "failed to get match order list from aggregator")
+	}
+
+	for _, match := range matches {
+		err = r.executeOrder(match)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -162,13 +173,7 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}) error {
 	return nil
 }
 
-func (r *Runner) executeOrder(data []byte) error {
-	var match resources.Match
-	err := json.Unmarshal(data, &match)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal message data as match")
-	}
-
+func (r *Runner) executeOrder(match resources.Match) error {
 	srcChainId, origChainId := match.Relationships.SrcChain.Data.ID, match.Relationships.OriginChain.Data.ID
 	srcChain, origChain, err := r.getChains(srcChainId, origChainId)
 	if err != nil {
@@ -206,17 +211,10 @@ func (r *Runner) executeOrder(data []byte) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
-
 	return nil
 }
 
-func (r *Runner) executeMatch(data []byte) error {
-	var order resources.Order
-	err := json.Unmarshal(data, &order)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal message data as order")
-	}
-
+func (r *Runner) executeMatch(order resources.Order) error {
 	srcChainId, destChainId := order.Relationships.SrcChain.Data.ID, order.Relationships.DestinationChain.Data.ID
 	srcChain, destChain, err := r.getChains(srcChainId, destChainId)
 	if err != nil {
@@ -275,10 +273,20 @@ func (r *Runner) handleOrderUpdates(message []byte) error {
 	switch recvMessage.Action {
 	case "add-match":
 		// when a match is added we can execute the order
-		err = r.executeOrder(recvMessage.Data)
+		var match resources.Match
+		err = json.Unmarshal(recvMessage.Data, &match)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal message data as match")
+		}
+		err = r.executeOrder(match)
 	case "update-order":
 		// when the order is updated and its state is Executed we can execute the match
-		err = r.executeMatch(recvMessage.Data)
+		var order resources.Order
+		err = json.Unmarshal(recvMessage.Data, &order)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal message data as order")
+		}
+		err = r.executeMatch(order)
 	}
 	return err
 }
