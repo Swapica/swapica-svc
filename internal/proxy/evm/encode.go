@@ -30,6 +30,7 @@ type createMatchCalldata struct {
 
 func CreateMatchCalldata(calldata createMatchCalldata) (string, error) {
 	calldataType, err := abi.NewType("tuple", "", []abi.ArgumentMarshaling{
+		{Name: "use_relayer", Type: "bool"},
 		{Name: "selector", Type: "uint8"},
 		{Name: "chain_id", Type: "uint256"},
 		{Name: "swapica", Type: "address"},
@@ -37,7 +38,6 @@ func CreateMatchCalldata(calldata createMatchCalldata) (string, error) {
 		{Name: "token_to_sell", Type: "address"},
 		{Name: "amount_to_sell", Type: "uint256"},
 		{Name: "origin_chain", Type: "uint256"},
-		{Name: "use_relayer", Type: "bool"},
 	})
 	if err != nil {
 		return "", err
