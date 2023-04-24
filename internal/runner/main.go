@@ -278,7 +278,9 @@ func (r *Runner) handleOrderUpdates(message []byte) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to unmarshal message data as match")
 		}
-		err = r.executeOrder(match)
+		if match.Attributes.UseRelayer {
+			err = r.executeOrder(match)
+		}
 	case "update-order":
 		// when the order is updated and its state is Executed we can execute the match
 		var order resources.Order
@@ -286,7 +288,9 @@ func (r *Runner) handleOrderUpdates(message []byte) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to unmarshal message data as order")
 		}
-		err = r.executeMatch(order)
+		if order.Attributes.UseRelayer {
+			err = r.executeMatch(order)
+		}
 	}
 	return err
 }
