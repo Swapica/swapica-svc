@@ -3,8 +3,10 @@ package evm
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"math/big"
+
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/resources"
@@ -17,6 +19,9 @@ import (
 const (
 	gasLimit = 300000
 )
+
+var bigOne = big.NewInt(1)
+var errNotSingleOrder = errors.New("expected 1 order/match to be returned or execution to be reverted") // must not occur
 
 func skipSig(address common.Address, transaction *types.Transaction) (*types.Transaction, error) {
 	return transaction, nil

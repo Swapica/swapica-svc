@@ -24,18 +24,19 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 
 	calldata, err := CreateMatchCalldata(createMatchCalldata{
 		Selector:     createMatch,
-		ChainId:      params.Order.DestChain,
+		ChainId:      params.Order.DestinationChain,
 		Swapica:      e.swapperContract,
-		OrderId:      params.Order.Id,
+		OrderId:      params.Order.OrderId,
 		TokenToSell:  params.Order.TokenToBuy,
 		AmountToSell: params.Order.AmountToBuy,
 		OriginChain:  big.NewInt(srcChainParams.ChainId),
+		UseRelayer:   params.UseRelayer,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if enums.State(params.OrderStatus.State) != enums.AwaitingMatch {
+	if enums.State(params.Order.Status.State) != enums.AwaitingMatch {
 		return nil, errors.New("can not create match if order is not awaiting match")
 	}
 
@@ -82,5 +83,5 @@ func (e *evmProxy) CreateMatch(params types.CreateMatchParams) (interface{}, err
 
 	confirmed := signNumber >= threshold
 
-	return encodeTx(tx, sender, params.Order.DestChain, params.DestChain.ID, &confirmed)
+	return encodeTx(tx, sender, params.Order.DestinationChain, params.DestChain.ID, &confirmed)
 }

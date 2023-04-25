@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 	"net/http"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
@@ -60,29 +61,13 @@ func ExecuteOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	matchStatus, err := ProxyRepo(r).Get(destChain.ID).GetMatchStatus(match.Id)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get match status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	orderStatus, err := ProxyRepo(r).Get(srcChain.ID).GetOrderStatus(order.Id)
-	if err != nil {
-		Log(r).WithError(err).Error("failed to get order status")
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
 	params := types.ExecuteOrderParams{
-		SrcChain:    *srcChain,
-		DestChain:   *destChain,
-		Order:       order,
-		Match:       match,
-		OrderStatus: orderStatus,
-		MatchStatus: matchStatus,
-		Receiver:    request.Receiver,
-		Sender:      request.Sender,
+		SrcChain:  *srcChain,
+		DestChain: *destChain,
+		Order:     order,
+		Match:     match,
+		Receiver:  request.Receiver,
+		Sender:    request.Sender,
 	}
 
 	if request.RawTxData != nil {

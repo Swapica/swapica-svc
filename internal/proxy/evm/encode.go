@@ -25,10 +25,12 @@ type createMatchCalldata struct {
 	TokenToSell  common.Address
 	AmountToSell *big.Int
 	OriginChain  *big.Int
+	UseRelayer   bool
 }
 
 func CreateMatchCalldata(calldata createMatchCalldata) (string, error) {
 	calldataType, err := abi.NewType("tuple", "", []abi.ArgumentMarshaling{
+		{Name: "use_relayer", Type: "bool"},
 		{Name: "selector", Type: "uint8"},
 		{Name: "chain_id", Type: "uint256"},
 		{Name: "swapica", Type: "address"},

@@ -3,6 +3,7 @@ package evm
 import (
 	"math/big"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/swapica"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -32,12 +33,15 @@ func (e *evmProxy) createOrder(params types.CreateOrderParams, sender common.Add
 	}
 
 	tx, err := e.swapper.CreateOrder(
-		GetTransactionOpts(params.TokenToSell, sender, big.NewInt(int64(params.AmountToSell.Float()))),
-		tokenToSell,
-		big.NewInt(int64(params.AmountToSell.Float())),
-		tokenToBuy,
-		big.NewInt(int64(params.AmountToBuy.Float())),
-		big.NewInt(destChainId.ChainId),
+		GetTransactionOpts(params.TokenToSell, sender, params.AmountToSell),
+		swapica.ISwapicaCreateOrderRequest{
+			TokenToSell:      tokenToSell,
+			AmountToSell:     params.AmountToSell,
+			TokenToBuy:       tokenToBuy,
+			AmountToBuy:      params.AmountToBuy,
+			DestinationChain: big.NewInt(destChainId.ChainId),
+			UseRelayer:       params.UseRalyer,
+		},
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create tx")
