@@ -25,6 +25,7 @@ properties:
     example: "0xf41ceE234219D6cc3d90A6996dC3276aD378cfCF"
   use_relayer:
     type: bool
+    description: Responsible for using a relayer that pays user fees in native token by charging fees in the order token
   raw_tx_data:
     type: string
-    description: redeem tx data with collected signatures
+    description: Redeem tx data with collected signatures

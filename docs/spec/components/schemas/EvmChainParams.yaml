@@ -8,12 +8,20 @@ properties:
   chain_id:
     type: integer
     format: int64
+    description: Chain ID, see example for BSC Mainnet
+    example: 56
   rpc_url:
     type: string
+    description: Node RPC url
   native_symbol:
     type: string
+    description: Native token symbol
+    example: "BNB"
   explorer_url:
     type: string
+    description: Chain scan url
+    example: "https://bscscan.com"
   native_decimals:
     type: integer
     format: uint8
+    description: Amount of native decimals, max of 18

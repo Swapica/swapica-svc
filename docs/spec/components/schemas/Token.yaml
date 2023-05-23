@@ -14,12 +14,14 @@ allOf:
         properties:
           name:
             type: string
+            example: "Tether USDT"
           icon:
             type: string
             description: Link to icon
             example: https://some.storage.com/image.png
           symbol:
             type: string
+            example: "USDT"
           token_type:
             $ref: '#/components/schemas/TokenType'
       relationships:

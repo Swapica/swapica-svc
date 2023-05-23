@@ -16,10 +16,15 @@ allOf:
         properties:
           chain_id:
             type: string
+            description: Chain name
+            example: "sepolia"
           token_id:
             type: string
+            description: Token ID from config
+            example: "1"
           contract_address:
             type: string
+            description: Token contract address
           token_type:
             $ref: '#/components/schemas/TokenType'
           max_amount:
