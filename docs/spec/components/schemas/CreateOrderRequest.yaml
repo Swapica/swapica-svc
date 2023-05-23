@@ -11,21 +11,25 @@ required:
 properties:
   src_chain:
     type: string
+    description: Source chain to create order on
   token_to_sell:
     type: string
-    description: address of token contract
+    description: Address of token contract
   amount_to_sell:
     type: string
-    description: uint256 value, multiplied by 10^token_decimals
+    description: Uint256 value, multiplied by 10^token_decimals
   token_to_buy:
     type: string
-    description: address of token contract
+    description: Address of token contract
   amount_to_buy:
     type: string
-    description: uint256 value, multiplied by 10^token_decimals
+    description: Uint256 value, multiplied by 10^token_decimals
   dest_chain:
     type: string
+    description: Destination chain to create match for order on
   sender:
     type: string
+    description: Sender's address
   use_relayer:
     type: bool
+    description: Responsible for using a relayer that pays user fees in native token by charging fees in the order token
