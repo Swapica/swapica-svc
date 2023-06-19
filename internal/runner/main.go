@@ -12,6 +12,8 @@ import (
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	resources2 "github.com/Swapica/swapica-svc/resources"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/gorilla/websocket"
 	jsonapi "gitlab.com/distributed_lab/json-api-connector"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -148,7 +150,7 @@ func (r *Runner) getChains(srcId, destId string) (src *data.Chain, dest *data.Ch
 	return
 }
 
-func (r *Runner) sendTxToRelayer(chainId string, data interface{}) error {
+func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.Address, receiver common.Address) error {
 	u, _ := url.Parse("/transaction")
 	evmTx, ok := data.(resources2.EvmTransaction)
 	if !ok {
@@ -156,17 +158,30 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}) error {
 		return errors.New(fmt.Sprintf("invalid tx data format"))
 	}
 
+	executeTxData, err := hexutil.Decode(evmTx.Attributes.TxBody.Data)
+	if err != nil {
+		r.log.Debug(fmt.Sprintf("err in decode tx data"))
+		return errors.New(fmt.Sprintf("invalid tx data"))
+	}
+
+	relayerTx, err := EncodeExecuteParams(executeCalldata{
+		Token:      token,
+		Commission: big.NewInt(10), //TODO calculate commission
+		Receiver:   receiver,
+		CoreData:   executeTxData,
+	})
+
 	evmTxReq := resources3.EvmTransactionRequest{
 		Data: resources3.EvmTransaction{
 			Key: resources3.Key{Type: "evm_transaction"},
 			Attributes: resources3.EvmTransactionAttributes{
 				Chain: chainId,
-				Data:  evmTx.Attributes.TxBody.Data,
+				Data:  relayerTx,
 			},
 		},
 	}
 
-	err := r.relayer.PostJSON(u, evmTxReq, context.Background(), nil)
+	err = r.relayer.PostJSON(u, evmTxReq, context.Background(), nil)
 	if err != nil {
 		return errors.Wrap(err, "relayer returns error")
 	}
@@ -207,7 +222,7 @@ func (r *Runner) executeOrder(match resources.Match) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(origChainId, tx)
+	err = r.sendTxToRelayer(origChainId, tx, order.TokenToBuy, swapicaMatch.Creator)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
@@ -252,7 +267,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(destChainId, tx)
+	err = r.sendTxToRelayer(destChainId, tx, match.TokenToSell, match.Creator)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
