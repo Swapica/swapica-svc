@@ -22,6 +22,7 @@ import (
 	"math/big"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type Runner struct {
@@ -140,12 +141,53 @@ func (r *Runner) getChains(srcId, destId string) (src *data.Chain, dest *data.Ch
 	}
 
 	if src == nil {
-		return nil, nil, errors.New("src chain not found")
+		src, err = r.getChainByParams(srcId)
+		if err != nil {
+			return
+		}
+
+		if src == nil {
+			return nil, nil, errors.New("src chain not found")
+		}
 	}
 
 	dest, err = r.chains.New().FilterByID(destId).Get()
 	if dest == nil {
-		return nil, nil, errors.New("dest chain not found")
+		dest, err = r.getChainByParams(destId)
+		if err != nil {
+			return
+		}
+
+		if dest == nil {
+			return nil, nil, errors.New("dest chain not found")
+		}
+	}
+	return
+}
+
+type ChainParams struct {
+	ChainId uint64 `json:"chain_id"`
+}
+
+func (r *Runner) getChainByParams(chainId string) (ch *data.Chain, err error) {
+	allChains, err := r.chains.Select()
+	if err != nil {
+		return
+	}
+
+	for _, chain := range allChains {
+		var cainParams ChainParams
+		err = json.Unmarshal(chain.ChainParams, &cainParams)
+		if err != nil {
+			return
+		}
+
+		if chainId == strconv.FormatUint(cainParams.ChainId, 10) {
+			ch, err = r.chains.New().FilterByID(chain.ID).Get()
+			if err != nil {
+				return
+			}
+		}
 	}
 	return
 }
@@ -236,7 +278,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.Wrap(err, "failed to get chains")
 	}
 
-	swapicaOrder, err := r.proxyRepo.Get(srcChainId).GetOrder(big.NewInt(order.Attributes.OrderId))
+	swapicaOrder, err := r.proxyRepo.Get(srcChain.ID).GetOrder(big.NewInt(order.Attributes.OrderId))
 	if err != nil {
 		return errors.Wrap(err, "failed to get swapica order")
 	}
@@ -245,7 +287,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.New("cannot execute a match if order is not executed")
 	}
 
-	match, err := r.proxyRepo.Get(destChainId).GetMatch(swapicaOrder.Status.MatchId)
+	match, err := r.proxyRepo.Get(destChain.ID).GetMatch(swapicaOrder.Status.MatchId)
 	if err != nil {
 		return errors.Wrap(err, "failed to get swapica match")
 	}
@@ -259,7 +301,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		Sender:    swapicaOrder.Creator.String(),
 	}
 
-	tx, err := r.proxyRepo.Get(destChainId).ExecuteMatch(params)
+	tx, err := r.proxyRepo.Get(destChain.ID).ExecuteMatch(params)
 	if err != nil {
 		return errors.Wrap(err, "failed to get execute match tx")
 	}
@@ -267,7 +309,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(destChainId, tx, match.TokenToSell, match.Creator)
+	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, match.Creator)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
