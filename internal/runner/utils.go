@@ -13,7 +13,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"io"
-	"log"
 	"math"
 	"math/big"
 	"net/http"
@@ -56,7 +55,7 @@ const (
 func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddress common.Address, amount string, rpc string) (*big.Int, error) {
 	client, err := ethclient.Dial(rpc)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	callMsg := ethereum.CallMsg{
@@ -66,22 +65,22 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 
 	gasLimit, err := client.EstimateGas(context.Background(), callMsg)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	gasLimitBig := big.NewInt(int64(gasLimit))
 	gas := gasLimitBig.Mul(gasLimitBig, gasPrice)
 
-	ether := ConvertAmount(gas, 18)
+	gasInNative := ConvertAmount(gas, 18)
 
 	amountToInt, _ := new(big.Int).SetString(amount, 10)
 
 	if tokenAddress == common.HexToAddress(nativeToken) {
-		return getPercent(ether, ConvertAmount(amountToInt, 18)), nil
+		return getPercent(gasInNative, ConvertAmount(amountToInt, 18)), nil
 	}
 
 	instanceErc20, err := erc20.NewErc20(contractAddress, client)
@@ -97,7 +96,7 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 	decimals, err := instanceErc20.Decimals(&bind.CallOpts{})
 	price, err := GetTokenPrice(symbol)
 
-	return getPercent(ether.Quo(ether, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals)), nil
+	return getPercent(gasInNative.Quo(gasInNative, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals)), nil
 }
 
 func ConvertAmount(wei *big.Int, decimals uint8) *big.Float {
