@@ -192,7 +192,8 @@ func (r *Runner) getChainByParams(chainId string) (ch *data.Chain, err error) {
 	return
 }
 
-func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.Address, receiver common.Address) error {
+func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.Address,
+	receiver common.Address, contractAddress common.Address, amount string, rpc string) error {
 	u, _ := url.Parse("/transaction")
 	evmTx, ok := data.(resources2.EvmTransaction)
 	if !ok {
@@ -206,9 +207,11 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 		return errors.New(fmt.Sprintf("invalid tx data"))
 	}
 
+	commission, err := CommissionEstimate(executeTxData, contractAddress, token, amount, rpc)
+
 	relayerTx, err := EncodeExecuteParams(executeCalldata{
 		Token:      token,
-		Commission: big.NewInt(10), //TODO calculate commission
+		Commission: commission,
 		Receiver:   receiver,
 		CoreData:   executeTxData,
 	})
@@ -264,7 +267,7 @@ func (r *Runner) executeOrder(match resources.Match) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(origChainId, tx, order.TokenToBuy, swapicaMatch.Creator)
+	err = r.sendTxToRelayer(origChainId, tx, order.TokenToBuy, swapicaMatch.Creator, common.HexToAddress(origChain.SwapContract), order.AmountToBuy.String(), origChain.RpcEndpoint)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
@@ -309,7 +312,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, match.Creator)
+	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, match.Creator, common.HexToAddress(destChain.SwapContract), match.AmountToSell.String(), destChain.RpcEndpoint)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
