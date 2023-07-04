@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/erc20"
 	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
+	sha3 "github.com/miguelmota/go-solidity-sha3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"io"
 	"math"
@@ -27,25 +27,15 @@ type executeCalldata struct {
 }
 
 func EncodeExecuteParams(calldata executeCalldata) (string, error) {
-	calldataType, err := abi.NewType("tuple", "", []abi.ArgumentMarshaling{
-		{Name: "token", Type: "address"},
-		{Name: "commission", Type: "uint256"},
-		{Name: "receiver", Type: "address"},
-		{Name: "core_data", Type: "bytes"},
-	})
-	if err != nil {
-		return "", err
-	}
+	hash := sha3.SoliditySHA3(
+		sha3.String("\x19Ethereum Signed Message:\n32"),
+		sha3.Address(calldata.Token),
+		sha3.Uint256(calldata.Commission),
+		sha3.Address(calldata.Receiver),
+		sha3.Bytes32(calldata.CoreData),
+	)
 
-	args := abi.Arguments{
-		{Type: calldataType, Name: "calldata"},
-	}
-
-	packed, err := args.Pack(&calldata)
-	if err != nil {
-		return "", err
-	}
-	return hexutil.Encode(packed), err
+	return hexutil.Encode(hash), nil
 }
 
 const (

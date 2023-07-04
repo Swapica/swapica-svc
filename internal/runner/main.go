@@ -207,11 +207,11 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 		return errors.New(fmt.Sprintf("invalid tx data"))
 	}
 
-	commission, err := CommissionEstimate(executeTxData, contractAddress, token, amount, rpc)
+	//commission, err := CommissionEstimate(executeTxData, contractAddress, token, amount, rpc)
 
 	relayerTx, err := EncodeExecuteParams(executeCalldata{
 		Token:      token,
-		Commission: commission,
+		Commission: big.NewInt(10),
 		Receiver:   receiver,
 		CoreData:   executeTxData,
 	})
