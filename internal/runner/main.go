@@ -213,8 +213,6 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 		return errors.New(fmt.Sprintf("invalid data"))
 	}
 
-	fmt.Println(commission)
-
 	relayerTx, err := EncodeExecuteParams(executeCalldata{
 		Token:      token,
 		Commission: commission,
