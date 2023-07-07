@@ -51,7 +51,7 @@ func (e *evmProxy) executeOrder(params types.ExecuteOrderParams, sender common.A
 		ChainId:      params.Match.OriginChainId,
 		Swapica:      e.swapperContract,
 		OrderId:      params.Order.OrderId,
-		Receiver:     params.Match.Creator,
+		Receiver:     common.HexToAddress(params.Receiver),
 		MatchId:      params.Match.MatchId,
 		MatchSwapica: common.HexToAddress(params.DestChain.SwapContract),
 	})
@@ -88,7 +88,7 @@ func (e *evmProxy) executeOrder(params types.ExecuteOrderParams, sender common.A
 }
 
 func (e *evmProxy) validateExecuteOrder(params types.ExecuteOrderParams) (bool, error) {
-	if params.Receiver != params.Match.Creator.String() {
+	if params.Receiver != params.Match.Creator.String() && params.Receiver != e.relayerContract.String() {
 		return false, errors.New("invalid receiver")
 	}
 

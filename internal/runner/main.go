@@ -213,6 +213,8 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 		return errors.New(fmt.Sprintf("invalid data"))
 	}
 
+	fmt.Println(commission)
+
 	relayerTx, err := EncodeExecuteParams(executeCalldata{
 		Token:      token,
 		Commission: commission,
@@ -259,7 +261,7 @@ func (r *Runner) executeOrder(match resources.Match) error {
 		DestChain: *srcChain,
 		Order:     order,
 		Match:     swapicaMatch,
-		Receiver:  swapicaMatch.Creator.String(),
+		Receiver:  origChain.RelayerContract,
 		Sender:    order.Creator.String(),
 	}
 
@@ -304,7 +306,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		DestChain: *srcChain,
 		Order:     swapicaOrder,
 		Match:     match,
-		Receiver:  match.Creator.String(),
+		Receiver:  destChain.RelayerContract,
 		Sender:    swapicaOrder.Creator.String(),
 	}
 

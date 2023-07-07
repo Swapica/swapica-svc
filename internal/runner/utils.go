@@ -80,7 +80,8 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 	amountToInt, _ := new(big.Int).SetString(amount, 10)
 
 	if tokenAddress == common.HexToAddress(nativeToken) {
-		return getPercent(gasInNative, ConvertAmount(amountToInt, 18)), nil
+		commission := getPercent(gasInNative, ConvertAmount(amountToInt, 18))
+		return ConvertToBigIntCommission(commission), nil
 	}
 
 	instanceErc20, err := erc20.NewErc20(contractAddress, client)
@@ -96,7 +97,19 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 	decimals, err := instanceErc20.Decimals(&bind.CallOpts{})
 	price, err := GetTokenPrice(symbol)
 
-	return getPercent(gasInNative.Quo(gasInNative, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals)), nil
+	commission := getPercent(gasInNative.Quo(gasInNative, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals))
+
+	return ConvertToBigIntCommission(commission), nil
+}
+
+func ConvertToBigIntCommission(x *big.Int) *big.Int {
+	base := big.NewInt(10)
+	exponent := big.NewInt(27)
+	result := new(big.Int).Exp(base, exponent, nil)
+	temp := new(big.Int).Mul(x, result)
+
+	return new(big.Int).Div(temp, big.NewInt(100))
+
 }
 
 func ConvertAmount(wei *big.Int, decimals uint8) *big.Float {
