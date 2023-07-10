@@ -109,7 +109,6 @@ func ConvertToBigIntCommission(x *big.Int) *big.Int {
 	temp := new(big.Int).Mul(x, result)
 
 	return new(big.Int).Div(temp, big.NewInt(100))
-
 }
 
 func ConvertAmount(wei *big.Int, decimals uint8) *big.Float {

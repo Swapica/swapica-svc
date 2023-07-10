@@ -63,6 +63,7 @@ data:
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
       type: "evm" # chain type(evm supports only)
       swap_contract: "" # address of swap contract
+      relayer_contract: "" # address of automatic relayer contract
       rpc_endpoint: "" # network rpc
       confirmations: 12 # needed blocks after tx will be confirmed
       chain_params:
@@ -77,6 +78,7 @@ data:
       icon: "https://chainlist.org/_next/image?url=https%3A%2F%2Fdefillama.com%2Fchain-icons%2Frsz_ethereum.jpg&w=64&q=75"
       type: "evm"
       swap_contract: "" # address of swap contract
+      relayer_contract: "" # address of automatic relayer contract
       rpc_endpoint: "" # network rpc
       confirmations: 12
       chain_params:

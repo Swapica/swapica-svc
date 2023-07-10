@@ -28,4 +28,4 @@ properties:
   sender:
     type: string
   use_relayer:
-    type: bool
+    type: boolean
