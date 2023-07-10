@@ -4,11 +4,10 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"

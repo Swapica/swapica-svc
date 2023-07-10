@@ -49,5 +49,4 @@ post:
             - data
           properties:
             data:
-              type: object
               $ref: '#/components/schemas/ApproveRequest'

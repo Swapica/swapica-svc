@@ -15,7 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewProxy(rpc string, signer signature.Signer, swapperContract string, confirmations int) (types.Proxy, error) {
+func NewProxy(rpc string, signer signature.Signer, swapperContract string, relayerContract string, confirmations int) (types.Proxy, error) {
 	client, err := ethclient.Dial(rpc)
 	if err != nil {
 		return nil, err
@@ -36,6 +36,7 @@ func NewProxy(rpc string, signer signature.Signer, swapperContract string, confi
 		signer:          signer,
 		chainID:         chainID,
 		swapperContract: common.HexToAddress(swapperContract),
+		relayerContract: common.HexToAddress(relayerContract),
 		swapper:         b,
 		confirmations:   confirmations,
 	}, nil
@@ -46,6 +47,7 @@ type evmProxy struct {
 	signer          signature.Signer
 	chainID         *big.Int
 	swapperContract common.Address
+	relayerContract common.Address
 	swapper         *swapica.Swapica
 	confirmations   int
 }

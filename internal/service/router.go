@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/data/mem"
 	"github.com/Swapica/swapica-svc/internal/proxy"
 	"github.com/Swapica/swapica-svc/internal/service/handlers"
@@ -8,13 +9,8 @@ import (
 	"gitlab.com/distributed_lab/ape"
 )
 
-func (s *service) router() chi.Router {
+func (s *service) router(proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens data.TokensQ) chi.Router {
 	r := chi.NewRouter()
-
-	proxyRepo, err := proxy.NewProxyRepo(s.cfg.Chains(), s.cfg.Signer())
-	if err != nil {
-		panic(err)
-	}
 
 	r.Use(
 		ape.RecoverMiddleware(s.log),
@@ -22,8 +18,8 @@ func (s *service) router() chi.Router {
 		ape.CtxMiddleware(
 			handlers.CtxLog(s.log),
 			handlers.CtxSigner(s.cfg.Signer()),
-			handlers.CtxChainsQ(mem.NewChainsQ(s.cfg.Chains())),
-			handlers.CtxTokensQ(mem.NewTokenQ(s.cfg.Tokens())),
+			handlers.CtxChainsQ(chains),
+			handlers.CtxTokensQ(tokens),
 			handlers.CtxTokenChainsQ(mem.NewTokenChainsQ(s.cfg.TokenChains())),
 			handlers.CtxProxyRepo(proxyRepo),
 		),

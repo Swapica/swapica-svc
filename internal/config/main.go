@@ -13,6 +13,8 @@ type Config interface {
 	comfig.Listenerer
 	Signerer
 	Chainer
+
+	RunnerCfg() RunnerConfig
 }
 
 type config struct {
@@ -21,7 +23,9 @@ type config struct {
 	comfig.Listenerer
 	Signerer
 	Chainer
-	getter kv.Getter
+
+	runnerCfg comfig.Once
+	getter    kv.Getter
 }
 
 func New(getter kv.Getter) Config {

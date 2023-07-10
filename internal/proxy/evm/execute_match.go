@@ -51,7 +51,7 @@ func (e *evmProxy) executeMatch(params types.ExecuteMatchParams, sender common.A
 		ChainId:  params.Order.DestinationChain,
 		Swapica:  e.swapperContract,
 		MatchId:  params.Match.MatchId,
-		Receiver: params.Order.Creator,
+		Receiver: common.HexToAddress(params.Receiver),
 	})
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (e *evmProxy) validateExecuteMatch(params types.ExecuteMatchParams) (bool, 
 		return false, errors.New("cannot execute a match when it is not awaiting finalization")
 	}
 
-	if params.Receiver != params.Order.Creator.String() {
+	if params.Receiver != params.Order.Creator.String() && params.Receiver != e.relayerContract.String() {
 		return false, errors.New("invalid receiver")
 	}
 

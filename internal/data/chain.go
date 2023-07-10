@@ -22,9 +22,10 @@ type Chain struct {
 	Type        resources.ChainType `fig:"type,required"`
 	ChainParams json.RawMessage     `fig:"chain_params"`
 
-	Confirmations int    `fig:"confirmations,required"`
-	SwapContract  string `fig:"swap_contract,required"`
-	RpcEndpoint   string `fig:"rpc_endpoint,required"`
+	Confirmations   int    `fig:"confirmations,required"`
+	SwapContract    string `fig:"swap_contract,required"`
+	RelayerContract string `fig:"relayer_contract,required"`
+	RpcEndpoint     string `fig:"rpc_endpoint,required"`
 	// Relation
 	Tokens []TokenChain
 }
