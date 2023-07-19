@@ -86,6 +86,7 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 
 		if commission.Cmp(big.NewInt(100)) > -1 {
 			logan.New().WithFields(logan.F{
+				"txData":      hexutil.Encode(txData),
 				"commission":  commission.String(),
 				"gasLimit":    gasLimit,
 				"gasPrice":    gasPrice.String(),
@@ -114,6 +115,7 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 
 	if commission.Cmp(big.NewInt(100)) > -1 {
 		logan.New().WithFields(logan.F{
+			"txData":      hexutil.Encode(txData),
 			"commission":  commission.String(),
 			"gasLimit":    gasLimit,
 			"gasPrice":    gasPrice.String(),
