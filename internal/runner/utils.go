@@ -4,6 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"math"
+	"math/big"
+	"net/http"
+	"strings"
+
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/erc20"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -11,12 +17,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"io"
-	"math"
-	"math/big"
-	"net/http"
-	"strings"
 )
 
 type executeCalldata struct {
@@ -98,6 +100,16 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 	price, err := GetTokenPrice(symbol)
 
 	commission := getPercent(gasInNative.Quo(gasInNative, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals))
+
+	if commission.Cmp(big.NewInt(100)) > -1 {
+		logan.New().WithFields(logan.F{
+			"commission":  commission.String(),
+			"gasLimit":    gasLimit,
+			"gasPrice":    gasPrice.String(),
+			"gasInNative": gasInNative.String(),
+			"tokenPrice":  price,
+		}).Debug("commission estimate")
+	}
 
 	return ConvertToBigIntCommission(commission), nil
 }
