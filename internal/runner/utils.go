@@ -83,6 +83,17 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 
 	if tokenAddress == common.HexToAddress(nativeToken) {
 		commission := getPercent(gasInNative, ConvertAmount(amountToInt, 18))
+
+		if commission.Cmp(big.NewInt(100)) > -1 {
+			logan.New().WithFields(logan.F{
+				"commission":  commission.String(),
+				"gasLimit":    gasLimit,
+				"gasPrice":    gasPrice.String(),
+				"gasInNative": gasInNative.String(),
+				"tokenPrice":  "native",
+			}).Debug("commission estimate")
+		}
+
 		return ConvertToBigIntCommission(commission), nil
 	}
 
