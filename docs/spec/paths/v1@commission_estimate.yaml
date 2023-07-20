@@ -1,0 +1,13 @@
+get:
+  summary: Get commission estimate for order/match relay
+  operationId: getCommissionEstimate
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - data
+          properties:
+            data:
+              $ref: '#/components/schemas/GetCommissionEstimateRequest'

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"io"
 	"math"
 	"math/big"
@@ -17,7 +18,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
@@ -50,10 +50,6 @@ func EncodeExecuteParams(calldata executeCalldata) (string, error) {
 	return hexutil.Encode(packed), err
 }
 
-const (
-	nativeToken = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-)
-
 func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddress common.Address, amount string, rpc string) (*big.Int, error) {
 	client, err := ethclient.Dial(rpc)
 	if err != nil {
@@ -81,19 +77,8 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 
 	amountToInt, _ := new(big.Int).SetString(amount, 10)
 
-	if tokenAddress == common.HexToAddress(nativeToken) {
+	if tokenAddress == common.HexToAddress(enums.TokenTypeNative) {
 		commission := getPercent(gasInNative, ConvertAmount(amountToInt, 18))
-
-		if commission.Cmp(big.NewInt(100)) > -1 {
-			logan.New().WithFields(logan.F{
-				"txData":      hexutil.Encode(txData),
-				"commission":  commission.String(),
-				"gasLimit":    gasLimit,
-				"gasPrice":    gasPrice.String(),
-				"gasInNative": gasInNative.String(),
-				"tokenPrice":  "native",
-			}).Debug("commission estimate")
-		}
 
 		return ConvertToBigIntCommission(commission), nil
 	}
@@ -112,17 +97,6 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 	price, err := GetTokenPrice(symbol)
 
 	commission := getPercent(gasInNative.Quo(gasInNative, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals))
-
-	if commission.Cmp(big.NewInt(100)) > -1 {
-		logan.New().WithFields(logan.F{
-			"txData":      hexutil.Encode(txData),
-			"commission":  commission.String(),
-			"gasLimit":    gasLimit,
-			"gasPrice":    gasPrice.String(),
-			"gasInNative": gasInNative.String(),
-			"tokenPrice":  price,
-		}).Debug("commission estimate")
-	}
 
 	return ConvertToBigIntCommission(commission), nil
 }

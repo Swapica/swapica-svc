@@ -1,6 +1,8 @@
 package types
 
 import (
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/erc20"
+	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 
 	"github.com/Swapica/swapica-svc/internal/data"
@@ -22,6 +24,9 @@ type Proxy interface {
 
 	GetOrder(id *big.Int) (swapica.ISwapicaOrder, error)
 	GetMatch(id *big.Int) (swapica.ISwapicaMatch, error)
+
+	SuggestGasPrice() (*big.Int, error)
+	GetTokenInstance(address common.Address) (*erc20.Erc20, error)
 }
 
 type CreateOrderParams struct {
