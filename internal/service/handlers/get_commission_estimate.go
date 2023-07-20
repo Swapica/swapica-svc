@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"github.com/Swapica/swapica-svc/internal/runner"
 	"math"
 	"math/big"
 	"net/http"
 
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
-	"github.com/Swapica/swapica-svc/internal/runner"
 	"github.com/Swapica/swapica-svc/internal/service/models"
 	"github.com/Swapica/swapica-svc/internal/service/requests"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -44,6 +44,13 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 
 	amountToBuyFloat, _ := new(big.Float).SetString(request.AmountToBuy)
 
+	priceUsd, err := runner.GetTokenPrice("USDT")
+	if err != nil {
+		Log(r).WithError(err).Error("failed to get token price")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
 	if request.TokenToBuy == enums.TokenTypeNative {
 		amountToBuyFloat = ConvertAmount(amountToBuyFloat, 18)
 
@@ -53,7 +60,13 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 		lowerCommission.Mul(amountToBuyFloat, lowerCommission)
 		upperCommission.Mul(amountToBuyFloat, upperCommission)
 
-		ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, upperCommission))
+		lowerCommissionUsd := big.NewFloat(priceUsd)
+		lowerCommissionUsd.Quo(lowerCommission, lowerCommissionUsd)
+
+		upperCommissionUsd := big.NewFloat(priceUsd)
+		upperCommissionUsd.Quo(lowerCommission, upperCommissionUsd)
+
+		ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, lowerCommissionUsd, upperCommission, upperCommissionUsd))
 		return
 	}
 
@@ -97,7 +110,13 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 	lowerCommission.Mul(amountToBuyFloat, lowerCommission)
 	upperCommission.Mul(amountToBuyFloat, upperCommission)
 
-	ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, upperCommission))
+	lowerCommissionUsd := big.NewFloat(priceUsd)
+	lowerCommissionUsd.Quo(lowerCommission, lowerCommissionUsd)
+
+	upperCommissionUsd := big.NewFloat(priceUsd)
+	upperCommissionUsd.Quo(lowerCommission, upperCommissionUsd)
+
+	ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, lowerCommissionUsd, upperCommission, upperCommissionUsd))
 }
 
 func ConvertAmount(weiFloat *big.Float, decimals uint8) *big.Float {
