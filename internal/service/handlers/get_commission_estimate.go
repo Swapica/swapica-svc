@@ -64,7 +64,7 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 		lowerCommissionUsd.Quo(lowerCommission, lowerCommissionUsd)
 
 		upperCommissionUsd := big.NewFloat(priceUsd)
-		upperCommissionUsd.Quo(lowerCommission, upperCommissionUsd)
+		upperCommissionUsd.Quo(upperCommission, upperCommissionUsd)
 
 		ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, lowerCommissionUsd, upperCommission, upperCommissionUsd))
 		return
@@ -114,7 +114,7 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 	lowerCommissionUsd.Quo(lowerCommission, lowerCommissionUsd)
 
 	upperCommissionUsd := big.NewFloat(priceUsd)
-	upperCommissionUsd.Quo(lowerCommission, upperCommissionUsd)
+	upperCommissionUsd.Quo(upperCommission, upperCommissionUsd)
 
 	ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, lowerCommissionUsd, upperCommission, upperCommissionUsd))
 }
