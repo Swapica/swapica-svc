@@ -2,8 +2,6 @@ package requests
 
 import (
 	"net/http"
-
-	"github.com/go-chi/chi"
 )
 
 type GetCommissionEstimateRequest struct {
@@ -13,15 +11,10 @@ type GetCommissionEstimateRequest struct {
 }
 
 func NewGetCommissionEstimateRequest(r *http.Request) (GetCommissionEstimateRequest, error) {
-	amountToBuy := chi.URLParam(r, "amount_to_buy")
-	destChain := chi.URLParam(r, "dest_chain")
-	tokenToBuy := chi.URLParam(r, "token_to_buy")
-
-	request := GetCommissionEstimateRequest{
-		AmountToBuy: amountToBuy,
-		DestChain:   destChain,
-		TokenToBuy:  tokenToBuy,
-	}
+	request := GetCommissionEstimateRequest{}
+	request.AmountToBuy = r.URL.Query().Get("amount_to_buy")
+	request.DestChain = r.URL.Query().Get("dest_chain")
+	request.TokenToBuy = r.URL.Query().Get("token_to_buy")
 
 	return request, nil
 }
