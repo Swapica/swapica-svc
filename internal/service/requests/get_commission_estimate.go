@@ -1,17 +1,26 @@
 package requests
 
 import (
-	"encoding/json"
-	"github.com/Swapica/swapica-svc/resources"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
+
+	"github.com/go-chi/chi"
 )
 
-func NewGetCommissionEstimateRequest(r *http.Request) (resources.GetCommissionEstimateRequest, error) {
-	var request resources.GetCommissionEstimateRequest
+type GetCommissionEstimateRequest struct {
+	AmountToBuy string
+	DestChain   string
+	TokenToBuy  string
+}
 
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return request, errors.Wrap(err, "failed to decode request")
+func NewGetCommissionEstimateRequest(r *http.Request) (GetCommissionEstimateRequest, error) {
+	amountToBuy := chi.URLParam(r, "amount_to_buy")
+	destChain := chi.URLParam(r, "dest_chain")
+	tokenToBuy := chi.URLParam(r, "token_to_buy")
+
+	request := GetCommissionEstimateRequest{
+		AmountToBuy: amountToBuy,
+		DestChain:   destChain,
+		TokenToBuy:  tokenToBuy,
 	}
 
 	return request, nil
