@@ -8,13 +8,11 @@ import (
 )
 
 func NewGetCommissionEstimateRequest(r *http.Request) (resources.GetCommissionEstimateRequest, error) {
-	request := struct {
-		Data resources.GetCommissionEstimateRequest
-	}{}
+	var request resources.GetCommissionEstimateRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return request.Data, errors.Wrap(err, "failed to decode request")
+		return request, errors.Wrap(err, "failed to decode request")
 	}
 
-	return request.Data, nil
+	return request, nil
 }
