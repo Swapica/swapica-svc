@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
@@ -78,13 +79,19 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 
 		lowerCommissionUsd, err := Converter(r).ConvertToStat(lowerCommission, nativeSymbol)
 		if err != nil {
-			Log(r).WithError(err).Error("failed to convert")
+			Log(r).WithError(err).WithFields(logan.F{
+				"lower_commission": lowerCommission.String(),
+				"native_symbol":    nativeSymbol,
+			}).Error("failed to convert")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
 		upperCommissionUsd, err := Converter(r).ConvertToStat(upperCommission, nativeSymbol)
 		if err != nil {
-			Log(r).WithError(err).Error("failed to convert")
+			Log(r).WithError(err).WithFields(logan.F{
+				"upper_commission": upperCommission.String(),
+				"native_symbol":    nativeSymbol,
+			}).Error("failed to convert")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
@@ -116,13 +123,21 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 
 	lowerCommInAsset, err := Converter(r).Convert(lowerGasNative, nativeSymbol, symbol)
 	if err != nil {
-		Log(r).WithError(err).Error("failed to convert")
+		Log(r).WithError(err).WithFields(logan.F{
+			"lower_gas_native": lowerGasNative.String(),
+			"native_symbol":    nativeSymbol,
+			"dest_symbol":      symbol,
+		}).Error("failed to convert")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 	upperCommInAsset, err := Converter(r).Convert(upperGasNative, nativeSymbol, symbol)
 	if err != nil {
-		Log(r).WithError(err).Error("failed to convert")
+		Log(r).WithError(err).WithFields(logan.F{
+			"upper_gas_native": upperGasNative.String(),
+			"native_symbol":    nativeSymbol,
+			"dest_symbol":      symbol,
+		}).Error("failed to convert")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
