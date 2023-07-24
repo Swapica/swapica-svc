@@ -92,7 +92,6 @@ func (c *converter) getPrice(source, dest string) *big.Float {
 		if err != nil || price.Cmp(big.NewFloat(0)) == 0 {
 			price, err = f(dest, source)
 			if err != nil || price.Cmp(big.NewFloat(0)) == 0 {
-				fmt.Println(err)
 				continue
 			}
 			price = revertPrice(price)

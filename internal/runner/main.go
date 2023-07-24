@@ -220,7 +220,7 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 	}
 	nativeSymbol := ""
 	for _, tokenChain := range tokenChains {
-		if tokenChain.ContractAddress == nil {
+		if tokenChain.ContractAddress != nil && tokenChain.TokenType == "native" {
 			t, err := r.tokens.FilterByID(tokenChain.TokenID).Get()
 			if err != nil {
 				return errors.Wrap(err, "failed to get token from memory")

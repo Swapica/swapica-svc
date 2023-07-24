@@ -52,7 +52,7 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 	}
 	nativeSymbol := ""
 	for _, tokenChain := range tokenChains {
-		if tokenChain.ContractAddress == nil {
+		if tokenChain.ContractAddress != nil && tokenChain.TokenType == "native" {
 			t, err := TokensQ(r).FilterByID(tokenChain.TokenID).Get()
 			if err != nil {
 				Log(r).WithError(err).Error("failed to get token")
