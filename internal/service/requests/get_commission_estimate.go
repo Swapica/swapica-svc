@@ -10,7 +10,7 @@ type GetCommissionEstimateRequest struct {
 	TokenToBuy  string
 }
 
-func NewGetCommissionEstimateRequest(r *http.Request) (GetCommissionEstimateRequest, error) {
+func NewGetCommissionEstimateRequest(r *http.Request) (GetCommissionEstimateRequest, error) { // TODO validation
 	request := GetCommissionEstimateRequest{}
 	request.AmountToBuy = r.URL.Query().Get("amount_to_buy")
 	request.DestChain = r.URL.Query().Get("dest_chain")

@@ -2,15 +2,10 @@ package runner
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
-	"io"
 	"math"
 	"math/big"
-	"net/http"
-	"strings"
 
+	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/erc20"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -50,7 +45,9 @@ func EncodeExecuteParams(calldata executeCalldata) (string, error) {
 	return hexutil.Encode(packed), err
 }
 
-func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddress common.Address, amount string, rpc string) (*big.Int, error) {
+func (r *Runner) CommissionEstimate(
+	txData []byte, contractAddress common.Address, tokenAddress common.Address, nativeSymbol, amount, rpc string,
+) (*big.Int, error) {
 	client, err := ethclient.Dial(rpc)
 	if err != nil {
 		return nil, err
@@ -94,11 +91,15 @@ func CommissionEstimate(txData []byte, contractAddress common.Address, tokenAddr
 	}
 
 	decimals, err := instanceErc20.Decimals(&bind.CallOpts{})
-	price, err := GetTokenPrice(symbol)
 
-	commission := getPercent(gasInNative.Quo(gasInNative, new(big.Float).SetFloat64(price)), ConvertAmount(amountToInt, decimals))
+	commissionInAsset, err := r.converter.Convert(gasInNative, nativeSymbol, symbol)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to convert")
+	}
 
-	return ConvertToBigIntCommission(commission), nil
+	commissionPercent := getPercent(commissionInAsset, ConvertAmount(amountToInt, decimals))
+
+	return ConvertToBigIntCommission(commissionPercent), nil
 }
 
 func ConvertToBigIntCommission(x *big.Int) *big.Int {
@@ -123,39 +124,7 @@ func getPercent(x *big.Float, y *big.Float) *big.Int {
 	multiply := x.Mul(x, big.NewFloat(100))
 	divide := multiply.Quo(multiply, y)
 	float64Value, _ := divide.Float64()
-	ceilValue := math.Ceil(float64Value)
+	ceilValue := math.Ceil(float64Value) // TODO remove
 
 	return big.NewInt(int64(ceilValue))
-}
-
-func GetTokenPrice(symbol string) (float64, error) {
-	if strings.ToLower(symbol) == "usdc" || strings.ToLower(symbol) == "usdt" {
-		symbol = "usd"
-	}
-
-	resp, err := http.Get(fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=eth", symbol))
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to get price")
-	}
-
-	defer resp.Body.Close()
-
-	raw, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to read response")
-	}
-
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to unmarshal response")
-	}
-
-	var data map[string]map[string]float64
-	err = json.Unmarshal(raw, &data)
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to unmarshal response")
-	}
-
-	price := data[strings.ToLower(symbol)]["eth"]
-
-	return price, nil
 }

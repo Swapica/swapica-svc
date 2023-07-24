@@ -51,8 +51,9 @@ func Run(cfg config.Config) {
 
 	chains := mem.NewChainsQ(cfg.Chains())
 	tokens := mem.NewTokenQ(cfg.Tokens())
+	tokenChains := mem.NewTokenChainsQ(cfg.TokenChains())
 
-	newRunner, err := runner.NewRunner(cfg, proxyRepo, chains, tokens)
+	newRunner, err := runner.NewRunner(cfg, proxyRepo, chains, tokens, tokenChains)
 	if err != nil {
 		panic(err)
 	}

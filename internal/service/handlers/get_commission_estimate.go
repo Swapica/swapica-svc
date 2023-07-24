@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/Swapica/swapica-svc/internal/runner"
 	"math"
 	"math/big"
 	"net/http"
@@ -44,11 +43,28 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 
 	amountToBuyFloat, _ := new(big.Float).SetString(request.AmountToBuy)
 
-	priceUsd, err := runner.GetTokenPrice("USDT")
+	tokenChains, err := TokenChainsQ(r).FilterByChainID(request.DestChain).Select()
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get token price")
+		Log(r).WithError(err).Error("failed to select token chains")
 		ape.RenderErr(w, problems.InternalError())
 		return
+	}
+	nativeSymbol := ""
+	for _, tokenChain := range tokenChains {
+		if tokenChain.ContractAddress == nil {
+			t, err := TokensQ(r).FilterByID(tokenChain.TokenID).Get()
+			if err != nil {
+				Log(r).WithError(err).Error("failed to get token")
+				ape.RenderErr(w, problems.InternalError())
+				return
+			}
+			if t == nil {
+				Log(r).Error("token not found")
+				ape.RenderErr(w, problems.InternalError())
+				return
+			}
+			nativeSymbol = t.Symbol
+		}
 	}
 
 	if request.TokenToBuy == enums.TokenTypeNative {
@@ -60,11 +76,18 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 		lowerCommission.Mul(amountToBuyFloat, lowerCommission)
 		upperCommission.Mul(amountToBuyFloat, upperCommission)
 
-		lowerCommissionUsd := big.NewFloat(priceUsd)
-		lowerCommissionUsd.Quo(lowerCommission, lowerCommissionUsd)
-
-		upperCommissionUsd := big.NewFloat(priceUsd)
-		upperCommissionUsd.Quo(upperCommission, upperCommissionUsd)
+		lowerCommissionUsd, err := Converter(r).ConvertToStat(lowerCommission, nativeSymbol)
+		if err != nil {
+			Log(r).WithError(err).Error("failed to convert")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		upperCommissionUsd, err := Converter(r).ConvertToStat(upperCommission, nativeSymbol)
+		if err != nil {
+			Log(r).WithError(err).Error("failed to convert")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
 
 		ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, lowerCommissionUsd, upperCommission, upperCommissionUsd))
 		return
@@ -91,30 +114,39 @@ func GetCommissionEstimate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	price, err := runner.GetTokenPrice(symbol)
+	lowerCommInAsset, err := Converter(r).Convert(lowerGasNative, nativeSymbol, symbol)
 	if err != nil {
-		Log(r).WithError(err).Error("failed to get token price")
+		Log(r).WithError(err).Error("failed to convert")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	upperCommInAsset, err := Converter(r).Convert(upperGasNative, nativeSymbol, symbol)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to convert")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	amountToBuyFloat = ConvertAmount(amountToBuyFloat, decimals)
 
-	lowerCommission := getPercent(
-		lowerGasNative.Quo(lowerGasNative, new(big.Float).SetFloat64(price)),
-		amountToBuyFloat)
-	upperCommission := getPercent(
-		upperGasNative.Quo(upperGasNative, new(big.Float).SetFloat64(price)),
-		amountToBuyFloat)
+	lowerCommission := getPercent(lowerCommInAsset, amountToBuyFloat)
+	upperCommission := getPercent(upperCommInAsset, amountToBuyFloat)
 
 	lowerCommission.Mul(amountToBuyFloat, lowerCommission)
 	upperCommission.Mul(amountToBuyFloat, upperCommission)
 
-	lowerCommissionUsd := big.NewFloat(priceUsd)
-	lowerCommissionUsd.Quo(lowerCommission, lowerCommissionUsd)
-
-	upperCommissionUsd := big.NewFloat(priceUsd)
-	upperCommissionUsd.Quo(upperCommission, upperCommissionUsd)
+	lowerCommissionUsd, err := Converter(r).ConvertToStat(lowerCommission, nativeSymbol)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to convert")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	upperCommissionUsd, err := Converter(r).ConvertToStat(upperCommission, nativeSymbol)
+	if err != nil {
+		Log(r).WithError(err).Error("failed to convert")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
 
 	ape.Render(w, models.NewCommissionEstimateResponse(lowerCommission, lowerCommissionUsd, upperCommission, upperCommissionUsd))
 }

@@ -9,6 +9,7 @@ require (
 	github.com/ethereum/go-ethereum v1.11.2
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-ozzo/ozzo-validation/v4 v4.2.1
+	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e
 	github.com/gorilla/websocket v1.4.2
 	github.com/miguelmota/go-solidity-sha3 v0.1.1
 	github.com/pkg/errors v0.9.1

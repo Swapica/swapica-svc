@@ -7,6 +7,7 @@ import (
 	"github.com/Swapica/order-aggregator-svc/resources"
 	resources3 "github.com/Swapica/relayer-svc/resources"
 	"github.com/Swapica/swapica-svc/internal/config"
+	"github.com/Swapica/swapica-svc/internal/converter"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/proxy"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
@@ -26,17 +27,21 @@ import (
 )
 
 type Runner struct {
-	socketUrl  string
-	aggregator *jsonapi.Connector
-	relayer    *jsonapi.Connector
-	log        *logan.Entry
-	proxyRepo  proxy.ProxyRepo
-	chains     data.ChainsQ
-	tokens     data.TokensQ
-	useRelayer bool
+	socketUrl   string
+	aggregator  *jsonapi.Connector
+	relayer     *jsonapi.Connector
+	log         *logan.Entry
+	proxyRepo   proxy.ProxyRepo
+	chains      data.ChainsQ
+	tokens      data.TokensQ
+	tokenChains data.TokenChainsQ
+	converter   converter.Converter
+	useRelayer  bool
 }
 
-func NewRunner(cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens data.TokensQ) (*Runner, error) {
+func NewRunner(
+	cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens data.TokensQ, tokenChains data.TokenChainsQ,
+) (*Runner, error) {
 
 	aggregator := jsonapi.NewConnector(
 		signed.NewClient(
@@ -52,14 +57,16 @@ func NewRunner(cfg config.Config, proxyRepo proxy.ProxyRepo, chains data.ChainsQ
 	)
 
 	runner := &Runner{
-		socketUrl:  cfg.RunnerCfg().Aggregator.Ws,
-		aggregator: aggregator,
-		relayer:    relayer,
-		log:        cfg.Log(),
-		proxyRepo:  proxyRepo,
-		chains:     chains,
-		tokens:     tokens,
-		useRelayer: cfg.RunnerCfg().UseRelayer,
+		socketUrl:   cfg.RunnerCfg().Aggregator.Ws,
+		aggregator:  aggregator,
+		relayer:     relayer,
+		log:         cfg.Log(),
+		proxyRepo:   proxyRepo,
+		chains:      chains,
+		tokens:      tokens,
+		tokenChains: tokenChains,
+		converter:   converter.NewConverter(),
+		useRelayer:  cfg.RunnerCfg().UseRelayer,
 	}
 
 	return runner, nil
@@ -207,11 +214,31 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 		return errors.New(fmt.Sprintf("invalid tx data"))
 	}
 
-	commission, err := CommissionEstimate(executeTxData, contractAddress, token, amount, rpc)
+	tokenChains, err := r.tokenChains.FilterByChainID(chainId).Select()
+	if err != nil {
+		return errors.Wrap(err, "failed to select token chains from memory")
+	}
+	nativeSymbol := ""
+	for _, tokenChain := range tokenChains {
+		if tokenChain.ContractAddress == nil {
+			t, err := r.tokens.FilterByID(tokenChain.TokenID).Get()
+			if err != nil {
+				return errors.Wrap(err, "failed to get token from memory")
+			}
+			if t == nil {
+				return errors.New("token not found")
+			}
+			nativeSymbol = t.Symbol
+		}
+	}
+
+	commission, err := r.CommissionEstimate(executeTxData, contractAddress, token, nativeSymbol, amount, rpc)
 	if err != nil {
 		r.log.Debug(fmt.Sprintf("err in estimate commission"))
 		return errors.New(fmt.Sprintf("invalid data"))
 	}
+
+	// TODO skip if commission >= 100
 
 	relayerTx, err := EncodeExecuteParams(executeCalldata{
 		Token:      token,

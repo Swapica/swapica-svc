@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/Swapica/swapica-svc/internal/converter"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/data/mem"
 	"github.com/Swapica/swapica-svc/internal/proxy"
@@ -22,6 +23,7 @@ func (s *service) router(proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens 
 			handlers.CtxTokensQ(tokens),
 			handlers.CtxTokenChainsQ(mem.NewTokenChainsQ(s.cfg.TokenChains())),
 			handlers.CtxProxyRepo(proxyRepo),
+			handlers.CtxConverter(converter.NewConverter()),
 		),
 	)
 	r.Route("/v1", func(r chi.Router) {

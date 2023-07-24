@@ -89,6 +89,9 @@ github.com/go-ozzo/ozzo-validation/v4
 # github.com/go-stack/stack v1.8.1
 ## explicit; go 1.17
 github.com/go-stack/stack
+# github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e
+## explicit
+github.com/golang/groupcache/lru
 # github.com/google/jsonapi v0.0.0-20200226002910-c8283f632fb7
 ## explicit
 github.com/google/jsonapi

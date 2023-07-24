@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"github.com/Swapica/swapica-svc/internal/converter"
 	"net/http"
 
 	"github.com/Swapica/swapica-svc/internal/data"
@@ -19,6 +20,7 @@ const (
 	proxyRepoCtxKey
 	tokensQCtxKey
 	tokenChainsQCtxKey
+	converterCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -79,4 +81,14 @@ func CtxTokensQ(entry data.TokensQ) func(context.Context) context.Context {
 
 func TokensQ(r *http.Request) data.TokensQ {
 	return r.Context().Value(tokensQCtxKey).(data.TokensQ).New()
+}
+
+func CtxConverter(entry converter.Converter) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, converterCtxKey, entry)
+	}
+}
+
+func Converter(r *http.Request) converter.Converter {
+	return r.Context().Value(converterCtxKey).(converter.Converter)
 }
