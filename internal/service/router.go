@@ -41,6 +41,7 @@ func (s *service) router(proxyRepo proxy.ProxyRepo, chains data.ChainsQ, tokens 
 		})
 		r.Get("/chains", handlers.GetChainList)
 		r.Get("/tokens", handlers.GetTokenList)
+		r.Get("/token_chains", handlers.GetTokenChainList)
 		r.Post("/approve", handlers.Approve)
 		r.Get("/commission_estimate", handlers.GetCommissionEstimate)
 	})

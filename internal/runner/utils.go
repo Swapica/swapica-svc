@@ -99,6 +99,10 @@ func (r *Runner) CommissionEstimate(
 
 	commissionPercent := getPercent(commissionInAsset, ConvertAmount(amountToInt, decimals))
 
+	if commissionPercent.Cmp(big.NewInt(100)) > -1 {
+		return nil, errors.New("commission is >= 100%")
+	}
+
 	return ConvertToBigIntCommission(commissionPercent), nil
 }
 

@@ -38,3 +38,16 @@ func newTokenChainModelWithRelation(value data.TokenChain) *resources.TokenChain
 
 	return model
 }
+
+func NewTokenChainListResponse(tokenChains []data.TokenChain) resources.TokenChainListResponse {
+	response := resources.TokenChainListResponse{
+		Data:     make([]resources.TokenChain, len(tokenChains)),
+		Included: resources.Included{},
+	}
+
+	for i, tokenChain := range tokenChains {
+		response.Data[i] = *newTokenChainModelWithRelation(tokenChain)
+	}
+
+	return response
+}
