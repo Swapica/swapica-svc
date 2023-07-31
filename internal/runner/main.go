@@ -123,7 +123,10 @@ func (r *Runner) ExecuteOrders() error {
 	}
 
 	for _, order := range orders {
-		_ = r.executeMatch(order)
+		err = r.executeMatch(order)
+		if err != nil {
+			r.log.WithError(err).Error("failed to execute match")
+		}
 	}
 
 	matches, err := r.fetchMatches()
@@ -134,7 +137,7 @@ func (r *Runner) ExecuteOrders() error {
 	for _, match := range matches {
 		err = r.executeOrder(match)
 		if err != nil {
-			return err
+			r.log.WithError(err).Error("failed to execute order")
 		}
 	}
 
