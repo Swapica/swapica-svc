@@ -83,7 +83,11 @@ func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 			return nil, err
 		}
 
-		orders = append(orders, response.Data...)
+		for _, o := range response.Data {
+			if enums.State(o.Attributes.State) == enums.AwaitingMatch {
+				orders = append(orders, o)
+			}
+		}
 		if len(response.Data) < limit || response.Links == nil {
 			break
 		}
@@ -105,7 +109,11 @@ func (r *Runner) fetchMatches() (matches []resources.Match, err error) {
 			return nil, errors.Wrap(err, "failed to send get request")
 		}
 
-		matches = append(matches, response.Data...)
+		for _, m := range response.Data {
+			if enums.State(m.Attributes.State) == enums.AwaitingFinalization {
+				matches = append(matches, m)
+			}
+		}
 		if len(response.Data) < limit || response.Links == nil {
 			break
 		}
@@ -117,7 +125,7 @@ func (r *Runner) fetchMatches() (matches []resources.Match, err error) {
 }
 
 func (r *Runner) ExecuteOrders() error {
-	orders, err := r.fetchOrders()
+	orders, err := r.fetchOrders() // TODO skip unnecessary orders
 	if err != nil {
 		return errors.Wrap(err, "failed to get order list from aggregator")
 	}
@@ -129,7 +137,7 @@ func (r *Runner) ExecuteOrders() error {
 		}
 	}
 
-	matches, err := r.fetchMatches()
+	matches, err := r.fetchMatches() // TODO skip unnecessary matches
 	if err != nil {
 		return errors.Wrap(err, "failed to get match order list from aggregator")
 	}
