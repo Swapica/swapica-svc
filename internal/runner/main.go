@@ -246,7 +246,6 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 	commission, err := r.CommissionEstimate(executeTxData, contractAddress, token, nativeSymbol, amount, rpc)
 	if err != nil {
 		if err == CommissionIsTooHigh {
-			r.log.WithField("commission_percent", commission.String()).Warn("commission is too high")
 			return nil
 		}
 		r.log.Debug(fmt.Sprintf("err in estimate commission"))

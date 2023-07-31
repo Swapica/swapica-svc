@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"gitlab.com/distributed_lab/logan/v3"
 	"math"
 	"math/big"
 
@@ -79,6 +80,17 @@ func (r *Runner) CommissionEstimate(
 	if tokenAddress == common.HexToAddress(enums.TokenTypeNative) {
 		commission := getPercent(gasInNative, ConvertAmount(amountToInt, 18))
 
+		if commission.Cmp(big.NewInt(100)) > -1 {
+			r.log.WithFields(logan.F{
+				"commission_percent": commission.String(),
+				"gas_limit":          gasLimit,
+				"gas_price":          gasPrice,
+				"gas_in_native":      gasInNative.String(),
+				"amount":             ConvertAmount(amountToInt, 18).String(),
+			}).Warn("commission is too high")
+			return commission, CommissionIsTooHigh
+		}
+
 		return ConvertToBigIntCommission(commission), nil
 	}
 
@@ -102,6 +114,13 @@ func (r *Runner) CommissionEstimate(
 	commissionPercent := getPercent(commissionInAsset, ConvertAmount(amountToInt, decimals))
 
 	if commissionPercent.Cmp(big.NewInt(100)) > -1 {
+		r.log.WithFields(logan.F{
+			"commission_percent": commissionPercent.String(),
+			"gas_limit":          gasLimit,
+			"gas_price":          gasPrice,
+			"gas_in_native":      gasInNative.String(),
+			"amount":             ConvertAmount(amountToInt, decimals).String(),
+		}).Warn("commission is too high")
 		return commissionPercent, CommissionIsTooHigh
 	}
 
