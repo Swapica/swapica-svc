@@ -1,3 +1,6 @@
+# github.com/ALTree/bigfloat v0.0.0-20220102081255-38c8b72a9924
+## explicit; go 1.15
+github.com/ALTree/bigfloat
 # github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6
 ## explicit
 github.com/StackExchange/wmi

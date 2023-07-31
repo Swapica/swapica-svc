@@ -3,6 +3,7 @@ module github.com/Swapica/swapica-svc
 go 1.19
 
 require (
+	github.com/ALTree/bigfloat v0.0.0-20220102081255-38c8b72a9924
 	github.com/Swapica/order-aggregator-svc v0.1.0-rc.2
 	github.com/Swapica/relayer-svc v0.1.0-rc.0
 	github.com/alecthomas/kingpin v2.2.6+incompatible

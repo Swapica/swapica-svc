@@ -4,13 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/big"
+	"net/http"
+	"net/url"
+	"strconv"
+
 	"github.com/Swapica/order-aggregator-svc/resources"
 	resources3 "github.com/Swapica/relayer-svc/resources"
 	"github.com/Swapica/swapica-svc/internal/config"
 	"github.com/Swapica/swapica-svc/internal/converter"
 	"github.com/Swapica/swapica-svc/internal/data"
 	"github.com/Swapica/swapica-svc/internal/proxy"
-	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/types"
 	resources2 "github.com/Swapica/swapica-svc/resources"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,10 +24,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/connectors/signed"
-	"math/big"
-	"net/http"
-	"net/url"
-	"strconv"
 )
 
 type Runner struct {
@@ -75,7 +75,7 @@ func NewRunner(
 func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 	var limit = 100
 	var response resources.OrderListResponse
-	val, _ := url.ParseQuery(fmt.Sprintf("filter[use_relayer]=true&filter[state]=1&page[number]=0&page[limit]=%d", limit))
+	val, _ := url.ParseQuery(fmt.Sprintf("filter[use_relayer]=true&filter[state]=4&page[number]=0&page[limit]=%d", limit))
 	for {
 		u, _ := url.Parse("/orders?" + val.Encode())
 		err = r.aggregator.Get(u, &response)
@@ -83,11 +83,7 @@ func (r *Runner) fetchOrders() (orders []resources.Order, err error) {
 			return nil, err
 		}
 
-		for _, o := range response.Data {
-			if enums.State(o.Attributes.State) == enums.AwaitingMatch {
-				orders = append(orders, o)
-			}
-		}
+		orders = append(orders, response.Data...)
 		if len(response.Data) < limit || response.Links == nil {
 			break
 		}
@@ -109,11 +105,7 @@ func (r *Runner) fetchMatches() (matches []resources.Match, err error) {
 			return nil, errors.Wrap(err, "failed to send get request")
 		}
 
-		for _, m := range response.Data {
-			if enums.State(m.Attributes.State) == enums.AwaitingFinalization {
-				matches = append(matches, m)
-			}
-		}
+		matches = append(matches, response.Data...)
 		if len(response.Data) < limit || response.Links == nil {
 			break
 		}
@@ -125,7 +117,7 @@ func (r *Runner) fetchMatches() (matches []resources.Match, err error) {
 }
 
 func (r *Runner) ExecuteOrders() error {
-	orders, err := r.fetchOrders() // TODO skip unnecessary orders
+	orders, err := r.fetchOrders()
 	if err != nil {
 		return errors.Wrap(err, "failed to get order list from aggregator")
 	}
@@ -137,7 +129,7 @@ func (r *Runner) ExecuteOrders() error {
 		}
 	}
 
-	matches, err := r.fetchMatches() // TODO skip unnecessary matches
+	matches, err := r.fetchMatches()
 	if err != nil {
 		return errors.Wrap(err, "failed to get match order list from aggregator")
 	}
@@ -243,7 +235,7 @@ func (r *Runner) sendTxToRelayer(chainId string, data interface{}, token common.
 		}
 	}
 
-	commission, err := r.CommissionEstimate(executeTxData, contractAddress, token, nativeSymbol, amount, rpc)
+	commission, err := r.CommissionEstimate(contractAddress, token, nativeSymbol, amount, rpc)
 	if err != nil {
 		if err == CommissionIsTooHigh {
 			return nil
@@ -329,10 +321,6 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.Wrap(err, "failed to get swapica order")
 	}
 
-	if enums.State(swapicaOrder.Status.State) != enums.Executed {
-		return errors.New("cannot execute a match if order is not executed")
-	}
-
 	match, err := r.proxyRepo.Get(destChain.ID).GetMatch(swapicaOrder.Status.MatchId)
 	if err != nil {
 		return errors.Wrap(err, "failed to get swapica match")
@@ -355,7 +343,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, swapicaOrder.Creator, common.HexToAddress(destChain.SwapContract), swapicaOrder.AmountToSell.String(), destChain.RpcEndpoint)
+	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, swapicaOrder.Creator, common.HexToAddress(destChain.SwapContract), match.AmountToSell.String(), destChain.RpcEndpoint)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}

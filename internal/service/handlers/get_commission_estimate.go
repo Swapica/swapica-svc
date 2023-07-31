@@ -175,6 +175,6 @@ func ConvertAmount(weiFloat *big.Float, decimals uint8) *big.Float {
 }
 
 func getPercent(x *big.Float, y *big.Float) *big.Float {
-	multiply := x.Mul(x, big.NewFloat(100))
-	return multiply.Quo(multiply, y)
+	res := new(big.Float)
+	return res.Quo(x, y)
 }

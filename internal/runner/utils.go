@@ -2,18 +2,18 @@ package runner
 
 import (
 	"context"
-	"gitlab.com/distributed_lab/logan/v3"
 	"math"
 	"math/big"
 
+	"github.com/ALTree/bigfloat"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/enums"
 	"github.com/Swapica/swapica-svc/internal/proxy/evm/generated/erc20"
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
@@ -49,41 +49,32 @@ func EncodeExecuteParams(calldata executeCalldata) (string, error) {
 }
 
 func (r *Runner) CommissionEstimate(
-	txData []byte, contractAddress common.Address, tokenAddress common.Address, nativeSymbol, amount, rpc string,
+	contractAddress common.Address, tokenAddress common.Address, nativeSymbol, amount, rpc string,
 ) (*big.Int, error) {
 	client, err := ethclient.Dial(rpc)
 	if err != nil {
 		return nil, err
 	}
 
-	callMsg := ethereum.CallMsg{
-		To:   &contractAddress,
-		Data: txData,
-	}
-
-	gasLimit, err := client.EstimateGas(context.Background(), callMsg)
-	if err != nil {
-		return nil, err
-	}
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	gasLimitBig := big.NewInt(int64(gasLimit))
-	gas := gasLimitBig.Mul(gasLimitBig, gasPrice)
+	gasLimit := big.NewInt(150000)
+	gas := gasLimit.Mul(gasLimit, gasPrice)
 
 	gasInNative := ConvertAmount(gas, 18)
 
 	amountToInt, _ := new(big.Int).SetString(amount, 10)
 
 	if tokenAddress == common.HexToAddress(enums.TokenTypeNative) {
-		commission := getPercent(gasInNative, ConvertAmount(amountToInt, 18))
+		commission, err := getPercent(gasInNative, ConvertAmount(amountToInt, 18))
 
-		if commission.Cmp(big.NewInt(100)) > -1 {
+		if err != nil {
 			r.log.WithFields(logan.F{
 				"commission_percent": commission.String(),
-				"gas_limit":          gasLimit,
+				"gas_limit":          150000,
 				"gas_price":          gasPrice,
 				"gas_in_native":      gasInNative.String(),
 				"amount":             ConvertAmount(amountToInt, 18).String(),
@@ -91,7 +82,7 @@ func (r *Runner) CommissionEstimate(
 			return commission, CommissionIsTooHigh
 		}
 
-		return ConvertToBigIntCommission(commission), nil
+		return commission, nil
 	}
 
 	instanceErc20, err := erc20.NewErc20(contractAddress, client)
@@ -111,12 +102,11 @@ func (r *Runner) CommissionEstimate(
 		return nil, errors.Wrap(err, "failed to convert")
 	}
 
-	commissionPercent := getPercent(commissionInAsset, ConvertAmount(amountToInt, decimals))
-
-	if commissionPercent.Cmp(big.NewInt(100)) > -1 {
+	commissionPercent, err := getPercent(commissionInAsset, ConvertAmount(amountToInt, decimals))
+	if err != nil {
 		r.log.WithFields(logan.F{
 			"commission_percent": commissionPercent.String(),
-			"gas_limit":          gasLimit,
+			"gas_limit":          150000,
 			"gas_price":          gasPrice,
 			"gas_in_native":      gasInNative.String(),
 			"amount":             ConvertAmount(amountToInt, decimals).String(),
@@ -124,16 +114,7 @@ func (r *Runner) CommissionEstimate(
 		return commissionPercent, CommissionIsTooHigh
 	}
 
-	return ConvertToBigIntCommission(commissionPercent), nil
-}
-
-func ConvertToBigIntCommission(x *big.Int) *big.Int {
-	base := big.NewInt(10)
-	exponent := big.NewInt(27)
-	result := new(big.Int).Exp(base, exponent, nil)
-	temp := new(big.Int).Mul(x, result)
-
-	return new(big.Int).Div(temp, big.NewInt(100))
+	return commissionPercent, nil
 }
 
 func ConvertAmount(wei *big.Int, decimals uint8) *big.Float {
@@ -145,11 +126,19 @@ func ConvertAmount(wei *big.Int, decimals uint8) *big.Float {
 	return ether
 }
 
-func getPercent(x *big.Float, y *big.Float) *big.Int {
-	multiply := x.Mul(x, big.NewFloat(100))
-	divide := multiply.Quo(multiply, y)
-	float64Value, _ := divide.Float64()
-	ceilValue := math.Ceil(float64Value) // TODO remove
+func getPercent(x *big.Float, y *big.Float) (*big.Int, error) {
+	res := new(big.Float)
+	res.Quo(x, y)
 
-	return big.NewInt(int64(ceilValue))
+	if res.Cmp(big.NewFloat(1)) > 0 {
+		return nil, CommissionIsTooHigh
+	}
+
+	multiplier := bigfloat.Pow(big.NewFloat(10), big.NewFloat(27))
+	res.Mul(res, multiplier)
+
+	resI := new(big.Int)
+	res.Int(resI)
+
+	return resI, nil
 }
