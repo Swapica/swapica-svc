@@ -16,6 +16,8 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
+var CommissionIsTooHigh error = errors.New("commission is >= 100%")
+
 type executeCalldata struct {
 	Token      common.Address
 	Commission *big.Int
@@ -100,7 +102,7 @@ func (r *Runner) CommissionEstimate(
 	commissionPercent := getPercent(commissionInAsset, ConvertAmount(amountToInt, decimals))
 
 	if commissionPercent.Cmp(big.NewInt(100)) > -1 {
-		return nil, errors.New("commission is >= 100%")
+		return commissionPercent, CommissionIsTooHigh
 	}
 
 	return ConvertToBigIntCommission(commissionPercent), nil

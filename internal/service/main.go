@@ -58,7 +58,7 @@ func Run(cfg config.Config) {
 		panic(err)
 	}
 
-	go running.WithBackOff(context.Background(), cfg.Log(), "swapica", newRunner.Run, 10*time.Second, 5*time.Second, 5*time.Minute)
+	go running.WithBackOff(context.Background(), cfg.Log(), "swapica", newRunner.Run, 20*time.Second, 5*time.Second, 5*time.Minute)
 
 	if err := newService(cfg).run(proxyRepo, chains, tokens); err != nil {
 		panic(err)
