@@ -355,7 +355,7 @@ func (r *Runner) executeMatch(order resources.Order) error {
 		return errors.New("failed to build transaction")
 	}
 
-	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, swapicaOrder.Creator, common.HexToAddress(destChain.SwapContract), match.AmountToSell.String(), destChain.RpcEndpoint)
+	err = r.sendTxToRelayer(destChain.ID, tx, match.TokenToSell, swapicaOrder.Creator, common.HexToAddress(destChain.SwapContract), swapicaOrder.AmountToSell.String(), destChain.RpcEndpoint)
 	if err != nil {
 		return errors.Wrap(err, "failed to send tx to relayer")
 	}
